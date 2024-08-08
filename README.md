@@ -14,9 +14,24 @@ Principais Recursos:
 
 Shape Factory é seu parceiro completo para uma jornada de saúde e fitness, combinando treino, nutrição e motivação em um único aplicativo. Baixe agora e comece a transformar sua vida!
 
-Requisitos Funcionais - Cadastro de usuários ( ADM ) / Planos de treinos / Gestão de exercícios ( ADM ) / Armazenamento dos vídeos de treinos ( ADM ) / Armazenamento de guias detalhados de cada exercício / Rastreamento de desempenho / Gráfico de progresso / Plano alimentar personalizado / Armazenamento de receitas ( ADM ) / Insights personalizados / Ajustes de treino e dieta
+Requisitos Funcionais - 
+* Cadastro de usuários ( ADM )
+* Planos de treinos
+* Gestão de exercícios ( ADM )
+* Armazenamento dos vídeos de treinos ( ADM )
+* Armazenamento de guias detalhados de cada exercício
+* Rastreamento de desempenho
+* Gráfico de progresso
+* Plano alimentar personalizado
+* Armazenamento de receitas ( ADM )
+* Insights personalizados
+* Ajustes de treino e dieta
 
-Requisitos não Funcionais - Desempenho / Usabilidade / Segurança / Manutenção
+Requisitos não Funcionais -
+* Desempenho
+* Usabilidade
+* Segurança
+* Manutenção
 
 API - Spring boot ( JAVA )
 
