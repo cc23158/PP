@@ -1,10 +1,8 @@
 # Shape Factory
 
-Tema { Aplicativo de exercício e saúde }
+Tema - Aplicativo de exercício e saúde
 
-Descrição {
-
-Shape Factory é o aplicativo ideal para quem busca melhorar a saúde e atingir objetivos específicos de fitness.
+Descrição - Shape Factory é o aplicativo ideal para quem busca melhorar a saúde e atingir objetivos específicos de fitness.
 
 Principais Recursos:
 
@@ -16,10 +14,10 @@ Principais Recursos:
 
 Shape Factory é seu parceiro completo para uma jornada de saúde e fitness, combinando treino, nutrição e motivação em um único aplicativo. Baixe agora e comece a transformar sua vida!
 
-}
+Requisitos Funcionais - Cadastro de usuários ( ADM ) / Planos de treinos / Gestão de exercícios ( ADM ) / Armazenamento dos vídeos de treinos ( ADM ) / Armazenamento de guias detalhados de cada exercício / Rastreamento de desempenho / Gráfico de progresso / Plano alimentar personalizado / Armazenamento de receitas ( ADM ) / Insights personalizados / Ajustes de treino e dieta
 
-Requisitos {  }
+Requisitos não Funcionais - Desempenho / Usabilidade / Segurança / Manutenção
 
-API { Spring boot ( JAVA ) }
+API - Spring boot ( JAVA )
 
-Banco de Dados { SSMS ( T-SQL ) }
+Banco de Dados - SSMS ( T-SQL )
