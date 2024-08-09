@@ -1,1 +1,5 @@
+com\example\SF\DTO\Classes\Client.class
 com\example\SF\SfApplication.class
+com\example\SF\DTO\Classes\Admin.class
+com\example\SF\DTO\Interfaces\IClient.class
+com\example\SF\DTO\Interfaces\IAdmin.class
