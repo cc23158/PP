@@ -27,15 +27,17 @@ public class ClientService {
         return iClient.save(client);
     }
 
+    public Client getByName(String name){
+        return iClient.getByName(name);
+    }
+
     /* Customizes methods */
     /*
-    public Client getByName(String name){
-
-    }
 
     public Client delete(String username){
 
     }
 
     */
+
 }

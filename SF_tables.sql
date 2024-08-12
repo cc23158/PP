@@ -55,12 +55,20 @@ DROP TABLE SF.ADM
 
 /* TRIGGERS */
 
-CREATE OR ALTER TRIGGER SF.ClientAge ON SF.Client FOR INSERT AS
+CREATE OR ALTER TRIGGER SF.ClientAge ON SF.Client INSTEAD OF INSERT AS
 BEGIN
 	
-	DECLARE @
+	INSERT INTO SF.Client (client_name, client_age, client_gender, client_height, client_weight, client_password)
+    SELECT client_name, client_age, client_gender, client_height, client_weight, client_password
+    FROM inserted WHERE client_age > 12;
 
 END
 
 
-12
+CREATE OR ALTER PROCEDURE SF.GET_Client @name varchar(30) as
+BEGIN
+	
+	SELECT client_id, client_name, client_age, client_gender, client_height, client_weight, client_password
+    FROM SF.Client WHERE client_name = @name;
+
+END
