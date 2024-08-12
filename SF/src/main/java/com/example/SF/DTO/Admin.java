@@ -1,4 +1,4 @@
-package com.example.SF.DTO.Classes;
+package com.example.SF.DTO;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

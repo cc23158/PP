@@ -1,4 +1,4 @@
-package com.example.SF.DTO.Classes;
+package com.example.SF.DTO;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -45,5 +45,8 @@ public class Client {
     @DecimalMin(value = "0.0", message = "Weight must be greater than 0.0 kg")
     @DecimalMax(value = "600", message = "Weight must be less than 600 kg")
     private Double client_weight;
+
+    @Column(name = "client_password", nullable = false, length = 60)
+    private String client_password;
 
 }
