@@ -8,21 +8,59 @@ CREATE TABLE SF.Client(
 	client_gender CHAR NOT NULL,
 	client_height FLOAT NOT NULL,
 	client_weight FLOAT NOT NULL,
+	client_password VARCHAR(60) NOT NULL,
 
 	PRIMARY KEY(client_id)
 
 )
 
-CREATE TABLE SF.Admin(
+CREATE TABLE SF.Adm(
 
-	admin_id INT IDENTITY NOT NULL,
-	admin_user VARCHAR(30) NOT NULL,
-	admin_password VARCHAR(60) NOT NULL,
+	adm_id INT IDENTITY NOT NULL,
+	adm_user VARCHAR(30) NOT NULL,
+	adm_password VARCHAR(60) NOT NULL,
 
-	PRIMARY KEY(admin_id)
+	PRIMARY KEY(adm_id)
 
 
 )
 
-insert into sf.Client values('a', 16, 'M', 1.8, 70.4)
-insert into sf.Admin values('b', 'c')
+DBCC CHECKIDENT ('SF.Client', RESEED, 0)
+DBCC CHECKIDENT ('SF.Adm', RESEED, 0)
+
+INSERT INTO SF.Client (client_name, client_age, client_gender, client_height, client_weight, client_password)
+VALUES 
+('Alice Johnson', 30, 'F', 165.5, 55.0, 'password123'),
+('Bob Smith', 45, 'M', 175.0, 80.0, 'securepass456'),
+('Charlie Brown', 25, 'M', 180.0, 70.0, 'mysecret789'),
+('Diana Prince', 35, 'F', 160.0, 60.0, 'wonderpass321'),
+('Eve Davis', 40, 'F', 170.0, 65.0, 'evepassword000');
+
+INSERT INTO SF.Adm (adm_user, adm_password)
+VALUES 
+('adm1', 'admpass123'),
+('adm2', 'admpass456'),
+('adm3', 'admpass789'),
+('adm4', 'admpass321'),
+('adm5', 'admpass000');
+
+select * from sf.client
+select * from sf.adm
+
+delete sf.client
+delete sf.adm
+
+DROP TABLE SF.ADM
+
+
+/* TRIGGERS */
+
+CREATE OR ALTER TRIGGER SF.ClientAge ON SF.Client FOR INSERT AS
+BEGIN
+	
+	DECLARE @
+
+END
+
+
+12

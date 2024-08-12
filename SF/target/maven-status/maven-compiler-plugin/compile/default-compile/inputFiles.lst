@@ -1,5 +1,9 @@
-C:\Users\u23158\Desktop\PP\SF\src\main\java\com\example\SF\DTO\Classes\Admin.java
-C:\Users\u23158\Desktop\PP\SF\src\main\java\com\example\SF\DTO\Classes\Client.java
-C:\Users\u23158\Desktop\PP\SF\src\main\java\com\example\SF\DTO\Interfaces\IAdmin.java
-C:\Users\u23158\Desktop\PP\SF\src\main\java\com\example\SF\DTO\Interfaces\IClient.java
-C:\Users\u23158\Desktop\PP\SF\src\main\java\com\example\SF\SfApplication.java
+C:\Users\u23158\Downloads\PP-API\PP-API\SF\src\main\java\com\example\SF\BLL\AdminService.java
+C:\Users\u23158\Downloads\PP-API\PP-API\SF\src\main\java\com\example\SF\BLL\ClientService.java
+C:\Users\u23158\Downloads\PP-API\PP-API\SF\src\main\java\com\example\SF\DAL\AdminController.java
+C:\Users\u23158\Downloads\PP-API\PP-API\SF\src\main\java\com\example\SF\DAL\ClientController.java
+C:\Users\u23158\Downloads\PP-API\PP-API\SF\src\main\java\com\example\SF\DTO\Admin.java
+C:\Users\u23158\Downloads\PP-API\PP-API\SF\src\main\java\com\example\SF\DTO\Client.java
+C:\Users\u23158\Downloads\PP-API\PP-API\SF\src\main\java\com\example\SF\Repository\IAdmin.java
+C:\Users\u23158\Downloads\PP-API\PP-API\SF\src\main\java\com\example\SF\Repository\IClient.java
+C:\Users\u23158\Downloads\PP-API\PP-API\SF\src\main\java\com\example\SF\SfApplication.java
