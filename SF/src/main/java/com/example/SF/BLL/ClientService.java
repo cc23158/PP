@@ -2,6 +2,8 @@ package com.example.SF.BLL;
 
 import com.example.SF.DTO.Client;
 import com.example.SF.Repository.IClient;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import jdk.jshell.spi.ExecutionControl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,19 @@ public class ClientService {
         return iClient.save(client);
     }
 
-    public Client getByName(String name){
-        return iClient.getByName(name);
+    public void delete(Integer id) {
+        if(iClient.existsById(id)){
+            iClient.deleteById(id);
+        }
+
+        else{
+            throw new EntityNotFoundException("Client not founded");
+        }
+    }
+
+    @Transactional
+    public Client getByName(String name, String surname){
+        return iClient.getByName(name, surname);
     }
 
     /* Customizes methods */

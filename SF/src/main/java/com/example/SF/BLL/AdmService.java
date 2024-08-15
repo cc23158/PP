@@ -2,6 +2,7 @@ package com.example.SF.BLL;
 
 import com.example.SF.DTO.Adm;
 import com.example.SF.Repository.IAdm;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,16 @@ public class AdmService {
 
     public Adm save(Adm adm){
         return iAdm.save(adm);
+    }
+
+    public void delete(Integer id){
+        if(iAdm.existsById(id)){
+            iAdm.deleteById(id);
+        }
+
+        else{
+            throw new EntityNotFoundException("Adm not founded");
+        }
     }
 
     /* Customizes methods */

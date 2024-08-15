@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface IClient extends JpaRepository<Client, Integer> {
 
-    @Procedure
-    Client getByName(@Param("clientName") String name);
+    @Procedure(procedureName = "SF.GET_Client")
+    Client getByName(@Param("clientName") String name, @Param("clientSurname") String surname);
 
 }
