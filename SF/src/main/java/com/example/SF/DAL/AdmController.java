@@ -3,6 +3,7 @@ package com.example.SF.DAL;
 import com.example.SF.BLL.AdmService;
 import com.example.SF.DTO.Adm;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,23 +25,45 @@ public class AdmController {
         return admService.getAll();
     }
 
+    @GetMapping("/verify/{user}/{password}")
+    public ResponseEntity<String> verify(@PathVariable String user, @PathVariable String password) {
+        try {
+            boolean exists = admService.verify(user, password);
+            if (exists) {
+                return ResponseEntity.ok().body("Account verified");
+            }
+
+            else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            }
+        }
+
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        }
+    }
+
+    @PostMapping("/postAdm/{user}/{password}")
+    public ResponseEntity<String> postAdm(@PathVariable String user, @PathVariable String password){
+        try{
+            admService.postAdm(user, password);
+            return ResponseEntity.ok().body("Adm inserted");
+        }
+
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured");
+        }
+    }
+
     @DeleteMapping("/deleteAdm/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable String id){
+    public ResponseEntity<String> deleteAdm(@PathVariable String id){
         try{
             Integer integerId = Integer.valueOf(id);
-            admService.delete(integerId);
-            return ResponseEntity.ok("Adm deleted");
+            admService.deleteAdm(integerId);
+            return ResponseEntity.ok().body("Adm deleted");
         }
 
-        catch(NumberFormatException e){
-            return ResponseEntity.badRequest().body("Invalid id");
-        }
-
-        catch(EntityNotFoundException e){
-            return ResponseEntity.badRequest().body("Adm not founded");
-        }
-
-        catch(Exception e){
+        catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured");
         }
     }

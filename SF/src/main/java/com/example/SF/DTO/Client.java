@@ -40,4 +40,7 @@ public class Client {
     @Column(name = "client_password")
     private String client_password;
 
+    @Column(name = "client_active")
+    private Boolean client_active;
+
 }

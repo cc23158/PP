@@ -32,23 +32,39 @@ public class ClientController {
         return clientService.getByName(name, surname);
     }
 
-    @DeleteMapping("/deleteClient/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable String id){
+    @PostMapping("/postClient/{name}/{surname}/{age}/{gender}/{height}/{weight}/{password}")
+    public ResponseEntity<String> postClient(
+            @PathVariable String name,
+            @PathVariable String surname,
+            @PathVariable String age,
+            @PathVariable Character gender,
+            @PathVariable String height,
+            @PathVariable String weight,
+            @PathVariable String password
+            ){
         try{
-            Integer integerId = Integer.valueOf(id);
-            clientService.delete(integerId);
-            return ResponseEntity.ok("Client deleted");
-        }
+            Integer integerAge = Integer.valueOf(age);
+            Double doubleHeight = Double.parseDouble(height);
+            Double doubleWeight = Double.parseDouble(weight);
 
-        catch(NumberFormatException e){
-            return ResponseEntity.badRequest().body("Invalid id");
-        }
-
-        catch(EntityNotFoundException e){
-            return ResponseEntity.badRequest().body("Client not founded");
+            clientService.postClient(name, surname, integerAge, gender, doubleHeight, doubleWeight, password);
+            return ResponseEntity.ok("Client inserted");
         }
 
         catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured");
+        }
+    }
+
+    @DeleteMapping("/deleteClient/{id}")
+    public ResponseEntity<String> deleteClient(@PathVariable String id){
+        try{
+            Integer integerId = Integer.valueOf(id);
+            clientService.deleteClient(integerId);
+            return ResponseEntity.ok("Client deleted");
+        }
+
+        catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured");
         }
     }

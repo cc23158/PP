@@ -3,6 +3,7 @@ package com.example.SF.BLL;
 import com.example.SF.DTO.Adm;
 import com.example.SF.Repository.IAdm;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,26 +27,19 @@ public class AdmService {
         return iAdm.save(adm);
     }
 
-    public void delete(Integer id){
-        if(iAdm.existsById(id)){
-            iAdm.deleteById(id);
-        }
-
-        else{
-            throw new EntityNotFoundException("Adm not founded");
-        }
+    @Transactional
+    public boolean verify(String user, String password){
+        return iAdm.verify(user, password);
     }
 
-    /* Customizes methods */
-    /*
-    public Adm verifyAccount(String username, String password){
-
+    @Transactional
+    public void postAdm(String user, String password){
+        iAdm.postAdm(user, password);
     }
 
-    public Adm delete(String username){
-
+    @Transactional
+    public void deleteAdm(Integer id){
+        iAdm.deleteAdm(id);
     }
-
-    */
 
 }

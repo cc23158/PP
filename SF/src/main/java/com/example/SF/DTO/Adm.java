@@ -25,4 +25,7 @@ public class Adm {
     @Column(name = "adm_password")
     private String adm_password;
 
+    @Column(name = "adm_active")
+    private Boolean adm_active;
+
 }

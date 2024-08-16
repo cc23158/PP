@@ -6,6 +6,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jdk.jshell.spi.ExecutionControl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -29,28 +30,33 @@ public class ClientService {
         return iClient.save(client);
     }
 
-    public void delete(Integer id) {
-        if(iClient.existsById(id)){
-            iClient.deleteById(id);
-        }
-
-        else{
-            throw new EntityNotFoundException("Client not founded");
-        }
-    }
-
     @Transactional
     public Client getByName(String name, String surname){
         return iClient.getByName(name, surname);
     }
 
-    /* Customizes methods */
-    /*
+    @Transactional
+    public void postClient(
+            String name,
+            String surname,
+            Integer age,
+            Character gender,
+            Double height,
+            Double weight,
+            String password
+    ) throws Exception {
+        try{
+            iClient.postClient(name, surname, age, gender, height, weight, password);
+        }
 
-    public Client delete(String username){
-
+        catch (Exception e){
+            throw new Exception(e);
+        }
     }
 
-    */
+    @Transactional
+    public void deleteClient(Integer id){
+        iClient.deleteClient(id);
+    }
 
 }
