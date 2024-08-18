@@ -38,6 +38,11 @@ public class AdmService {
     }
 
     @Transactional
+    public void updateAdmPassword(Integer id, String password){
+        iAdm.updateAdmPassword(id, password);
+    }
+
+    @Transactional
     public void deleteAdm(Integer id){
         iAdm.deleteAdm(id);
     }

@@ -24,6 +24,20 @@ public interface IClient extends JpaRepository<Client, Integer> {
             @Param("clientPassword") String password
     );
 
+    @Procedure(procedureName = "SF.UPDATE_ClientData")
+    void updateClientData(
+            @Param("clientId") Integer id,
+            @Param("clientAge") Integer age,
+            @Param("clientHeight") Double height,
+            @Param("clientWeight") Double weight
+    );
+
+    @Procedure(procedureName = "SF.UPDATE_ClientPassword")
+    void updateClientPassword(
+            @Param("clientId") Integer id,
+            @Param("clientPassword") String password
+    );
+
     @Procedure(procedureName = "SF.DELETE_Client")
     void deleteClient(
             @Param("clientId") Integer id

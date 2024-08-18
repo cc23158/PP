@@ -55,6 +55,19 @@ public class AdmController {
         }
     }
 
+    @PutMapping("/updateAdm/{id}/{password}")
+    public ResponseEntity<String> updateAdm(@PathVariable String id, @PathVariable String password){
+        try{
+            Integer integerId = Integer.valueOf(id);
+            admService.updateAdmPassword(integerId, password);
+            return ResponseEntity.ok().body("Adm updated");
+        }
+
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured");
+        }
+    }
+
     @DeleteMapping("/deleteAdm/{id}")
     public ResponseEntity<String> deleteAdm(@PathVariable String id){
         try{
@@ -67,7 +80,5 @@ public class AdmController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured");
         }
     }
-
-    // @GetMapping("/verifyAccount")
 
 }

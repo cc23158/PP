@@ -55,6 +55,33 @@ public class ClientService {
     }
 
     @Transactional
+    public void updateClientData(
+            Integer id,
+            Integer age,
+            Double height,
+            Double weight
+    ) throws Exception{
+        try{
+            iClient.updateClientData(id, age, height, weight);
+        }
+
+        catch (Exception e){
+            throw new Exception(e);
+        }
+    }
+
+    @Transactional
+    public void updateClientPassword(Integer id, String password) throws Exception{
+        try {
+            iClient.updateClientPassword(id, password);
+        }
+
+        catch (Exception e){
+            throw new Exception(e);
+        }
+    }
+
+    @Transactional
     public void deleteClient(Integer id){
         iClient.deleteClient(id);
     }

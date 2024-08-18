@@ -4,7 +4,7 @@ import com.example.SF.BLL.ClientService;
 import com.example.SF.DTO.Client;
 import jakarta.persistence.Convert;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.coyote.Response;
+import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +52,40 @@ public class ClientController {
         }
 
         catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured");
+        }
+    }
+
+    @PutMapping("/updateClientData/{id}/{age}/{height}/{weight}")
+    public ResponseEntity<String> updateClientData(
+            @PathVariable String id,
+            @PathVariable String age,
+            @PathVariable String height,
+            @PathVariable String weight
+    ){
+        try{
+            Integer integerId = Integer.valueOf(id);
+            Integer integerAge = Integer.valueOf(age);
+            Double doubleHeight = Double.parseDouble(height);
+            Double doubleWeight = Double.parseDouble(weight);
+            clientService.updateClientData(integerId, integerAge, doubleHeight, doubleWeight);
+            return ResponseEntity.ok().body("Client updated");
+        }
+
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error ocurred");
+        }
+    }
+
+    @PutMapping("/updateClientPassword/{id}/{password}")
+    public ResponseEntity<String> updateClientPassword(@PathVariable String id, @PathVariable String password){
+        try{
+            Integer integerId = Integer.valueOf(id);
+            clientService.updateClientPassword(integerId, password);
+            return ResponseEntity.ok().body("Client updated");
+        }
+
+        catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured");
         }
     }
