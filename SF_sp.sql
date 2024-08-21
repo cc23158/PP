@@ -5,7 +5,7 @@ CREATE OR ALTER PROCEDURE SF.GET_Client
 as
 BEGIN
 	
-	SELECT client_id, client_name, client_surname, client_age, client_gender, client_height, client_weight, client_password, client_active
+	SELECT client_id, client_name, client_surname, client_age, client_birthday, client_gender, client_height, client_weight, client_password, client_active
     FROM SF.Client WHERE client_name = @name AND client_surname = @surname;
 
 END
@@ -31,6 +31,7 @@ CREATE OR ALTER PROCEDURE SF.POST_Client
 @name VARCHAR(30),
 @surname VARCHAR(30),
 @age INT,
+@birthday DATE,
 @gender CHAR,
 @height FLOAT,
 @weight FLOAT,
@@ -38,8 +39,8 @@ CREATE OR ALTER PROCEDURE SF.POST_Client
 as
 BEGIN
 
-	INSERT INTO SF.Client (client_name, client_surname, client_age, client_gender, client_height, client_weight, client_password, client_active)
-	VALUES (@name, @surname, @age, @gender, @height, @weight, @password, 0)
+	INSERT INTO SF.Client (client_name, client_surname, client_age, client_birthday, client_gender, client_height, client_weight, client_password, client_active)
+	VALUES (@name, @surname, @age, @birthday, @gender, @height, @weight, @password, 0)
 
 END
 
@@ -89,11 +90,6 @@ BEGIN
 	UPDATE SF.Adm SET adm_password = @password WHERE adm_id = @id
 
 END
-
-CREATE
-
--- UPDATE ADM --
-CREATE OR ALTER PROCEDURE SF.UPDATE_Adm
 
 -- DELETE CLIENT --
 CREATE OR ALTER PROCEDURE SF.DELETE_Client

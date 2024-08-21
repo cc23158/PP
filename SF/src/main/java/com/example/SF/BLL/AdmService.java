@@ -23,10 +23,6 @@ public class AdmService {
         return iAdm.findAll();
     }
 
-    public Adm save(Adm adm){
-        return iAdm.save(adm);
-    }
-
     @Transactional
     public boolean verify(String user, String password){
         return iAdm.verify(user, password);

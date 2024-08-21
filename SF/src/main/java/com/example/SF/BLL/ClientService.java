@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -26,10 +27,6 @@ public class ClientService {
         return iClient.findAll();
     }
 
-    public Client save(Client client){
-        return iClient.save(client);
-    }
-
     @Transactional
     public Client getByName(String name, String surname){
         return iClient.getByName(name, surname);
@@ -40,13 +37,14 @@ public class ClientService {
             String name,
             String surname,
             Integer age,
+            Date birthday,
             Character gender,
             Double height,
             Double weight,
             String password
     ) throws Exception {
         try{
-            iClient.postClient(name, surname, age, gender, height, weight, password);
+            iClient.postClient(name, surname, age, birthday, gender, height, weight, password);
         }
 
         catch (Exception e){

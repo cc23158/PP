@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "Client", schema = "SF")
 @NoArgsConstructor
@@ -27,6 +29,9 @@ public class Client {
 
     @Column(name = "client_age")
     private Integer client_age;
+
+    @Column(name = "client_birthday")
+    private Date client_birthday;
 
     @Column(name = "client_gender")
     private Character client_gender;

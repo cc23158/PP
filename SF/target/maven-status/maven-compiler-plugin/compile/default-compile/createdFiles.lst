@@ -1,9 +1,9 @@
-com\example\SF\Repository\IAdmin.class
 com\example\SF\DTO\Client.class
 com\example\SF\BLL\ClientService.class
-com\example\SF\DTO\Admin.class
-com\example\SF\BLL\AdminService.class
+com\example\SF\Repository\IAdm.class
 com\example\SF\Repository\IClient.class
+com\example\SF\BLL\AdmService.class
 com\example\SF\SfApplication.class
-com\example\SF\DAL\AdminController.class
+com\example\SF\DTO\Adm.class
+com\example\SF\DAL\AdmController.class
 com\example\SF\DAL\ClientController.class

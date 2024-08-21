@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -32,11 +34,12 @@ public class ClientController {
         return clientService.getByName(name, surname);
     }
 
-    @PostMapping("/postClient/{name}/{surname}/{age}/{gender}/{height}/{weight}/{password}")
+    @PostMapping("/postClient/{name}/{surname}/{age}/{birthday}/{gender}/{height}/{weight}/{password}")
     public ResponseEntity<String> postClient(
             @PathVariable String name,
             @PathVariable String surname,
             @PathVariable String age,
+            @PathVariable String birthday,
             @PathVariable Character gender,
             @PathVariable String height,
             @PathVariable String weight,
@@ -44,10 +47,11 @@ public class ClientController {
             ){
         try{
             Integer integerAge = Integer.valueOf(age);
+            Date dateBirthday = new SimpleDateFormat("yyyy-MM-dd").parse(birthday);
             Double doubleHeight = Double.parseDouble(height);
             Double doubleWeight = Double.parseDouble(weight);
 
-            clientService.postClient(name, surname, integerAge, gender, doubleHeight, doubleWeight, password);
+            clientService.postClient(name, surname, integerAge, dateBirthday, gender, doubleHeight, doubleWeight, password);
             return ResponseEntity.ok("Client inserted");
         }
 
