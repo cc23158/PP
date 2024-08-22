@@ -10,10 +10,10 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/ClientService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/ClientService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/AdmController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/AdmController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/ClientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/ClientController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/DTO/Adm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/DTO/Adm.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/DTO/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/DTO/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IAdm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IAdm.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SF_tables.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../SF_tables.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Shape Factory.docx" beforeDir="false" afterPath="$PROJECT_DIR$/../Shape Factory.docx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,13 +33,6 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
-  </component>
-  <component name="MavenImportPreferences">
-    <option name="generalSettings">
-      <MavenGeneralSettings>
-        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
-      </MavenGeneralSettings>
-    </option>
   </component>
   <component name="MavenRunner">
     <option name="skipTests" value="true" />
@@ -73,6 +66,13 @@
     &quot;last_opened_file_path&quot;: &quot;C:/Users/vymim/OneDrive/Área de Trabalho/PP/SF&quot;
   }
 }</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-21.0.1-openjdk-21.0.1-4caba194b151-23eed401" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

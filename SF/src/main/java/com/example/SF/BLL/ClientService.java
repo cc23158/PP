@@ -36,6 +36,7 @@ public class ClientService {
     public void postClient(
             String name,
             String surname,
+            String email,
             Integer age,
             Date birthday,
             Character gender,
@@ -44,7 +45,7 @@ public class ClientService {
             String password
     ) throws Exception {
         try{
-            iClient.postClient(name, surname, age, birthday, gender, height, weight, password);
+            iClient.postClient(name, surname, email, age, birthday, gender, height, weight, password);
         }
 
         catch (Exception e){

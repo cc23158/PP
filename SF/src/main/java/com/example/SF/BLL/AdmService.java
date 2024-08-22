@@ -24,15 +24,20 @@ public class AdmService {
     }
 
     @Transactional
-    public boolean verify(String user, String password){
-        return iAdm.verify(user, password);
+    public boolean verify(String email, String password){
+        return iAdm.verify(email, password);
     }
 
     @Transactional
-    public void postAdm(String user, String password){
-        iAdm.postAdm(user, password);
+    public void postAdm(String email, String password, Double salary){
+        iAdm.postAdm(email, password, salary);
     }
 
+    @Transactional
+    public void updateAdmSalary(Integer id, Double salary){
+        iAdm.updateAdmSalary(id, salary);
+    }
+    
     @Transactional
     public void updateAdmPassword(Integer id, String password){
         iAdm.updateAdmPassword(id, password);

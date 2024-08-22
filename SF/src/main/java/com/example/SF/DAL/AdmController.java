@@ -25,10 +25,10 @@ public class AdmController {
         return admService.getAll();
     }
 
-    @GetMapping("/verify/{user}/{password}")
-    public ResponseEntity<String> verify(@PathVariable String user, @PathVariable String password) {
+    @GetMapping("/verify/{email}/{password}")
+    public ResponseEntity<String> verify(@PathVariable String email, @PathVariable String password) {
         try {
-            boolean exists = admService.verify(user, password);
+            boolean exists = admService.verify(email, password);
             if (exists) {
                 return ResponseEntity.ok().body("Account verified");
             }
@@ -43,10 +43,11 @@ public class AdmController {
         }
     }
 
-    @PostMapping("/postAdm/{user}/{password}")
-    public ResponseEntity<String> postAdm(@PathVariable String user, @PathVariable String password){
+    @PostMapping("/postAdm/{email}/{password}/{salary}")
+    public ResponseEntity<String> postAdm(@PathVariable String email, @PathVariable String password, @PathVariable String salary){
         try{
-            admService.postAdm(user, password);
+            Double doubleSalary = Double.parseDouble(salary);
+            admService.postAdm(email, password, doubleSalary);
             return ResponseEntity.ok().body("Adm inserted");
         }
 
@@ -55,8 +56,22 @@ public class AdmController {
         }
     }
 
-    @PutMapping("/updateAdm/{id}/{password}")
-    public ResponseEntity<String> updateAdm(@PathVariable String id, @PathVariable String password){
+    @PutMapping("/updateAdmSalary/{id}/{salary}")
+    public ResponseEntity<String> updateAdmSalary(@PathVariable String id, @PathVariable String salary){
+        try{
+            Integer integerId = Integer.valueOf(id);
+            Double doubleSalary = Double.parseDouble(salary);
+            admService.updateAdmSalary(integerId, doubleSalary);
+            return ResponseEntity.ok().body("Adm updated");
+        }
+
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured");
+        }
+    }
+
+    @PutMapping("/updateAdmPassword/{id}/{password}")
+    public ResponseEntity<String> updateAdmPassword(@PathVariable String id, @PathVariable String password){
         try{
             Integer integerId = Integer.valueOf(id);
             admService.updateAdmPassword(integerId, password);

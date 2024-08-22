@@ -1,9 +1,9 @@
 -- TRIGGER CLIENT INSERT --
-CREATE OR ALTER TRIGGER SF.ClientInsert ON SF.Client INSTEAD OF INSERT AS
+CREATE OR ALTER TRIGGER SF.ClientInsert ON SF.Client INSTEAD OF INSERT as
 BEGIN
 	
-	INSERT INTO SF.Client (client_name, client_age, client_birthday, client_gender, client_height, client_weight, client_password)
-    SELECT client_name, client_age, client_gender, client_birthday, client_height, client_weight, client_password
+	INSERT INTO SF.Client (client_name, client_surname, client_email, client_age, client_birthday, client_gender, client_height, client_weight, client_password)
+    SELECT client_name, client_surname, client_email, client_age, client_gender, client_birthday, client_height, client_weight, client_password
     FROM inserted 
 	
 	WHERE client_age > 12 AND 
@@ -17,7 +17,7 @@ BEGIN
 END
 
 -- TRIGGER CLIENT UPDATE --
-CREATE OR ALTER TRIGGER SF.ClientUpdate ON SF.Client INSTEAD OF UPDATE AS
+CREATE OR ALTER TRIGGER SF.ClientUpdate ON SF.Client INSTEAD OF UPDATE as
 BEGIN
 
 	UPDATE SF.Client SET client_age = i.client_age,

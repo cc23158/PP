@@ -19,6 +19,7 @@ public interface IClient extends JpaRepository<Client, Integer> {
     void postClient(
             @Param("clientName") String name,
             @Param("clientSurname") String surname,
+            @Param("clientEmail") String email,
             @Param("clientAge") Integer age,
             @Param("clientBirthday") Date birthday,
             @Param("clientGender") Character gender,

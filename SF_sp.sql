@@ -5,20 +5,20 @@ CREATE OR ALTER PROCEDURE SF.GET_Client
 as
 BEGIN
 	
-	SELECT client_id, client_name, client_surname, client_age, client_birthday, client_gender, client_height, client_weight, client_password, client_active
+	SELECT client_id, client_name, client_surname, client_email, client_age, client_birthday, client_gender, client_height, client_weight, client_password, client_active
     FROM SF.Client WHERE client_name = @name AND client_surname = @surname;
 
 END
 
--- GET ADM --
+-- GET ADM (VERIFICATION) --
 CREATE OR ALTER PROCEDURE SF.GET_Adm
-@user VARCHAR(30),
+@email VARCHAR(60),
 @password VARCHAR(60),
 @result BIT OUTPUT
 as
 BEGIN
 
-	IF EXISTS (SELECT 1 FROM SF.Adm WHERE adm_user = @user AND adm_password = @password AND adm_active = 0)
+	IF EXISTS (SELECT 1 FROM SF.Adm WHERE adm_email = @email AND adm_password = @password AND adm_active = 0)
         SET @result = 1;
 
     ELSE
@@ -30,6 +30,7 @@ END
 CREATE OR ALTER PROCEDURE SF.POST_Client
 @name VARCHAR(30),
 @surname VARCHAR(30),
+@email VARCHAR(60),
 @age INT,
 @birthday DATE,
 @gender CHAR,
@@ -39,20 +40,21 @@ CREATE OR ALTER PROCEDURE SF.POST_Client
 as
 BEGIN
 
-	INSERT INTO SF.Client (client_name, client_surname, client_age, client_birthday, client_gender, client_height, client_weight, client_password, client_active)
-	VALUES (@name, @surname, @age, @birthday, @gender, @height, @weight, @password, 0)
+	INSERT INTO SF.Client (client_name, client_surname, client_email, client_age, client_birthday, client_gender, client_height, client_weight, client_password, client_active)
+	VALUES (@name, @surname, @age, @email, @birthday, @gender, @height, @weight, @password, 0)
 
 END
 
 -- POST ADM --
 CREATE OR ALTER PROCEDURE SF.POST_Adm
-@user VARCHAR(30),
-@password VARCHAR(60)
+@email VARCHAR(30),
+@password VARCHAR(60),
+@salary FLOAT
 as
 BEGIN
 
-	INSERT INTO SF.Adm (adm_user, adm_password, adm_active)
-	VALUES (@user, @password, 0)
+	INSERT INTO SF.Adm (adm_email, adm_password, adm_salary, adm_active)
+	VALUES (@email, @password, @salary, 0)
 
 END
 
@@ -77,6 +79,17 @@ as
 BEGIN
 
 	UPDATE SF.Client SET client_password = @password WHERE client_id = @id
+
+END
+
+-- UPDATE ADM SALARY --
+CREATE OR ALTER PROCEDURE SF.UPDATE_AdmSalary
+@id INT,
+@salary FLOAT
+as
+BEGIN
+
+	UPDATE SF.Adm SET adm_salary = @salary WHERE adm_id = @id
 
 END
 

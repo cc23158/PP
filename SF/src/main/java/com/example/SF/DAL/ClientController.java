@@ -34,10 +34,11 @@ public class ClientController {
         return clientService.getByName(name, surname);
     }
 
-    @PostMapping("/postClient/{name}/{surname}/{age}/{birthday}/{gender}/{height}/{weight}/{password}")
+    @PostMapping("/postClient/{name}/{surname}/{email}/{age}/{birthday}/{gender}/{height}/{weight}/{password}")
     public ResponseEntity<String> postClient(
             @PathVariable String name,
             @PathVariable String surname,
+            @PathVariable String email,
             @PathVariable String age,
             @PathVariable String birthday,
             @PathVariable Character gender,
@@ -51,7 +52,7 @@ public class ClientController {
             Double doubleHeight = Double.parseDouble(height);
             Double doubleWeight = Double.parseDouble(weight);
 
-            clientService.postClient(name, surname, integerAge, dateBirthday, gender, doubleHeight, doubleWeight, password);
+            clientService.postClient(name, surname, email, integerAge, dateBirthday, gender, doubleHeight, doubleWeight, password);
             return ResponseEntity.ok("Client inserted");
         }
 

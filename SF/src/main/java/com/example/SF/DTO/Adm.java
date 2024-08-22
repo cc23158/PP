@@ -19,11 +19,14 @@ public class Adm {
     @Column(name = "adm_id")
     private Integer adm_id;
 
-    @Column(name = "adm_user")
-    private String adm_user;
+    @Column(name = "adm_email")
+    private String adm_email;
 
     @Column(name = "adm_password")
     private String adm_password;
+
+    @Column(name = "adm_salary")
+    private Double adm_salary;
 
     @Column(name = "adm_active")
     private Boolean adm_active;

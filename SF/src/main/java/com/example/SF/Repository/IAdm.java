@@ -9,14 +9,21 @@ public interface IAdm extends JpaRepository<Adm, Integer> {
 
     @Procedure(procedureName = "SF.GET_Adm")
     boolean verify(
-            @Param("admUser") String user,
+            @Param("admEmail") String email,
             @Param("admPassword") String password
     );
 
     @Procedure(procedureName = "SF.POST_Adm")
     void postAdm(
-            @Param("admUser") String user,
-            @Param("admPassword") String password
+            @Param("admEmail") String email,
+            @Param("admPassword") String password,
+            @Param("admSalary") Double salary
+    );
+
+    @Procedure(procedureName = "SF.UPDATE_AdmSalary")
+    void updateAdmSalary(
+            @Param("admId") Integer id,
+            @Param("admSalary") Double salary
     );
 
     @Procedure(procedureName = "SF.UPDATE_AdmPassword")

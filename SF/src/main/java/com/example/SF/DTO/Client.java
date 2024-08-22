@@ -27,6 +27,9 @@ public class Client {
     @Column(name = "client_surname")
     private String client_surname;
 
+    @Column(name = "client_email")
+    private String client_email;
+
     @Column(name = "client_age")
     private Integer client_age;
 
