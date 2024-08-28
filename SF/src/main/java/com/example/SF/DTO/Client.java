@@ -1,13 +1,12 @@
 package com.example.SF.DTO;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "Client", schema = "SF")
@@ -34,7 +33,7 @@ public class Client {
     private Integer client_age;
 
     @Column(name = "client_birthday")
-    private Date client_birthday;
+    private LocalDate client_birthday;
 
     @Column(name = "client_gender")
     private Character client_gender;

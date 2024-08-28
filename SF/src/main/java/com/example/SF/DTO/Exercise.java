@@ -25,4 +25,11 @@ public class Exercise {
     @Column(name = "exercise_path")
     private String exercise_path;
 
+    @ManyToOne
+    @JoinColumn(name = "exercise_muscle", referencedColumnName = "muscle_id")
+    private Muscle exercise_muscle;
+
+    @Column(name = "exercise_active")
+    private Boolean exercise_active;
+
 }

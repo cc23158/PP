@@ -2,15 +2,11 @@ package com.example.SF.BLL;
 
 import com.example.SF.DTO.Client;
 import com.example.SF.Repository.IClient;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import jdk.jshell.spi.ExecutionControl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -38,7 +34,7 @@ public class ClientService {
             String surname,
             String email,
             Integer age,
-            Date birthday,
+            LocalDate birthday,
             Character gender,
             Double height,
             Double weight,

@@ -2,8 +2,6 @@ package com.example.SF.DAL;
 
 import com.example.SF.BLL.AdmService;
 import com.example.SF.DTO.Adm;
-import jakarta.persistence.EntityNotFoundException;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +19,13 @@ public class AdmController {
     }
 
     @GetMapping("/getAllAdms")
+    // http://localhost:8080/adm/getAllAdms
     public List<Adm> getAll(){
         return admService.getAll();
     }
 
     @GetMapping("/verify/{email}/{password}")
+    // http://localhost:8080/adm/verify/adm1@gmail.com/password1
     public ResponseEntity<String> verify(@PathVariable String email, @PathVariable String password) {
         try {
             boolean exists = admService.verify(email, password);
@@ -44,10 +44,10 @@ public class AdmController {
     }
 
     @PostMapping("/postAdm/{email}/{password}/{salary}")
-    public ResponseEntity<String> postAdm(@PathVariable String email, @PathVariable String password, @PathVariable String salary){
+    // http://localhost:8080/adm/postAdm/adm3@gmail.com/password3/1250
+    public ResponseEntity<String> postAdm(@PathVariable String email, @PathVariable String password, @PathVariable Double salary){
         try{
-            Double doubleSalary = Double.parseDouble(salary);
-            admService.postAdm(email, password, doubleSalary);
+            admService.postAdm(email, password, salary);
             return ResponseEntity.ok().body("Adm inserted");
         }
 
@@ -57,11 +57,10 @@ public class AdmController {
     }
 
     @PutMapping("/updateAdmSalary/{id}/{salary}")
-    public ResponseEntity<String> updateAdmSalary(@PathVariable String id, @PathVariable String salary){
+    // http://localhost:8080/adm/updateAdmSalary/1/5000.0
+    public ResponseEntity<String> updateAdmSalary(@PathVariable Integer id, @PathVariable Double salary){
         try{
-            Integer integerId = Integer.valueOf(id);
-            Double doubleSalary = Double.parseDouble(salary);
-            admService.updateAdmSalary(integerId, doubleSalary);
+            admService.updateAdmSalary(id, salary);
             return ResponseEntity.ok().body("Adm updated");
         }
 
@@ -71,10 +70,10 @@ public class AdmController {
     }
 
     @PutMapping("/updateAdmPassword/{id}/{password}")
-    public ResponseEntity<String> updateAdmPassword(@PathVariable String id, @PathVariable String password){
+    // http://localhost:8080/adm/updateAdmPassword/1/newPassCode
+    public ResponseEntity<String> updateAdmPassword(@PathVariable Integer id, @PathVariable String password){
         try{
-            Integer integerId = Integer.valueOf(id);
-            admService.updateAdmPassword(integerId, password);
+            admService.updateAdmPassword(id, password);
             return ResponseEntity.ok().body("Adm updated");
         }
 
@@ -84,10 +83,10 @@ public class AdmController {
     }
 
     @DeleteMapping("/deleteAdm/{id}")
-    public ResponseEntity<String> deleteAdm(@PathVariable String id){
+    // http://localhost:8080/adm/deleteAdm/1
+    public ResponseEntity<String> deleteAdm(@PathVariable Integer id){
         try{
-            Integer integerId = Integer.valueOf(id);
-            admService.deleteAdm(integerId);
+            admService.deleteAdm(id);
             return ResponseEntity.ok().body("Adm deleted");
         }
 

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public interface IClient extends JpaRepository<Client, Integer> {
 
@@ -21,7 +21,7 @@ public interface IClient extends JpaRepository<Client, Integer> {
             @Param("clientSurname") String surname,
             @Param("clientEmail") String email,
             @Param("clientAge") Integer age,
-            @Param("clientBirthday") Date birthday,
+            @Param("clientBirthday") LocalDate birthday,
             @Param("clientGender") Character gender,
             @Param("clientHeight") Double height,
             @Param("clientWeight") Double weight,

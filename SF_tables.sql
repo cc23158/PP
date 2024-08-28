@@ -7,7 +7,7 @@ CREATE TABLE SF.Client(
 	client_id INT IDENTITY NOT NULL,
 	client_name VARCHAR(30) NOT NULL,
 	client_surname VARCHAR(30) NOT NULL,
-	client_email VARCHAR(60) NOT NULL,
+	client_email VARCHAR(60) NOT NULL UNIQUE,
 	client_age INT NOT NULL,
 	client_birthday DATE NOT NULL,
 	client_gender CHAR NOT NULL CHECK (client_gender IN ('M', 'F')),
@@ -32,13 +32,25 @@ CREATE TABLE SF.Adm(
 
 )
 
+CREATE TABLE SF.Muscle(
+
+	muscle_id INT IDENTITY NOT NULL,
+	muscle_name VARCHAR(30) NOT NULL,
+
+	PRIMARY KEY(muscle_id),
+
+)
+
 CREATE TABLE SF.Exercise(
 
 	exercise_id INT IDENTITY NOT NULL,
-	exercise_name VARCHAR(30) NOT NULL,
-	exercise_path NVARCHAR NOT NULL
+	exercise_name VARCHAR(60) NOT NULL,
+	exercise_path VARCHAR(1000) NOT NULL,
+	exercise_muscle INT NOT NULL,
+	exercise_active BIT NOT NULL,
 
-	PRIMARY KEY(exercise_id)
+	PRIMARY KEY(exercise_id),
+	FOREIGN KEY(exercise_muscle) REFERENCES SF.Muscle(muscle_id)
 
 )
 
@@ -54,8 +66,3 @@ CREATE TABLE SF.Recipe(
 	FOREIGN KEY(recipe_exercise) REFERENCES SF.Exercise(exercise_id)
 
 )
-
-DBCC CHECKIDENT ('SF.Client', RESEED, 0)
-DBCC CHECKIDENT ('SF.Adm', RESEED, 0)
-DBCC CHECKIDENT ('SF.Exercise', RESEED, 0)
-DBCC CHECKIDENT ('SF.Recipe', RESEED, 0)

@@ -25,7 +25,7 @@ as
 BEGIN
 
 	INSERT INTO SF.Client (client_name, client_surname, client_email, client_age, client_birthday, client_gender, client_height, client_weight, client_password, client_active)
-	VALUES (@name, @surname, @age, @email, @birthday, @gender, @height, @weight, @password, 0)
+	VALUES (@name, @surname, @email, @age, @birthday, @gender, @height, @weight, @password, 1)
 
 END
 
@@ -59,7 +59,7 @@ CREATE OR ALTER PROCEDURE SF.DELETE_Client
 as
 BEGIN
 
-	UPDATE SF.Client SET client_active = 1 WHERE client_id = @id
+	UPDATE SF.Client SET client_active = 0 WHERE client_id = @id
 
 END
 
@@ -71,7 +71,7 @@ CREATE OR ALTER PROCEDURE SF.GET_Adm
 as
 BEGIN
 
-	IF EXISTS (SELECT 1 FROM SF.Adm WHERE adm_email = @email AND adm_password = @password AND adm_active = 0)
+	IF EXISTS (SELECT 1 FROM SF.Adm WHERE adm_email = @email AND adm_password = @password AND adm_active = 1)
         SET @result = 1;
 
     ELSE
@@ -88,7 +88,7 @@ as
 BEGIN
 
 	INSERT INTO SF.Adm (adm_email, adm_password, adm_salary, adm_active)
-	VALUES (@email, @password, @salary, 0)
+	VALUES (@email, @password, @salary, 1)
 
 END
 
@@ -120,20 +120,88 @@ CREATE OR ALTER PROCEDURE SF.DELETE_Adm
 as
 BEGIN
 
-	UPDATE SF.Adm SET adm_active = 1 WHERE adm_id = @id
+	UPDATE SF.Adm SET adm_active = 0 WHERE adm_id = @id
 
 END
 
--- GET EXERCISE --
+-- GET EXERCISE BY MUSCLE --
 CREATE OR ALTER PROCEDURE SF.GET_Exercise
+@id INT
+as
+BEGIN
+
+	SELECT e.exercise_id, e.exercise_name, e.exercise_path
+	FROM SF.Exercise e
+	JOIN SF.Muscle m ON e.exercise_muscle = m.muscle_id
+	WHERE m.muscle_id = @id
+
+
+END
 
 -- POST EXERCISE --
 CREATE OR ALTER PROCEDURE SF.POST_Exercise
 @name VARCHAR(30),
-@path NVARCHAR
+@path VARCHAR(1000),
+@muscle INT
 as
 BEGIN
 
-	INSERT INTO SF.Exercise(exercise_name, exercise_path) VALUES(@name, @path)
+	INSERT INTO SF.Exercise(exercise_name, exercise_path, exercise_muscle, exercise_active) VALUES(@name, @path, @muscle, 1)
+
+END
+
+-- UPDATE EXERCISE PATH -- 
+CREATE OR ALTER PROCEDURE SF.UPDATE_Exercise
+@id INT,
+@path VARCHAR(1000)
+as
+BEGIN
+
+	UPDATE SF.Exercise SET exercise_path = @path WHERE exercise_id = @id
+
+END
+
+-- DELETE EXERCISE --
+CREATE OR ALTER PROCEDURE SF.DELETE_Exercise
+@id INT
+as
+BEGIN
+
+	UPDATE SF.Exercise SET exercise_active = 0 WHERE exercise_id = @id
+
+END
+
+-- POST MUSCLE --
+CREATE OR ALTER PROCEDURE SF.POST_Muscle
+@name VARCHAR(30)
+as
+BEGIN
+
+	INSERT INTO SF.Muscle(muscle_name) VALUES(@name)
+
+END
+
+-- GET RECIPE BY CLIENT --
+
+-- POST RECIPES --
+CREATE OR ALTER PROCEDURE SF.POST_Recipe
+@client INT,
+@exercise INT,
+@WEIGHT FLOAT
+as
+BEGIN
+
+	INSERT INTO SF.Recipe(recipe_client, recipe_exercise, recipe_weight) VALUES(@client, @exercise, @WEIGHT)
+
+END
+
+-- UPDATE RECIPES --
+CREATE OR ALTER PROCEDURE SF.UPDATE_Recipe
+@id INT,
+@weight FLOAT
+as
+BEGIN
+
+	UPDATE SF.Recipe SET recipe_weight = @weight WHERE recipe_id = @id
 
 END

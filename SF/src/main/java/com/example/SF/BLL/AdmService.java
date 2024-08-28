@@ -2,7 +2,6 @@ package com.example.SF.BLL;
 
 import com.example.SF.DTO.Adm;
 import com.example.SF.Repository.IAdm;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,18 +28,36 @@ public class AdmService {
     }
 
     @Transactional
-    public void postAdm(String email, String password, Double salary){
-        iAdm.postAdm(email, password, salary);
+    public void postAdm(String email, String password, Double salary) throws Exception{
+        try {
+            iAdm.postAdm(email, password, salary);
+        }
+
+        catch (Exception e){
+            throw new Exception(e);
+        }
     }
 
     @Transactional
-    public void updateAdmSalary(Integer id, Double salary){
-        iAdm.updateAdmSalary(id, salary);
+    public void updateAdmSalary(Integer id, Double salary) throws Exception{
+        try{
+            iAdm.updateAdmSalary(id, salary);
+        }
+
+        catch (Exception e){
+            throw new Exception(e);
+        }
     }
     
     @Transactional
-    public void updateAdmPassword(Integer id, String password){
-        iAdm.updateAdmPassword(id, password);
+    public void updateAdmPassword(Integer id, String password) throws Exception{
+        try{
+            iAdm.updateAdmPassword(id, password);
+        }
+
+        catch (Exception e){
+            throw new Exception(e);
+        }
     }
 
     @Transactional

@@ -2,15 +2,12 @@ package com.example.SF.DAL;
 
 import com.example.SF.BLL.ClientService;
 import com.example.SF.DTO.Client;
-import jakarta.persistence.Convert;
-import jakarta.persistence.EntityNotFoundException;
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -24,35 +21,34 @@ public class ClientController {
     }
 
     @GetMapping("/getAllClients")
+    // http://localhost:8080/client/getAllClients
     public List<Client> getAll(){
         return clientService.getAll();
     }
 
     @GetMapping("/getClientByName/{name}/{surname}")
-    // ex: http://localhost:8080/client/getClientByName/Alice/Johnson
+    // http://localhost:8080/client/getClientByName/Roberto/Martins
     public Client getByName(@PathVariable String name, @PathVariable String surname){
         return clientService.getByName(name, surname);
     }
 
     @PostMapping("/postClient/{name}/{surname}/{email}/{age}/{birthday}/{gender}/{height}/{weight}/{password}")
+    // http://localhost:8080/client/postClient/Roberto/Martins/roberto.martins@example.com/38/05-12-1985/M/170/75/senha654
     public ResponseEntity<String> postClient(
             @PathVariable String name,
             @PathVariable String surname,
             @PathVariable String email,
-            @PathVariable String age,
+            @PathVariable Integer age,
             @PathVariable String birthday,
             @PathVariable Character gender,
-            @PathVariable String height,
-            @PathVariable String weight,
+            @PathVariable Double height,
+            @PathVariable Double weight,
             @PathVariable String password
             ){
         try{
-            Integer integerAge = Integer.valueOf(age);
-            Date dateBirthday = new SimpleDateFormat("yyyy-MM-dd").parse(birthday);
-            Double doubleHeight = Double.parseDouble(height);
-            Double doubleWeight = Double.parseDouble(weight);
+            LocalDate dateBirthday = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
-            clientService.postClient(name, surname, email, integerAge, dateBirthday, gender, doubleHeight, doubleWeight, password);
+            clientService.postClient(name, surname, email, age, dateBirthday, gender, height, weight, password);
             return ResponseEntity.ok("Client inserted");
         }
 
@@ -62,18 +58,15 @@ public class ClientController {
     }
 
     @PutMapping("/updateClientData/{id}/{age}/{height}/{weight}")
+    // http://localhost:8080/client/updateClientData/18/46/176/84
     public ResponseEntity<String> updateClientData(
-            @PathVariable String id,
-            @PathVariable String age,
-            @PathVariable String height,
-            @PathVariable String weight
+            @PathVariable Integer id,
+            @PathVariable Integer age,
+            @PathVariable Double height,
+            @PathVariable Double weight
     ){
         try{
-            Integer integerId = Integer.valueOf(id);
-            Integer integerAge = Integer.valueOf(age);
-            Double doubleHeight = Double.parseDouble(height);
-            Double doubleWeight = Double.parseDouble(weight);
-            clientService.updateClientData(integerId, integerAge, doubleHeight, doubleWeight);
+            clientService.updateClientData(id, age, height, weight);
             return ResponseEntity.ok().body("Client updated");
         }
 
@@ -83,10 +76,10 @@ public class ClientController {
     }
 
     @PutMapping("/updateClientPassword/{id}/{password}")
-    public ResponseEntity<String> updateClientPassword(@PathVariable String id, @PathVariable String password){
+    // http://localhost:8080/client/updateClientPassword/18/passCode
+    public ResponseEntity<String> updateClientPassword(@PathVariable Integer id, @PathVariable String password){
         try{
-            Integer integerId = Integer.valueOf(id);
-            clientService.updateClientPassword(integerId, password);
+            clientService.updateClientPassword(id, password);
             return ResponseEntity.ok().body("Client updated");
         }
 
@@ -96,10 +89,10 @@ public class ClientController {
     }
 
     @DeleteMapping("/deleteClient/{id}")
-    public ResponseEntity<String> deleteClient(@PathVariable String id){
+    // http://localhost:8080/client/deleteClient/17
+    public ResponseEntity<String> deleteClient(@PathVariable Integer id){
         try{
-            Integer integerId = Integer.valueOf(id);
-            clientService.deleteClient(integerId);
+            clientService.deleteClient(id);
             return ResponseEntity.ok("Client deleted");
         }
 
