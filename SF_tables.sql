@@ -1,7 +1,5 @@
 CREATE SCHEMA SF
 
--- BIT => 0 = false and 1 = true
-
 CREATE TABLE SF.Client(
 	
 	client_id INT IDENTITY NOT NULL,
