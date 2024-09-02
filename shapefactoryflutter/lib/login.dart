@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const Login());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class Login extends StatelessWidget {
+  const Login({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class MainApp extends StatelessWidget {
               children: [
                 ///***If you have exported images you must have to copy those images in assets/images directory.
                 Image(
-                  image: AssetImage("assets/images/SF-removebg-preview.png"),
+                  image: const AssetImage("assets/images/SF-removebg-preview.png"),
                   height: MediaQuery.of(context).size.height * 0.3,
                   width: MediaQuery.of(context).size.width,
                   fit: BoxFit.cover,
@@ -46,7 +46,7 @@ class MainApp extends StatelessWidget {
                                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
                   child: TextField(
-                    controller: TextEditingController(text: "john@gmail.com"),
+                    controller: TextEditingController(),
                     obscureText: false,
                     textAlign: TextAlign.start,
                     maxLines: 1,
@@ -54,7 +54,7 @@ class MainApp extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                       fontStyle: FontStyle.normal,
                       fontSize: 16,
-                      color: Color(0xff000000),
+                      color: Colors.white,
                     ),
                     decoration: InputDecoration(
                       disabledBorder: OutlineInputBorder(
@@ -88,7 +88,7 @@ class MainApp extends StatelessWidget {
                   ),
                 ),
                 TextField(
-                  controller: TextEditingController(text: "12345678"),
+                  controller: TextEditingController(),
                   obscureText: true,
                   textAlign: TextAlign.start,
                   maxLines: 1,
@@ -96,7 +96,7 @@ class MainApp extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                     fontStyle: FontStyle.normal,
                     fontSize: 16,
-                    color: Color(0xff000000),
+                    color: Colors.white,
                   ),
                   decoration: InputDecoration(
                     disabledBorder: OutlineInputBorder(
