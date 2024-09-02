@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/cadastro.dart';
 
-void main() {
-  runApp(const Login());
-}
+
 
 class Login extends StatelessWidget {
   const Login({super.key});
@@ -192,7 +191,12 @@ class Login extends StatelessWidget {
                     color: Color(0xffffffff),
                   ),
                 ),
-                const Text(
+                GestureDetector(
+                  onTap: () => {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Cadastro()))
+                  },
+                  child: 
+                  const Text(
                   "Cadastrar",
                   textAlign: TextAlign.start,
                   overflow: TextOverflow.clip,
@@ -202,7 +206,10 @@ class Login extends StatelessWidget {
                     fontSize: 14,
                     color: Color(0xff9e9e9e),
                   ),
+                  
+                ),
                 )
+
               ]
             )
           ),
