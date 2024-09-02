@@ -1,34 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/cadastro.dart';
 
-
-
 class Login extends StatelessWidget {
   const Login({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
+        home: Scaffold(
       backgroundColor: const Color(0xff000000),
       body: Align(
         alignment: Alignment.center,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
           child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
                 ///***If you have exported images you must have to copy those images in assets/images directory.
                 Image(
-                  image: const AssetImage("assets/images/SF-removebg-preview.png"),
+                  image:
+                      const AssetImage("assets/images/SF-removebg-preview.png"),
                   height: MediaQuery.of(context).size.height * 0.3,
                   width: MediaQuery.of(context).size.width,
                   fit: BoxFit.cover,
                 ),
-                   const Align(
+                const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Login",
@@ -42,8 +41,9 @@ class Login extends StatelessWidget {
                     ),
                   ),
                 ),
-                                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
                   child: TextField(
                     controller: TextEditingController(),
                     obscureText: false,
@@ -58,18 +58,18 @@ class Login extends StatelessWidget {
                     decoration: InputDecoration(
                       disabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(4.0),
-                        borderSide:
-                            const BorderSide(color: Color(0xff9e9e9e), width: 1),
+                        borderSide: const BorderSide(
+                            color: Color(0xff9e9e9e), width: 1),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(4.0),
-                        borderSide:
-                            const BorderSide(color: Color(0xff9e9e9e), width: 1),
+                        borderSide: const BorderSide(
+                            color: Color(0xff9e9e9e), width: 1),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(4.0),
-                        borderSide:
-                            const BorderSide(color: Color(0xff9e9e9e), width: 1),
+                        borderSide: const BorderSide(
+                            color: Color(0xff9e9e9e), width: 1),
                       ),
                       labelText: "Email",
                       labelStyle: const TextStyle(
@@ -81,8 +81,8 @@ class Login extends StatelessWidget {
                       filled: true,
                       fillColor: const Color(0x00f2f2f3),
                       isDense: false,
-                      contentPadding:
-                          const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 12),
                     ),
                   ),
                 ),
@@ -127,7 +127,7 @@ class Login extends StatelessWidget {
                         const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   ),
                 ),
-                  const Padding(
+                const Padding(
                   padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
                   child: Align(
                     alignment: Alignment.centerRight,
@@ -193,29 +193,26 @@ class Login extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () => {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Cadastro()))
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Cadastro()))
                   },
-                  child: 
-                  const Text(
-                  "Cadastrar",
-                  textAlign: TextAlign.start,
-                  overflow: TextOverflow.clip,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontStyle: FontStyle.normal,
-                    fontSize: 14,
-                    color: Color(0xff9e9e9e),
+                  child: const Text(
+                    "Cadastrar",
+                    textAlign: TextAlign.start,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontStyle: FontStyle.normal,
+                      fontSize: 14,
+                      color: Color(0xff9e9e9e),
+                    ),
                   ),
-                  
-                ),
                 )
-
-              ]
-            )
-          ),
+              ])),
         ),
       ),
-    )
-    );
+    ));
   }
 }
