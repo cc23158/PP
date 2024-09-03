@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shapefactory/home.dart';
 
 class Objetivo extends StatelessWidget {
   const Objetivo({super.key});
@@ -36,7 +37,7 @@ class Objetivo extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const ScrollPhysics(),
                 children: [
-                       GestureDetector(
+                  GestureDetector(
                     onTap: () => {
                       mostrarPopUp(context, "força",
                           const AssetImage("assets/images/barra.png"))
@@ -57,8 +58,7 @@ class Objetivo extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Image(
-                            image:
-                                AssetImage("assets/images/barra.png"),
+                            image: AssetImage("assets/images/barra.png"),
                             width: 40,
                             fit: BoxFit.cover,
                           ),
@@ -101,7 +101,7 @@ class Objetivo extends StatelessWidget {
                       ),
                     ),
                   ),
-                 GestureDetector(
+                  GestureDetector(
                     onTap: () => {
                       mostrarPopUp(context, "a perda de peso",
                           const AssetImage("assets/images/esteira.png"))
@@ -122,8 +122,7 @@ class Objetivo extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Image(
-                            image:
-                                AssetImage("assets/images/esteira.png"),
+                            image: AssetImage("assets/images/esteira.png"),
                             width: 40,
                             fit: BoxFit.cover,
                           ),
@@ -166,7 +165,7 @@ class Objetivo extends StatelessWidget {
                       ),
                     ),
                   ),
-                 GestureDetector(
+                  GestureDetector(
                     onTap: () => {
                       mostrarPopUp(context, "massa",
                           const AssetImage("assets/images/musculos.png"))
@@ -187,8 +186,7 @@ class Objetivo extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Image(
-                            image:
-                                AssetImage("assets/images/musculos.png"),
+                            image: AssetImage("assets/images/musculos.png"),
                             width: 40,
                             fit: BoxFit.cover,
                           ),
@@ -305,6 +303,7 @@ class Objetivo extends StatelessWidget {
     ));
   }
 }
+
 mostrarPopUp(BuildContext context, String objetivo, AssetImage imagem) {
   showDialog(
     context: context,
@@ -323,38 +322,41 @@ mostrarPopUp(BuildContext context, String objetivo, AssetImage imagem) {
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 5.0),
-              Row(
-                children: [
-                Image(
-                  image: imagem,
-                  width: 40,
-                  alignment: Alignment.centerRight,
-                  fit: BoxFit.cover,
+              Row(children: [
+                Expanded(
+                  flex: 1,
+                  child: Image(
+                    image: imagem,
+                    fit: BoxFit.fill,
+                    width: 0.5,
+                  ),
                 ),
-                  Expanded(
-                            flex: 1,
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                        Text(
-                          'Você está pronto para fabricar $objetivo?',
-                          style: const TextStyle(fontSize: 13.0),
-                          overflow: TextOverflow.clip,
-                        ),
-                      ],
-                    )
-                    )
-              )]),
+                Expanded(
+                    flex: 1,
+                    child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Você está pronto para fabricar $objetivo?',
+                              style: const TextStyle(fontSize: 13.0),
+                              overflow: TextOverflow.clip,
+                            ),
+                          ],
+                        )))
+              ]),
               const SizedBox(height: 5.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   TextButton(
-                    child: const Icon(Icons.cancel, color: Colors.red,),
+                    child: const Icon(
+                      Icons.cancel,
+                      color: Colors.red,
+                    ),
                     onPressed: () {
                       Navigator.of(context).pop(false);
                     },
@@ -362,7 +364,8 @@ mostrarPopUp(BuildContext context, String objetivo, AssetImage imagem) {
                   TextButton(
                     child: const Icon(Icons.verified, color: Colors.green),
                     onPressed: () {
-                      Navigator.of(context).pop(true);
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => Home()));
                     },
                   ),
                 ],

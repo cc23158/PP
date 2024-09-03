@@ -4,11 +4,13 @@ publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: ^3.5.1
+  sdk: '>=3.2.6 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
+  #PageView lib
+  smooth_page_indicator: ^1.2.0+3 
 
 dev_dependencies:
   flutter_test:
