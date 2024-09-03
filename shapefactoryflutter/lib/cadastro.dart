@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shapefactory/objetivo.dart';
 
 class Cadastro extends StatelessWidget {
   const Cadastro({super.key});
@@ -217,7 +218,9 @@ class Cadastro extends StatelessWidget {
                   ),
                 ),
                 MaterialButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Objetivo()));
+                  },
                   color: const Color(0xff3a57e8),
                   elevation: 0,
                   shape: RoundedRectangleBorder(

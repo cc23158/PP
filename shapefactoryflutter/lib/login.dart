@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/cadastro.dart';
+import 'package:shapefactory/cadastro.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
