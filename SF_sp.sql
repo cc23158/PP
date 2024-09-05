@@ -205,3 +205,16 @@ BEGIN
 	UPDATE SF.Recipe SET recipe_weight = @weight WHERE recipe_id = @id
 
 END
+
+-- ACTIVES OR NOT --
+CREATE OR ALTER PROCEDURE SF.ACTIVE_Client
+@id INT
+as
+BEGIN
+
+	UPDATE SF.Client SET client_active = 1 WHERE client_id = @id
+
+END
+
+EXEC SF.ACTIVE_Client 1
+select * from sf.exercise
