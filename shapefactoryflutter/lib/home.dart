@@ -21,9 +21,11 @@ class Home extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Stack(
-                  alignment: Alignment.topLeft,
-                  children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  child: Stack(
+                    alignment: Alignment.topLeft,
+                    children: [
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,7 +109,7 @@ class Home extends StatelessWidget {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(12.0),
                                       child: Image.asset(
-                                        "images/paint.png",
+                                        "assets/images/paint.png",
                                         height: 300,
                                         width: 200,
                                         fit: BoxFit.cover,
@@ -132,6 +134,7 @@ class Home extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                          
                             ],
                           ),
                         ),
@@ -139,24 +142,28 @@ class Home extends StatelessWidget {
                     ),
                   ],
                 ),
+                )
               ],
             ),
           ),
           Expanded(
             flex: 1,
-            child: ListView(
+            child:
+            Card(
+              margin: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+              child: 
+              ListView(
               scrollDirection: Axis.vertical,
-              padding: EdgeInsets.zero,
               shrinkWrap: false,
               physics: const ScrollPhysics(),
               children: [
                 Card(
-                  margin: const EdgeInsets.fromLTRB(6, 20, 6, 6),
+                  margin: const EdgeInsets.fromLTRB(15, 20, 15, 0),
                   color: const Color(0xffe0e0e0),
                   shadowColor: const Color(0xff000000),
                   elevation: 1,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
+                    borderRadius: BorderRadius.circular(12.0),
                     side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
                   ),
                   child: Padding(
@@ -241,11 +248,220 @@ class Home extends StatelessWidget {
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-        ],
-      ),
+                Card(
+                  margin: const EdgeInsets.fromLTRB(15, 20, 15, 0),
+                  color: const Color(0xffe0e0e0),
+                  shadowColor: const Color(0xff000000),
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Treino A",
+                            textAlign: TextAlign.start,
+                            overflow: TextOverflow.clip,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontStyle: FontStyle.normal,
+                              fontSize: 14,
+                              color: Color(0xff000000),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+                                child: MaterialButton(
+                                  onPressed: () {},
+                                  color: const Color(0xffffffff),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    side: const BorderSide(
+                                        color: Color(0xff808080), width: 1),
+                                  ),
+                                  padding: const EdgeInsets.all(0),
+                                  textColor: const Color(0xff000000),
+                                  height: 40,
+                                  minWidth: 100,
+                                  child: const Text(
+                                    "Editar",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      fontStyle: FontStyle.normal,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              MaterialButton(
+                                onPressed: () {},
+                                color: const Color(0xffffffff),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  side: const BorderSide(
+                                      color: Color(0xff808080), width: 1),
+                                ),
+                                padding: const EdgeInsets.all(0),
+                                textColor: const Color(0xff000000),
+                                height: 40,
+                                minWidth: 100,
+                                child: const Text(
+                                  "Começar",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    fontStyle: FontStyle.normal,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Card(
+                  margin: const EdgeInsets.fromLTRB(15, 20, 15, 0),
+                  color: const Color(0xffe0e0e0),
+                  shadowColor: const Color(0xff000000),
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Treino A",
+                            textAlign: TextAlign.start,
+                            overflow: TextOverflow.clip,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontStyle: FontStyle.normal,
+                              fontSize: 14,
+                              color: Color(0xff000000),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+                                child: MaterialButton(
+                                  onPressed: () {},
+                                  color: const Color(0xffffffff),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    side: const BorderSide(
+                                        color: Color(0xff808080), width: 1),
+                                  ),
+                                  padding: const EdgeInsets.all(0),
+                                  textColor: const Color(0xff000000),
+                                  height: 40,
+                                  minWidth: 100,
+                                  child: const Text(
+                                    "Editar",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      fontStyle: FontStyle.normal,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              MaterialButton(
+                                onPressed: () {},
+                                color: const Color(0xffffffff),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  side: const BorderSide(
+                                      color: Color(0xff808080), width: 1),
+                                ),
+                                padding: const EdgeInsets.all(0),
+                                textColor: const Color(0xff000000),
+                                height: 40,
+                                minWidth: 100,
+                                child: const Text(
+                                  "Começar",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    fontStyle: FontStyle.normal,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+                  child: MaterialButton(
+                    onPressed: () {},
+                    color: const Color(0xffe0e0e0),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    textColor: const Color(0xff000000),
+                    height: 40,
+                    minWidth: 140,
+                    child: const Text(
+                      "Criar treino",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.normal,
+                      ),
+                    ),
+                  )
+                )
+              ]
+            ) 
+          
+            )
+          )
+        ]
+    )
     );
-  }
+}
 }

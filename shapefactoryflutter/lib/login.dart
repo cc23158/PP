@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shapefactory/cadastro.dart';
+import 'package:shapefactory/home.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
@@ -157,7 +158,9 @@ class Login extends StatelessWidget {
                       Expanded(
                         flex: 1,
                         child: MaterialButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => Home() ));
+                          },
                           color: const Color(0xff3a57e8),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
