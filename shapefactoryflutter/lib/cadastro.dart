@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:shapefactory/objetivo.dart';
+import 'package:http/http.dart' as http;
 
-class Cadastro extends StatelessWidget {
+class Cadastro extends StatefulWidget {
   const Cadastro({super.key});
+  
+  @override  
+  CadastroState createState() => CadastroState();  
+}  
+
+class CadastroState extends State<Cadastro> {
+  final controllerEmail = TextEditingController();
+  final controllerSenha = TextEditingController();
+  final controllerConfirmarSenha = TextEditingController();
+  var valor = 0;
 
   @override
   Widget build(BuildContext context) {
+    
     return MaterialApp(
         home: Scaffold(
       backgroundColor: const Color(0xff000000),
@@ -133,6 +147,180 @@ class Cadastro extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                   child: TextField(
                     controller: TextEditingController(),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(6),
+                      CardMonthInputFormatter(),
+                    ],
+                    textAlign: TextAlign.start,
+                    maxLines: 1,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontStyle: FontStyle.normal,
+                      fontSize: 16,
+                      color: Color(0xffffffff),
+                    ),
+                    decoration: InputDecoration(
+                      hintText: "DD/MM/AA",
+                      disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide: const BorderSide(
+                            color: Color(0xff9e9e9e), width: 1),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide: const BorderSide(
+                            color: Color(0xff9e9e9e), width: 1),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide: const BorderSide(
+                            color: Color(0xff9e9e9e), width: 1),
+                      ),
+                      labelText: "Data de Nascimento",
+                      labelStyle: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 16,
+                        color: Color(0xff9e9e9e),
+                      ),
+                      filled: true,
+                      fillColor: const Color(0x00ffffff),
+                      isDense: false,
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 12),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                  child: TextField(
+                    controller: TextEditingController(),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    textAlign: TextAlign.start,
+                    maxLines: 1,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontStyle: FontStyle.normal,
+                      fontSize: 16,
+                      color: Color(0xffffffff),
+                    ),
+                    decoration: InputDecoration(
+                      hintText: "Kg",
+                      disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide: const BorderSide(
+                            color: Color(0xff9e9e9e), width: 1),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide: const BorderSide(
+                            color: Color(0xff9e9e9e), width: 1),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide: const BorderSide(
+                            color: Color(0xff9e9e9e), width: 1),
+                      ),
+                      labelText: "Peso",
+                      labelStyle: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 16,
+                        color: Color(0xff9e9e9e),
+                      ),
+                      filled: true,
+                      fillColor: const Color(0x00ffffff),
+                      isDense: false,
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 12),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 16, 0, 15),
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          const Align(
+                            alignment: Alignment.centerLeft,
+                            child:Text(
+                            "Sexo",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontStyle: FontStyle.normal,
+                              fontSize: 16,
+                              color: Color(0xff9e9e9e),
+                              
+                            ),
+                          ),
+                          ),
+                          
+                          Row(
+                            
+                              children: [
+                                Radio(
+                                  value: 0,
+                                  groupValue: valor,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      valor = value!;
+                                      
+                                    });
+                                  },
+                                  activeColor: Colors.orange,
+                                  autofocus: false,
+                                  splashRadius: 20,
+                                  hoverColor: const Color(0x42000000),
+                                ),
+                                const Text(
+                                  "Masculino",
+                                  textAlign: TextAlign.start,
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontStyle: FontStyle.normal,
+                                    fontSize: 14,
+                                    color: Color(0xffffffff),
+                                  ),
+                                ),
+                                Radio(
+                                  value: 1,
+                                  groupValue: valor,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      valor = value!;
+                                      
+                                    });
+                                  },
+                                  activeColor: Colors.orange,
+                                  autofocus: false,
+                                  splashRadius: 20,
+                                  hoverColor: const Color(0x42000000),
+                                ),
+                                const Text(
+                                  "Feminino",
+                                  textAlign: TextAlign.start,
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontStyle: FontStyle.normal,
+                                    fontSize: 14,
+                                    color: Color(0xffffffff),
+                                  ),
+                                ),
+                              ])
+                        ],
+                      )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child: TextField(
+                    controller: TextEditingController(),
                     obscureText: true,
                     textAlign: TextAlign.start,
                     maxLines: 1,
@@ -202,7 +390,7 @@ class Cadastro extends StatelessWidget {
                         borderSide: const BorderSide(
                             color: Color(0xff9e9e9e), width: 1),
                       ),
-                      labelText: "Confimar Senha",
+                      labelText: "Confirmar senha",
                       labelStyle: const TextStyle(
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.normal,
@@ -219,9 +407,12 @@ class Cadastro extends StatelessWidget {
                 ),
                 MaterialButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Objetivo()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Objetivo()));
                   },
-                  color: const Color(0xff3a57e8),
+                  color: Colors.orange,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
@@ -246,7 +437,7 @@ class Cadastro extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Padding(
-                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 40),
                       child: Text(
                         "Já tem uma conta?",
                         textAlign: TextAlign.start,
@@ -260,7 +451,7 @@ class Cadastro extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                        padding: const EdgeInsets.fromLTRB(5, 10, 0, 0),
+                        padding: const EdgeInsets.fromLTRB(5, 10, 0, 40),
                         child: GestureDetector(
                           onTap: () => {Navigator.pop(context)},
                           child: const Text(
@@ -283,5 +474,28 @@ class Cadastro extends StatelessWidget {
         ),
       ),
     ));
+  }
+}
+
+class CardMonthInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    var newText = newValue.text;
+    if (newValue.selection.baseOffset == 0) {
+      return newValue;
+    }
+    var buffer = StringBuffer();
+    for (int i = 0; i < newText.length; i++) {
+      buffer.write(newText[i]);
+      var nonZeroIndex = i + 1;
+      if (nonZeroIndex % 2 == 0 && nonZeroIndex != newText.length) {
+        buffer.write('/');
+      }
+    }
+    var string = buffer.toString();
+    return newValue.copyWith(
+        text: string,
+        selection: TextSelection.collapsed(offset: string.length));
   }
 }

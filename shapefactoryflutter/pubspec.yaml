@@ -12,7 +12,7 @@ dependencies:
   #PageView lib
   smooth_page_indicator: ^1.2.0+3 
   flutter_animated_button: 2.0.3
-  google_fonts: ^6.2.1
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:

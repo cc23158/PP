@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class Home extends StatelessWidget {
   final pageController = PageController();
@@ -264,7 +263,6 @@ class Home extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 10, horizontal: 15),
                               child: AnimatedButton(
-
                                 text: 'Criar treino',
                                 isReverse: true,
                                 selectedTextColor: Colors.black,
@@ -288,7 +286,9 @@ class Home extends StatelessWidget {
                   BottomNavigationBarItem(
                       icon: Icon(Icons.home), label: "Home"),
                   BottomNavigationBarItem(
-                      icon: Icon(Icons.settings), label: "Configurações")
+                      icon: Icon(Icons.article_rounded), label: "Relatório"),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.person), label: "Conta"),
                 ],
                 backgroundColor: Colors.black,
                 selectedItemColor: Colors.orange,

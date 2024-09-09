@@ -161,7 +161,7 @@ class Login extends StatelessWidget {
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => Home() ));
                           },
-                          color: const Color(0xff3a57e8),
+                          color: Colors.orange,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.0),
