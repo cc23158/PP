@@ -114,7 +114,7 @@ class Login extends StatelessWidget {
                       borderSide:
                           const BorderSide(color: Color(0xff9e9e9e), width: 1),
                     ),
-                    labelText: "Password",
+                    labelText: "Senha",
                     labelStyle: const TextStyle(
                       fontWeight: FontWeight.w400,
                       fontStyle: FontStyle.normal,

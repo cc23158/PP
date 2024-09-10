@@ -6,20 +6,23 @@ import 'package:http/http.dart' as http;
 
 class Cadastro extends StatefulWidget {
   const Cadastro({super.key});
-  
-  @override  
-  CadastroState createState() => CadastroState();  
-}  
+
+  @override
+  CadastroState createState() => CadastroState();
+}
 
 class CadastroState extends State<Cadastro> {
   final controllerEmail = TextEditingController();
   final controllerSenha = TextEditingController();
   final controllerConfirmarSenha = TextEditingController();
+  final controllerPeso = TextEditingController();
+  final controllerNome = TextEditingController();
+  final controllerData = TextEditingController();
   var valor = 0;
+  var mensagemErro = "";
 
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp(
         home: Scaffold(
       backgroundColor: const Color(0xff000000),
@@ -58,7 +61,7 @@ class CadastroState extends State<Cadastro> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                   child: TextField(
-                    controller: TextEditingController(),
+                    controller: controllerNome,
                     obscureText: false,
                     textAlign: TextAlign.start,
                     maxLines: 1,
@@ -102,7 +105,7 @@ class CadastroState extends State<Cadastro> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                   child: TextField(
-                    controller: TextEditingController(),
+                    controller: controllerEmail,
                     obscureText: false,
                     textAlign: TextAlign.start,
                     maxLines: 1,
@@ -146,7 +149,7 @@ class CadastroState extends State<Cadastro> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                   child: TextField(
-                    controller: TextEditingController(),
+                    controller: controllerData,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(6),
@@ -195,7 +198,7 @@ class CadastroState extends State<Cadastro> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                   child: TextField(
-                    controller: TextEditingController(),
+                    controller: controllerPeso,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                     ],
@@ -248,79 +251,73 @@ class CadastroState extends State<Cadastro> {
                         children: [
                           const Align(
                             alignment: Alignment.centerLeft,
-                            child:Text(
-                            "Sexo",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.normal,
-                              fontSize: 16,
-                              color: Color(0xff9e9e9e),
-                              
+                            child: Text(
+                              "Sexo",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontStyle: FontStyle.normal,
+                                fontSize: 16,
+                                color: Color(0xff9e9e9e),
+                              ),
                             ),
                           ),
-                          ),
-                          
-                          Row(
-                            
-                              children: [
-                                Radio(
-                                  value: 0,
-                                  groupValue: valor,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      valor = value!;
-                                      
-                                    });
-                                  },
-                                  activeColor: Colors.orange,
-                                  autofocus: false,
-                                  splashRadius: 20,
-                                  hoverColor: const Color(0x42000000),
-                                ),
-                                const Text(
-                                  "Masculino",
-                                  textAlign: TextAlign.start,
-                                  overflow: TextOverflow.clip,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 14,
-                                    color: Color(0xffffffff),
-                                  ),
-                                ),
-                                Radio(
-                                  value: 1,
-                                  groupValue: valor,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      valor = value!;
-                                      
-                                    });
-                                  },
-                                  activeColor: Colors.orange,
-                                  autofocus: false,
-                                  splashRadius: 20,
-                                  hoverColor: const Color(0x42000000),
-                                ),
-                                const Text(
-                                  "Feminino",
-                                  textAlign: TextAlign.start,
-                                  overflow: TextOverflow.clip,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 14,
-                                    color: Color(0xffffffff),
-                                  ),
-                                ),
-                              ])
+                          Row(children: [
+                            Radio(
+                              value: 0,
+                              groupValue: valor,
+                              onChanged: (value) {
+                                setState(() {
+                                  valor = value!;
+                                });
+                              },
+                              activeColor: Colors.orange,
+                              autofocus: false,
+                              splashRadius: 20,
+                              hoverColor: const Color(0x42000000),
+                            ),
+                            const Text(
+                              "Masculino",
+                              textAlign: TextAlign.start,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontStyle: FontStyle.normal,
+                                fontSize: 14,
+                                color: Color(0xffffffff),
+                              ),
+                            ),
+                            Radio(
+                              value: 1,
+                              groupValue: valor,
+                              onChanged: (value) {
+                                setState(() {
+                                  valor = value!;
+                                });
+                              },
+                              activeColor: Colors.orange,
+                              autofocus: false,
+                              splashRadius: 20,
+                              hoverColor: const Color(0x42000000),
+                            ),
+                            const Text(
+                              "Feminino",
+                              textAlign: TextAlign.start,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontStyle: FontStyle.normal,
+                                fontSize: 14,
+                                color: Color(0xffffffff),
+                              ),
+                            ),
+                          ])
                         ],
                       )),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                   child: TextField(
-                    controller: TextEditingController(),
+                    controller: controllerSenha,
                     obscureText: true,
                     textAlign: TextAlign.start,
                     maxLines: 1,
@@ -347,6 +344,7 @@ class CadastroState extends State<Cadastro> {
                             color: Color(0xff9e9e9e), width: 1),
                       ),
                       labelText: "Senha",
+                      hintText: "Pelo menos 6 caracteres",
                       labelStyle: const TextStyle(
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.normal,
@@ -363,8 +361,8 @@ class CadastroState extends State<Cadastro> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 16, 0, 30),
-                  child: TextField(
-                    controller: TextEditingController(),
+                  child: TextFormField(
+                    controller: controllerConfirmarSenha,
                     obscureText: true,
                     textAlign: TextAlign.start,
                     maxLines: 1,
@@ -405,12 +403,45 @@ class CadastroState extends State<Cadastro> {
                     ),
                   ),
                 ),
+                Text(mensagemErro, style: TextStyle(color: Colors.red)),
                 MaterialButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const Objetivo()));
+
+                    if (controllerNome.text != "" &&
+                        controllerEmail.text != "" &&
+                        controllerData.text != "" &&
+                        controllerPeso.text != "" &&
+                        controllerSenha.text != "" &&
+                        controllerConfirmarSenha.text != "") {
+                      if (controllerSenha.text.length >= 6) {
+                        if (controllerConfirmarSenha.text ==
+                            controllerSenha.text) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Objetivo(
+                                      controllerNome.text,
+                                      controllerEmail.text,
+                                      controllerData.text,
+                                      controllerPeso.text,
+                                      valor,
+                                      controllerSenha.text)));
+                        } else {
+                          setState(() {
+                            mensagemErro = "As senhas não são iguais!";
+                          });
+                        }
+                      }
+                      else {
+                        setState(() {
+                          mensagemErro = "A senha deve ter pelo menos 6 caracteres";
+                        });
+                      }
+                    } else {
+                      setState(() {
+                        mensagemErro = "Preencha todos os campos";
+                      });
+                    }
                   },
                   color: Colors.orange,
                   elevation: 0,
@@ -431,6 +462,7 @@ class CadastroState extends State<Cadastro> {
                     ),
                   ),
                 ),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,

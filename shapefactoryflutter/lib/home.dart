@@ -38,7 +38,7 @@ class Home extends StatelessWidget {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               const Padding(
-                                padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                                padding: EdgeInsets.fromLTRB(16, 30, 16, 8),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -159,15 +159,18 @@ class Home extends StatelessWidget {
               Expanded(
                   flex: 1,
                   child: Card(
-                      margin: const EdgeInsets.fromLTRB(15, 0, 15, 15),
+                      margin: const EdgeInsets.fromLTRB(15, 10, 15, 0),
                       color: Colors.grey,
                       child: ListView(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: false,
                           physics: const ScrollPhysics(),
+                          padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                           children: [
-                            Card(
-                              margin: const EdgeInsets.fromLTRB(15, 20, 15, 0),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                              child: 
+                              Card(
                               color: const Color(0xffe0e0e0),
                               shadowColor: const Color(0xff000000),
                               elevation: 1,
@@ -259,6 +262,8 @@ class Home extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            ),
+                            
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 10, horizontal: 15),

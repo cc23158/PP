@@ -47,4 +47,6 @@ public interface IClient extends JpaRepository<Client, Integer> {
             @Param("clientId") Integer id
     );
 
+    Client getByEmail(String email);
+
 }

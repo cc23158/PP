@@ -81,4 +81,8 @@ public class ClientService {
         iClient.deleteClient(id);
     }
 
+    public Client getByEmail(String email) {
+        return iClient.getByEmail(email);
+    }
+
 }

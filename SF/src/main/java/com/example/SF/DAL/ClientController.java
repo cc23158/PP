@@ -32,6 +32,13 @@ public class ClientController {
         return clientService.getByName(name, surname);
     }
 
+    
+    @GetMapping("/getClientByEmail/{email}")
+    // http://localhost:8080/client/getClientByName/Roberto/Martins
+    public Client getByEmail(@PathVariable String email){
+        return clientService.getByEmail(email);
+    }
+
     @PostMapping("/postClient/{name}/{surname}/{email}/{age}/{birthday}/{gender}/{height}/{weight}/{password}")
     // http://localhost:8080/client/postClient/Roberto/Martins/roberto.martins@example.com/38/05-12-1985/M/170/75/senha654
     public ResponseEntity<String> postClient(
