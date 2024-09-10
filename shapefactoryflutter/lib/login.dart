@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shapefactory/cadastro.dart';
+import 'package:shapefactory/centralpage.dart';
 import 'package:shapefactory/home.dart';
 
 class Login extends StatelessWidget {
@@ -159,7 +160,10 @@ class Login extends StatelessWidget {
                         flex: 1,
                         child: MaterialButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => Home() ));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const CentralPage()));
                           },
                           color: Colors.orange,
                           elevation: 0,
