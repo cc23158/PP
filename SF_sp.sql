@@ -20,54 +20,6 @@ BEGIN
 
 END
 
--- POST CLIENT --
-CREATE OR ALTER PROCEDURE SF.POST_Client
-@name VARCHAR(30),
-@email VARCHAR(60),
-@birthday DATE,
-@gender CHAR,
-@weight FLOAT,
-@password VARCHAR(60)
-as
-BEGIN
-
-	INSERT INTO SF.Client (client_name, client_email, client_birthday, client_gender, client_weight, client_password, client_active)
-	VALUES (@name, @email, @birthday, @gender, @weight, @password, 1)
-
-END
-
--- UPDATE DATA CLIENT --
-CREATE OR ALTER PROCEDURE SF.UPDATE_ClientData
-@id INT,
-@weight FLOAT
-as
-BEGIN
-
-	UPDATE SF.Client SET client_weight = @weight WHERE client_id = @id
-
-END
-
--- UPDATE CLIENT PASSWORD --
-CREATE OR ALTER PROCEDURE SF.UPDATE_ClientPassword
-@id INT,
-@password VARCHAR(60)
-as
-BEGIN
-
-	UPDATE SF.Client SET client_password = @password WHERE client_id = @id
-
-END
-
--- DELETE CLIENT --
-CREATE OR ALTER PROCEDURE SF.DELETE_Client
-@id INT
-as
-BEGIN
-
-	UPDATE SF.Client SET client_active = 0 WHERE client_id = @id
-
-END
-
 -- GET ADM (VERIFICATION) --
 CREATE OR ALTER PROCEDURE SF.GET_Adm
 @email VARCHAR(60),

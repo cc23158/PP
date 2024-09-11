@@ -6,6 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="bb00d4d3-e614-48f3-8870-72260a2c7812" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/ClientService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/ClientService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/ClientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/ClientController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/SF-0.0.1-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/SF-0.0.1-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/SF-0.0.1-SNAPSHOT.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/target/SF-0.0.1-SNAPSHOT.jar.original" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/ClientService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/ClientService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/ClientController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/ClientController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/Repository/IClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/Repository/IClient.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../SF_sp.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../SF_sp.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -26,13 +36,6 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
-  </component>
-  <component name="MavenImportPreferences">
-    <option name="generalSettings">
-      <MavenGeneralSettings>
-        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
-      </MavenGeneralSettings>
-    </option>
   </component>
   <component name="MavenRunner">
     <option name="skipTests" value="true" />
@@ -66,6 +69,13 @@
     &quot;last_opened_file_path&quot;: &quot;C:/Users/vymim/OneDrive/Área de Trabalho/PP/SF&quot;
   }
 }</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-21.0.1-openjdk-21.0.1-4caba194b151-23eed401" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

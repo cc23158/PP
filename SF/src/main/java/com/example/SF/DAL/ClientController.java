@@ -39,20 +39,13 @@ public class ClientController {
         return clientService.getByEmail(email);
     }
 
-    @PostMapping("/postClient/{name}/{email}/{birthday}/{gender}/{weight}/{password}")
-    // http://localhost:8080/client/postClient/Roberto/roberto.martins@example.com/05-12-1985/M/75/senha654
-    public ResponseEntity<String> postClient(
-            @PathVariable String name,
-            @PathVariable String email,
-            @PathVariable String birthday,
-            @PathVariable Character gender,
-            @PathVariable Double weight,
-            @PathVariable String password
-            ){
+    @PostMapping("/insertClient/{name}/{email}/{birthday}/{gender}/{weight}/{password}")
+    // http://localhost:8080/client/insertClient/Giovane/giovane.lidorio@example.com/15-11-1999/M/83/senha002
+    public ResponseEntity<String> insertClient(@PathVariable String name, @PathVariable String email, @PathVariable String birthday, @PathVariable Character gender, @PathVariable Double weight, @PathVariable String password){
         try{
             LocalDate dateBirthday = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
-            clientService.postClient(name, email, dateBirthday, gender, weight, password);
+            clientService.insertClient(name, email, dateBirthday, gender, weight, password);
             return ResponseEntity.ok("Client inserted");
         }
 
@@ -61,12 +54,9 @@ public class ClientController {
         }
     }
 
-    @PutMapping("/updateClientData/{id}/{age}/{height}/{weight}")
+    @PutMapping("/updateClientData/{id}/{weight}")
     // http://localhost:8080/client/updateClientData/18/84
-    public ResponseEntity<String> updateClientData(
-            @PathVariable Integer id,
-            @PathVariable Double weight
-    ){
+    public ResponseEntity<String> updateClientData(@PathVariable Integer id, @PathVariable Double weight){
         try{
             clientService.updateClientData(id, weight);
             return ResponseEntity.ok().body("Client updated");

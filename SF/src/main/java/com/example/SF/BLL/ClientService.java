@@ -29,16 +29,9 @@ public class ClientService {
     }
 
     @Transactional
-    public void postClient(
-            String name,
-            String email,
-            LocalDate birthday,
-            Character gender,
-            Double weight,
-            String password
-    ) throws Exception {
+    public void insertClient(String name, String email, LocalDate birthday, Character gender, Double weight, String password) throws Exception{
         try{
-            iClient.postClient(name, email, birthday, gender, weight, password);
+            iClient.insertClient(name, email, birthday, gender, weight, password);
         }
 
         catch (Exception e){
@@ -47,10 +40,7 @@ public class ClientService {
     }
 
     @Transactional
-    public void updateClientData(
-            Integer id,
-            Double weight
-    ) throws Exception{
+    public void updateClientData(Integer id, Double weight) throws Exception{
         try{
             iClient.updateClientData(id, weight);
         }
@@ -72,13 +62,19 @@ public class ClientService {
     }
 
     @Transactional
-    public void deleteClient(Integer id){
-        iClient.deleteClient(id);
+    public void deleteClient(Integer id) throws Exception{
+        try{
+            iClient.deleteClient(id);
+        }
+
+        catch (Exception e){
+            throw new Exception(e);
+        }
     }
 
     @Transactional
-    public Client getByEmail(String email) {
-        return iClient.getByEmail(email);
+    public Client getByEmail(String email){
+            return iClient.getByEmail(email);
     }
 
 }
