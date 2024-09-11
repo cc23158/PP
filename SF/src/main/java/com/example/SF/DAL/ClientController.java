@@ -26,36 +26,33 @@ public class ClientController {
         return clientService.getAll();
     }
 
-    @GetMapping("/getClientByName/{name}/{surname}")
-    // http://localhost:8080/client/getClientByName/Roberto/Martins
-    public Client getByName(@PathVariable String name, @PathVariable String surname){
-        return clientService.getByName(name, surname);
+    @GetMapping("/getClientByName/{name}")
+    // http://localhost:8080/client/getClientByName/Roberto
+    public Client getByName(@PathVariable String name){
+        return clientService.getByName(name);
     }
 
     
     @GetMapping("/getClientByEmail/{email}")
-    // http://localhost:8080/client/getClientByName/Roberto/Martins
+    // http://localhost:8080/client/getClientByEmail/roberto.martins@example.com
     public Client getByEmail(@PathVariable String email){
         return clientService.getByEmail(email);
     }
 
-    @PostMapping("/postClient/{name}/{surname}/{email}/{age}/{birthday}/{gender}/{height}/{weight}/{password}")
-    // http://localhost:8080/client/postClient/Roberto/Martins/roberto.martins@example.com/38/05-12-1985/M/170/75/senha654
+    @PostMapping("/postClient/{name}/{email}/{birthday}/{gender}/{weight}/{password}")
+    // http://localhost:8080/client/postClient/Roberto/roberto.martins@example.com/05-12-1985/M/75/senha654
     public ResponseEntity<String> postClient(
             @PathVariable String name,
-            @PathVariable String surname,
             @PathVariable String email,
-            @PathVariable Integer age,
             @PathVariable String birthday,
             @PathVariable Character gender,
-            @PathVariable Double height,
             @PathVariable Double weight,
             @PathVariable String password
             ){
         try{
             LocalDate dateBirthday = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
-            clientService.postClient(name, surname, email, age, dateBirthday, gender, height, weight, password);
+            clientService.postClient(name, email, dateBirthday, gender, weight, password);
             return ResponseEntity.ok("Client inserted");
         }
 
@@ -65,15 +62,13 @@ public class ClientController {
     }
 
     @PutMapping("/updateClientData/{id}/{age}/{height}/{weight}")
-    // http://localhost:8080/client/updateClientData/18/46/176/84
+    // http://localhost:8080/client/updateClientData/18/84
     public ResponseEntity<String> updateClientData(
             @PathVariable Integer id,
-            @PathVariable Integer age,
-            @PathVariable Double height,
             @PathVariable Double weight
     ){
         try{
-            clientService.updateClientData(id, age, height, weight);
+            clientService.updateClientData(id, weight);
             return ResponseEntity.ok().body("Client updated");
         }
 

@@ -4,12 +4,9 @@ CREATE TABLE SF.Client(
 	
 	client_id INT IDENTITY NOT NULL,
 	client_name VARCHAR(30) NOT NULL,
-	client_surname VARCHAR(30) NOT NULL,
 	client_email VARCHAR(60) NOT NULL UNIQUE,
-	client_age INT NOT NULL,
 	client_birthday DATE NOT NULL,
 	client_gender CHAR NOT NULL CHECK (client_gender IN ('M', 'F')),
-	client_height FLOAT NOT NULL,
 	client_weight FLOAT NOT NULL,
 	client_password VARCHAR(60) NOT NULL,
 	client_active BIT NOT NULL,
@@ -62,5 +59,13 @@ CREATE TABLE SF.Recipe(
 	PRIMARY KEY(recipe_id),
 	FOREIGN KEY(recipe_client) REFERENCES SF.Client(client_id),
 	FOREIGN KEY(recipe_exercise) REFERENCES SF.Exercise(exercise_id)
+
+)
+
+CREATE TABLE SF.History(
+
+	history_id INT IDENTITY NOT NULL,
+	history_client INT NOT NULL,
+	history_recipe INT NOT NULL
 
 )

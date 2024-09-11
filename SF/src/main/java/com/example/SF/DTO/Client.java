@@ -23,23 +23,14 @@ public class Client {
     @Column(name = "client_name")
     private String client_name;
 
-    @Column(name = "client_surname")
-    private String client_surname;
-
     @Column(name = "client_email")
     private String client_email;
-
-    @Column(name = "client_age")
-    private Integer client_age;
 
     @Column(name = "client_birthday")
     private LocalDate client_birthday;
 
     @Column(name = "client_gender")
     private Character client_gender;
-
-    @Column(name = "client_height")
-    private Double client_height;
 
     @Column(name = "client_weight")
     private Double client_weight;

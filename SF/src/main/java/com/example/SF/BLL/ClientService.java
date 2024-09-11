@@ -24,24 +24,21 @@ public class ClientService {
     }
 
     @Transactional
-    public Client getByName(String name, String surname){
-        return iClient.getByName(name, surname);
+    public Client getByName(String name){
+        return iClient.getByName(name);
     }
 
     @Transactional
     public void postClient(
             String name,
-            String surname,
             String email,
-            Integer age,
             LocalDate birthday,
             Character gender,
-            Double height,
             Double weight,
             String password
     ) throws Exception {
         try{
-            iClient.postClient(name, surname, email, age, birthday, gender, height, weight, password);
+            iClient.postClient(name, email, birthday, gender, weight, password);
         }
 
         catch (Exception e){
@@ -52,12 +49,10 @@ public class ClientService {
     @Transactional
     public void updateClientData(
             Integer id,
-            Integer age,
-            Double height,
             Double weight
     ) throws Exception{
         try{
-            iClient.updateClientData(id, age, height, weight);
+            iClient.updateClientData(id, weight);
         }
 
         catch (Exception e){
@@ -81,6 +76,7 @@ public class ClientService {
         iClient.deleteClient(id);
     }
 
+    @Transactional
     public Client getByEmail(String email) {
         return iClient.getByEmail(email);
     }

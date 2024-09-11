@@ -1,44 +1,49 @@
--- GET CLIENT --
-CREATE OR ALTER PROCEDURE SF.GET_Client
-@name VARCHAR(30),
-@surname VARCHAR(30)
+-- GET CLIENT BY NAME --
+CREATE OR ALTER PROCEDURE SF.GET_ClientByName
+@name VARCHAR(30)
 as
 BEGIN
 	
-	SELECT client_id, client_name, client_surname, client_email, client_age, client_birthday, client_gender, client_height, client_weight, client_password, client_active
-    FROM SF.Client WHERE client_name = @name AND client_surname = @surname;
+	SELECT client_id, client_name, client_email, client_birthday, client_gender, client_weight, client_password, client_active
+    FROM SF.Client WHERE client_name = @name
+
+END
+
+-- GET CLIENT BY EMAIL --
+CREATE OR ALTER PROCEDURE SF.GET_ClientByEmail
+@email VARCHAR(60)
+as
+BEGIN
+
+	SELECT client_id, client_name, client_email, client_birthday, client_gender, client_weight, client_password, client_active
+    FROM SF.Client WHERE client_email = @email
 
 END
 
 -- POST CLIENT --
 CREATE OR ALTER PROCEDURE SF.POST_Client
 @name VARCHAR(30),
-@surname VARCHAR(30),
 @email VARCHAR(60),
-@age INT,
 @birthday DATE,
 @gender CHAR,
-@height FLOAT,
 @weight FLOAT,
 @password VARCHAR(60)
 as
 BEGIN
 
-	INSERT INTO SF.Client (client_name, client_surname, client_email, client_age, client_birthday, client_gender, client_height, client_weight, client_password, client_active)
-	VALUES (@name, @surname, @email, @age, @birthday, @gender, @height, @weight, @password, 1)
+	INSERT INTO SF.Client (client_name, client_email, client_birthday, client_gender, client_weight, client_password, client_active)
+	VALUES (@name, @email, @birthday, @gender, @weight, @password, 1)
 
 END
 
 -- UPDATE DATA CLIENT --
 CREATE OR ALTER PROCEDURE SF.UPDATE_ClientData
 @id INT,
-@age INT,
-@height FLOAT,
 @weight FLOAT
 as
 BEGIN
 
-	UPDATE SF.Client SET client_age = @age, client_height = @height, client_weight = @weight WHERE client_id = @id
+	UPDATE SF.Client SET client_weight = @weight WHERE client_id = @id
 
 END
 

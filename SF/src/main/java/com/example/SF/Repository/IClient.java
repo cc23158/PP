@@ -10,20 +10,14 @@ import java.time.LocalDate;
 public interface IClient extends JpaRepository<Client, Integer> {
 
     @Procedure(procedureName = "SF.GET_Client")
-    Client getByName(
-            @Param("clientName") String name,
-            @Param("clientSurname") String surname
-    );
+    Client getByName(@Param("clientName") String name);
 
     @Procedure(procedureName = "SF.POST_Client")
     void postClient(
             @Param("clientName") String name,
-            @Param("clientSurname") String surname,
             @Param("clientEmail") String email,
-            @Param("clientAge") Integer age,
             @Param("clientBirthday") LocalDate birthday,
             @Param("clientGender") Character gender,
-            @Param("clientHeight") Double height,
             @Param("clientWeight") Double weight,
             @Param("clientPassword") String password
     );
@@ -31,8 +25,6 @@ public interface IClient extends JpaRepository<Client, Integer> {
     @Procedure(procedureName = "SF.UPDATE_ClientData")
     void updateClientData(
             @Param("clientId") Integer id,
-            @Param("clientAge") Integer age,
-            @Param("clientHeight") Double height,
             @Param("clientWeight") Double weight
     );
 
@@ -47,6 +39,7 @@ public interface IClient extends JpaRepository<Client, Integer> {
             @Param("clientId") Integer id
     );
 
-    Client getByEmail(String email);
+    @Procedure(procedureName = "SF.GET_ClientByEmail")
+    Client getByEmail(@Param("clientEmail") String email);
 
 }

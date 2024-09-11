@@ -27,6 +27,13 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
   <component name="MavenRunner">
     <option name="skipTests" value="true" />
   </component>
@@ -41,24 +48,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.SfApplication.executor": "Run",
-    "Maven.SF [clean].executor": "Run",
-    "Maven.SF [compile].executor": "Run",
-    "Maven.SF [install].executor": "Run",
-    "Maven.SF [package].executor": "Run",
-    "Maven.SF [validate].executor": "Run",
-    "Maven.SF [verify].executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "telas",
-    "kotlin-language-version-configured": "true",
-    "last_directory_selection": "C:/Users/vymim/OneDrive/Área de Trabalho/PP/SF/src/main/java/com/example/SF",
-    "last_opened_file_path": "C:/Users/vymim/OneDrive/Área de Trabalho/PP/SF"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.SfApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.SF [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.SF [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.SF [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.SF [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.SF [validate].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.SF [verify].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;telas&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_directory_selection&quot;: &quot;C:/Users/vymim/OneDrive/Área de Trabalho/PP/SF/src/main/java/com/example/SF&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/vymim/OneDrive/Área de Trabalho/PP/SF&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
