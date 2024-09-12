@@ -28,36 +28,24 @@ public class AdmService {
     }
 
     @Transactional
-    public void postAdm(String email, String password, Double salary) throws Exception{
-        try {
-            iAdm.postAdm(email, password, salary);
-        }
+    public void insertAdm(String email, String password, Double salary) throws Exception{
+        try { iAdm.insertAdm(email, password, salary); }
 
-        catch (Exception e){
-            throw new Exception(e);
-        }
+        catch (Exception e){ throw new Exception(e); }
     }
 
     @Transactional
     public void updateAdmSalary(Integer id, Double salary) throws Exception{
-        try{
-            iAdm.updateAdmSalary(id, salary);
-        }
+        try{ iAdm.updateAdmSalary(id, salary); }
 
-        catch (Exception e){
-            throw new Exception(e);
-        }
+        catch (Exception e){ throw new Exception(e); }
     }
     
     @Transactional
     public void updateAdmPassword(Integer id, String password) throws Exception{
-        try{
-            iAdm.updateAdmPassword(id, password);
-        }
+        try{ iAdm.updateAdmPassword(id, password); }
 
-        catch (Exception e){
-            throw new Exception(e);
-        }
+        catch (Exception e){ throw new Exception(e); }
     }
 
     @Transactional

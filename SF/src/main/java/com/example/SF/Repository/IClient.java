@@ -45,5 +45,4 @@ public interface IClient extends JpaRepository<Client, Integer> {
     @Modifying
     @Query("UPDATE Client SET client_active = false WHERE client_id = :clientId")
     void deleteClient(@Param("clientId") Integer id);
-
 }

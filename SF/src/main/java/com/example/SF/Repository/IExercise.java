@@ -25,5 +25,4 @@ public interface IExercise extends JpaRepository<Exercise, Integer> {
 
     @Procedure(procedureName = "SF.DELETE_Exercise")
     void deleteExercise(@Param("exerciseId") Integer id);
-
 }

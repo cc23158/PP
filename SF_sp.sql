@@ -36,51 +36,6 @@ BEGIN
 
 END
 
--- POST ADM --
-CREATE OR ALTER PROCEDURE SF.POST_Adm
-@email VARCHAR(30),
-@password VARCHAR(60),
-@salary FLOAT
-as
-BEGIN
-
-	INSERT INTO SF.Adm (adm_email, adm_password, adm_salary, adm_active)
-	VALUES (@email, @password, @salary, 1)
-
-END
-
--- UPDATE ADM SALARY --
-CREATE OR ALTER PROCEDURE SF.UPDATE_AdmSalary
-@id INT,
-@salary FLOAT
-as
-BEGIN
-
-	UPDATE SF.Adm SET adm_salary = @salary WHERE adm_id = @id
-
-END
-
--- UPDATE ADM PASSWORD --
-CREATE OR ALTER PROCEDURE SF.UPDATE_AdmPassword
-@id INT,
-@password VARCHAR(60)
-as
-BEGIN
-
-	UPDATE SF.Adm SET adm_password = @password WHERE adm_id = @id
-
-END
-
--- DELETE ADM --
-CREATE OR ALTER PROCEDURE SF.DELETE_Adm
-@id INT
-as
-BEGIN
-
-	UPDATE SF.Adm SET adm_active = 0 WHERE adm_id = @id
-
-END
-
 -- GET EXERCISE BY MUSCLE --
 CREATE OR ALTER PROCEDURE SF.GET_Exercise
 @id INT

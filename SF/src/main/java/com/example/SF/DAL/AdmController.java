@@ -47,7 +47,7 @@ public class AdmController {
     // http://localhost:8080/adm/postAdm/adm3@gmail.com/password3/1250
     public ResponseEntity<String> postAdm(@PathVariable String email, @PathVariable String password, @PathVariable Double salary){
         try{
-            admService.postAdm(email, password, salary);
+            admService.insertAdm(email, password, salary);
             return ResponseEntity.ok().body("Adm inserted");
         }
 
