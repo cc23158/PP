@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:shapefactory/home.dart';
+import 'package:shapefactory/centralpage.dart';
 
 class Objetivo extends StatelessWidget {
-  Objetivo(String email);
+  const Objetivo(String email, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
         home: Scaffold(
       backgroundColor: const Color(0xff000000),
       body: Padding(
@@ -365,7 +366,7 @@ mostrarPopUp(BuildContext context, String objetivo, AssetImage imagem) {
                     child: const Icon(Icons.verified, color: Colors.green),
                     onPressed: () {
                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => Home()));
+                          MaterialPageRoute(builder: (context) => const CentralPage()));
                     },
                   ),
                 ],

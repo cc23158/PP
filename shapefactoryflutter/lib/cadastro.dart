@@ -25,6 +25,7 @@ class CadastroState extends State<Cadastro> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
         home: Scaffold(
       backgroundColor: const Color(0xff000000),
       body: Align(
@@ -582,7 +583,8 @@ Future<int> postClient(String nome, String email, String data, String sexo,
       Uri.parse('http://localhost:8080/client/insertClient/$nome/$email/$dataReal/$sexo/$peso/$senha'),
      
     );
-    if (info.statusCode == "200") {
+
+    if (info.statusCode == 200) {
       // Successful POST request, handle the response here
       print("Usuário registrado");
       return 1;

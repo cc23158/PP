@@ -1,14 +1,26 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shapefactory/cadastro.dart';
 import 'package:shapefactory/centralpage.dart';
+import 'package:http/http.dart' as http;
 
+class Login extends StatefulWidget {
+Login({super.key});
+  @override
+  LoginState createState() => LoginState();
+  
+}
 
-class Login extends StatelessWidget {
-  const Login({super.key});
+class LoginState extends State<Login>{
+ final controllerEmail = TextEditingController();
+  final controllerSenha = TextEditingController();
+  var mensagemErro = "";
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
         home: Scaffold(
       backgroundColor: const Color(0xff000000),
       body: Align(
@@ -47,7 +59,7 @@ class Login extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
                   child: TextField(
-                    controller: TextEditingController(),
+                    controller: controllerEmail,
                     obscureText: false,
                     textAlign: TextAlign.start,
                     maxLines: 1,
@@ -89,7 +101,7 @@ class Login extends StatelessWidget {
                   ),
                 ),
                 TextField(
-                  controller: TextEditingController(),
+                  controller: controllerSenha,
                   obscureText: true,
                   textAlign: TextAlign.start,
                   maxLines: 1,
@@ -146,6 +158,7 @@ class Login extends StatelessWidget {
                     ),
                   ),
                 ),
+                Text(mensagemErro, style: const TextStyle(color: Colors.red)),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 30, 0, 16),
                   child: Row(
@@ -159,11 +172,24 @@ class Login extends StatelessWidget {
                       Expanded(
                         flex: 1,
                         child: MaterialButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const CentralPage()));
+                          onPressed: () async {
+                            var senha = await getClientPassword(controllerEmail.text);
+                            if (senha == controllerSenha.text) {
+                              setState(() {
+                                mensagemErro = "";
+                              });
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const CentralPage()));
+                            }
+                            else {
+                              setState(() {
+                                mensagemErro = "Usuário ou senha incorretos";
+                              });
+                            }
+
                           },
                           color: Colors.orange,
                           elevation: 0,
@@ -221,5 +247,23 @@ class Login extends StatelessWidget {
         ),
       ),
     ));
+  }
+}
+ 
+
+
+Future<Object?> getClientPassword(String email) async {
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:8080/client/getClientByEmail/$email'),
+    );
+    var decodedResponse = jsonDecode(response.body);
+    if (decodedResponse != null && decodedResponse['client_password'] != null) {
+      return decodedResponse['client_password'];
+    } else {
+      return "Senha não encontrada";
+    }
+  } catch (erro) {
+    return "0";
   }
 }
