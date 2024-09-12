@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shapefactory/home.dart';
 
 class Objetivo extends StatelessWidget {
-  Objetivo(String nome, String email, String dataNascimento, String peso, int sexo, String senha);
+  Objetivo(String email);
 
   @override
   Widget build(BuildContext context) {

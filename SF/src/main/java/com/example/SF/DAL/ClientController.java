@@ -10,10 +10,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+
+
+
 @RestController
 @RequestMapping("/client")
 public class ClientController {
 
+    
     private final ClientService clientService;
 
     public ClientController(ClientService clientService){
@@ -32,13 +36,24 @@ public class ClientController {
         return clientService.getByName(name);
     }
 
-    
+    @CrossOrigin
     @GetMapping("/getClientByEmail/{email}")
     // http://localhost:8080/client/getClientByEmail/roberto.martins@example.com
     public Client getByEmail(@PathVariable String email){
-        return clientService.getByEmail(email);
+
+        Client cliente = clientService.getByEmail(email);
+        if (cliente != null){
+            System.out.println(cliente.getClient_email());
+            return cliente;
+        }
+        else {
+            System.out.println("retornando nulo");
+            return null;
+        }
+        
     }
 
+    @CrossOrigin
     @PostMapping("/insertClient/{name}/{email}/{birthday}/{gender}/{weight}/{password}")
     // http://localhost:8080/client/insertClient/Giovane/giovane.lidorio@example.com/15-11-1999/M/83/senha002
     public ResponseEntity<String> insertClient(@PathVariable String name, @PathVariable String email, @PathVariable String birthday, @PathVariable Character gender, @PathVariable Double weight, @PathVariable String password){

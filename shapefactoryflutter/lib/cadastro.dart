@@ -1,5 +1,6 @@
+
+
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:shapefactory/objetivo.dart';
 import 'package:http/http.dart' as http;
@@ -152,7 +153,7 @@ class CadastroState extends State<Cadastro> {
                     controller: controllerData,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(6),
+                      LengthLimitingTextInputFormatter(8),
                       CardMonthInputFormatter(),
                     ],
                     textAlign: TextAlign.start,
@@ -164,7 +165,7 @@ class CadastroState extends State<Cadastro> {
                       color: Color(0xffffffff),
                     ),
                     decoration: InputDecoration(
-                      hintText: "DD/MM/AA",
+                      hintText: "DD/MM/AAAA",
                       disabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(4.0),
                         borderSide: const BorderSide(
@@ -403,43 +404,69 @@ class CadastroState extends State<Cadastro> {
                     ),
                   ),
                 ),
-                Text(mensagemErro, style: TextStyle(color: Colors.red)),
+                Text(mensagemErro, style: const TextStyle(color: Colors.red)),
                 MaterialButton(
-                  onPressed: () {
-
-                    if (controllerNome.text != "" &&
-                        controllerEmail.text != "" &&
-                        controllerData.text != "" &&
-                        controllerPeso.text != "" &&
-                        controllerSenha.text != "" &&
-                        controllerConfirmarSenha.text != "") {
-                      if (controllerSenha.text.length >= 6) {
-                        if (controllerConfirmarSenha.text ==
-                            controllerSenha.text) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Objetivo(
-                                      controllerNome.text,
-                                      controllerEmail.text,
-                                      controllerData.text,
-                                      controllerPeso.text,
-                                      valor,
-                                      controllerSenha.text)));
+                  onPressed: () async {
+                    var cliente = await getClient(controllerEmail.text);
+                    print(cliente);
+                    if (cliente == "") {
+                      if (controllerNome.text != "" &&
+                          controllerEmail.text != "" &&
+                          controllerData.text != "" &&
+                          controllerPeso.text != "" &&
+                          controllerSenha.text != "" &&
+                          controllerConfirmarSenha.text != "") {
+                        if (controllerSenha.text.length >= 6) {
+                          if (controllerConfirmarSenha.text ==
+                              controllerSenha.text) {
+                            var sexo = "";
+                            switch (valor) {
+                              case 0:
+                                sexo = "M";
+                                break;
+                              case 1:
+                                sexo = "F";
+                                break;
+                            }
+                            var result =await postClient(
+                                controllerNome.text,
+                                controllerEmail.text,
+                                controllerData.text,
+                                sexo,
+                                controllerPeso.text,
+                                controllerSenha.text);
+                            switch (result){
+                              case 0:
+                              setState(() {
+                                mensagemErro = "Falha ao cadastrar";
+                              });
+                              break;
+                              case 1: 
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => Objetivo(controllerEmail.text)));
+                            }
+                          } else {
+                            setState(() {
+                              mensagemErro = "As senhas não são iguais!";
+                            });
+                          }
                         } else {
                           setState(() {
-                            mensagemErro = "As senhas não são iguais!";
+                            mensagemErro =
+                                "A senha deve ter pelo menos 6 caracteres";
                           });
                         }
-                      }
-                      else {
+                      } else {
                         setState(() {
-                          mensagemErro = "A senha deve ter pelo menos 6 caracteres";
+                          mensagemErro = "Preencha todos os campos";
                         });
                       }
+                    } else if (cliente == "0") {
+                      setState(() {
+                        mensagemErro = "Servidor está fora no momento";
+                      });
                     } else {
                       setState(() {
-                        mensagemErro = "Preencha todos os campos";
+                        mensagemErro = "Já existe uma conta com esse email";
                       });
                     }
                   },
@@ -521,7 +548,9 @@ class CardMonthInputFormatter extends TextInputFormatter {
     for (int i = 0; i < newText.length; i++) {
       buffer.write(newText[i]);
       var nonZeroIndex = i + 1;
-      if (nonZeroIndex % 2 == 0 && nonZeroIndex != newText.length) {
+      if (nonZeroIndex % 2 == 0 &&
+          nonZeroIndex != newText.length &&
+          buffer.length < 6) {
         buffer.write('/');
       }
     }
@@ -529,5 +558,40 @@ class CardMonthInputFormatter extends TextInputFormatter {
     return newValue.copyWith(
         text: string,
         selection: TextSelection.collapsed(offset: string.length));
+  }
+}
+
+Future<String> getClient(String email) async {
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:8080/client/getClientByEmail/$email'),
+    );
+    print(response.body);
+    return response.body;
+  } catch (erro) {
+    return "0";
+  }
+}
+
+Future<int> postClient(String nome, String email, String data, String sexo,
+    String peso, String senha) async {
+  try {
+    var dataReal = data.replaceAll(RegExp(r'/'),'-');
+    print('http://localhost:8080/client/insertClient/$nome/$email/$dataReal/$sexo/$peso/$senha');
+    final info = await http.post(
+      Uri.parse('http://localhost:8080/client/insertClient/$nome/$email/$dataReal/$sexo/$peso/$senha'),
+     
+    );
+    if (info.statusCode == "200") {
+      // Successful POST request, handle the response here
+      print("Usuário registrado");
+      return 1;
+    } else {
+      // If the server returns an error response, throw an exception
+      throw Exception('Failed to post data');
+    }
+  } catch (e) {
+    print(e.toString());
+    return 0;
   }
 }

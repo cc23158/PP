@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shapefactory/conta.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
 

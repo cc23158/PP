@@ -1,9 +1,7 @@
 // ignore_for_file: unnecessary_const
 
 import 'package:flutter/material.dart';
-import 'package:shapefactory/home.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:flutter_animated_button/flutter_animated_button.dart';
+
 
 class Conta extends StatefulWidget {
   const Conta({super.key});
@@ -22,12 +20,12 @@ class ContaState extends State<Conta> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff000000),
+      backgroundColor: const Color(0xff000000),
       body: ListView(
         scrollDirection: Axis.vertical,
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         shrinkWrap: false,
-        physics: ScrollPhysics(),
+        physics: const ScrollPhysics(),
         children: const [
           Padding(
             padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
