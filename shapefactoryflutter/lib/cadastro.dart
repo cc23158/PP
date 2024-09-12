@@ -20,7 +20,7 @@ class CadastroState extends State<Cadastro> {
   final controllerNome = TextEditingController();
   final controllerData = TextEditingController();
   var valor = 0;
-  var mensagemErro = "";
+  var mensagemErro = ""; 
 
   @override
   Widget build(BuildContext context) {
