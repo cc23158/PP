@@ -3,6 +3,7 @@ select * from sf.Adm
 select * from sf.Exercise
 select * from sf.Muscle
 select * from sf.Recipe
+select * from sf.History
 
 delete sf.Client
 delete sf.Adm
