@@ -43,11 +43,9 @@ public class ClientController {
 
         Client cliente = clientService.getByEmail(email);
         if (cliente != null){
-            System.out.println(cliente.getClient_email());
             return cliente;
         }
         else {
-            System.out.println("retornando nulo");
             return null;
         }
         
