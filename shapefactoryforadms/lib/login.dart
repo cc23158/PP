@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shapefactoryforadms/centralpage.dart';
@@ -200,12 +202,12 @@ class LoginState extends State<Login> {
                                         setState(() {
                                           mensagemErro = "";
                                         });
-
+                                        var musculosOfc = await getMuscles();
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const CentralPage()));
+                                                    CentralPage(musculos: musculosOfc)));
                                       }
                                       else if (verified == false){
                                         setState(() {
@@ -265,5 +267,28 @@ Future<Object?> verifyAccount(String email, String password) async {
   } catch (erro) {
     print("eae");
     return 0;
+  }
+}
+
+Future<List<String>?> getMuscles() async {
+  print("entrou");
+  var lista = List.filled(1, "Músculo", growable: true);
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:8080/muscle/getAllMuscles'),
+    );
+    print("chegou");
+    var decodedResponse = jsonDecode(response.body);
+    if (decodedResponse != null) {
+      var i = 0;
+      while (lista.length <= decodedResponse.length){
+        lista.add(utf8.decode(decodedResponse[i]["muscle_name"].codeUnits));
+        i++;
+      }
+      print(lista.toString());
+      return lista;
+    }
+  } catch (erro) {
+    print(erro.toString());
   }
 }

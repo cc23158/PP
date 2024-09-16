@@ -18,6 +18,7 @@ public class MuscleController {
         this.muscleService = muscleService;
     }
 
+    @CrossOrigin
     @GetMapping("/getAllMuscles")
     public List<Muscle> getAll(){
         return muscleService.getAll();

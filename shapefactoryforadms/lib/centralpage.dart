@@ -3,21 +3,26 @@ import 'package:shapefactoryforadms/AddExercice.dart';
 import 'package:shapefactoryforadms/EditTraining.dart';
 
 class CentralPage extends StatefulWidget {
-  const CentralPage({super.key});
+  final dynamic musculos;
+
+    const CentralPage({required this.musculos, super.key});
+
 
   @override
   State<StatefulWidget> createState() => CentralPageState();
 }
 
 class CentralPageState extends State<CentralPage> {
-  static const List<Widget> _pages = <Widget>[AddExercice(), EditTraining()];
+
   var _selectedIndex = 0;
+  
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = <Widget>[AddExercice(widget.musculos), const EditTraining()];
     return Scaffold(
       backgroundColor: Colors.black,
       body: Center(
-        child: _pages.elementAt(_selectedIndex), //New
+        child: pages.elementAt(_selectedIndex), //New
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
