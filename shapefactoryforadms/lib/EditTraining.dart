@@ -14,6 +14,7 @@ class EditTrainingState extends State<EditTraining>{
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
+      debugShowCheckedModeBanner: false,
     );
   }
 }

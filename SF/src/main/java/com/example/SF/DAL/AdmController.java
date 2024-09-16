@@ -24,6 +24,7 @@ public class AdmController {
         return admService.getAll();
     }
 
+    @CrossOrigin
     @GetMapping("/verify/{email}/{password}")
     // http://localhost:8080/adm/verify/adm1@gmail.com/password1
     public ResponseEntity<String> verify(@PathVariable String email, @PathVariable String password) {

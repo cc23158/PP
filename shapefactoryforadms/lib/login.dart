@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -14,9 +13,20 @@ class LoginState extends State<Login> {
   final controllerEmail = TextEditingController();
   final controllerSenha = TextEditingController();
   var mensagemErro = "";
+  var corBorda;
 
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.of(context).size.width >
+        MediaQuery.of(context).size.height) {
+      setState(() {
+        corBorda = const BorderSide(color: Colors.grey);
+      });
+    } else {
+      setState(() {
+        corBorda = const BorderSide(color: Colors.black);
+      });
+    }
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -24,15 +34,16 @@ class LoginState extends State<Login> {
         body: Align(
             alignment: Alignment.center,
             child: Container(
-              width: MediaQuery.of(context).size.width * 0.2,
-              height: MediaQuery.of(context).size.height * 0.5,
-              constraints: BoxConstraints(minHeight: 700, minWidth: 400),
+                width: MediaQuery.of(context).size.width * 0.2,
+                height: MediaQuery.of(context).size.height * 0.5,
+                constraints:
+                    const BoxConstraints(minHeight: 700, minWidth: 400),
                 child: Card(
-        
                   color: Colors.black,
-                  shape: const RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.grey),
-                      borderRadius: BorderRadius.all(Radius.circular(12))),
+                  shape: RoundedRectangleBorder(
+                      side: corBorda,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(12))),
                   child: SingleChildScrollView(
                       child: Padding(
                     padding: const EdgeInsets.all(10),
@@ -44,9 +55,9 @@ class LoginState extends State<Login> {
                           ///***If you have exported images you must have to copy those images in assets/images directory.
                           const Image(
                             image: AssetImage(
-                                "assets/images/SF-removebg-preview.png"),
+                                "assets/images/shapeforadmslogo.png"),
                             fit: BoxFit.cover,
-                          ), 
+                          ),
 
                           const Align(
                             alignment: Alignment.centerLeft,
@@ -181,32 +192,43 @@ class LoginState extends State<Login> {
                                   flex: 1,
                                   child: MaterialButton(
                                     onPressed: () async {
-                                      var senha = await getClientPassword(
-                                          controllerEmail.text);
-                                      if (senha == controllerSenha.text) {
+                                      var verified = await verifyAccount(
+                                          controllerEmail.text,
+                                          controllerSenha.text);
+                                          print(verified);
+                                      if (verified == true) {
                                         setState(() {
                                           mensagemErro = "";
                                         });
+
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     const CentralPage()));
-                                      } else {
+                                      }
+                                      else if (verified == false){
                                         setState(() {
                                           mensagemErro =
                                               "Usuário ou senha incorretos";
                                         });
                                       }
+                                      else{
+                                        setState(() {
+                                          mensagemErro = "Erro no servidor";
+                                        });
+                                      }
+ 
+                                      
                                     },
-                                    color: Colors.orange,
+                                    color: const Color.fromARGB(255, 255, 120, 40),
                                     elevation: 0,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12.0),
                                     ),
                                     padding: const EdgeInsets.all(16),
                                     textColor: const Color(0xffffffff),
-                                    height: 40,
+                                    height: 60,
                                     minWidth: 140,
                                     child: const Text(
                                       "Login",
@@ -229,18 +251,19 @@ class LoginState extends State<Login> {
   }
 }
 
-Future<Object?> getClientPassword(String email) async {
+Future<Object?> verifyAccount(String email, String password) async {
   try {
     final response = await http.get(
-      Uri.parse('http://localhost:8080/client/getClientByEmail/$email'),
+      Uri.parse('http://localhost:8080/adm/verify/$email/$password'),
     );
-    var decodedResponse = jsonDecode(response.body);
-    if (decodedResponse != null && decodedResponse['client_password'] != null) {
-      return decodedResponse['client_password'];
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return true;
     } else {
-      return "Senha não encontrada";
+      return false;
     }
   } catch (erro) {
-    return "0";
+    print("eae");
+    return 0;
   }
 }
