@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -197,7 +196,7 @@ class LoginState extends State<Login> {
                                       var verified = await verifyAccount(
                                           controllerEmail.text,
                                           controllerSenha.text);
-                                          print(verified);
+                                      print(verified);
                                       if (verified == true) {
                                         setState(() {
                                           mensagemErro = "";
@@ -207,23 +206,22 @@ class LoginState extends State<Login> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    CentralPage(musculos: musculosOfc)));
-                                      }
-                                      else if (verified == false){
+                                                    CentralPage(
+                                                        musculos:
+                                                            musculosOfc)));
+                                      } else if (verified == false) {
                                         setState(() {
                                           mensagemErro =
                                               "Usuário ou senha incorretos";
                                         });
-                                      }
-                                      else{
+                                      } else {
                                         setState(() {
                                           mensagemErro = "Erro no servidor";
                                         });
                                       }
- 
-                                      
                                     },
-                                    color: const Color.fromARGB(255, 255, 120, 40),
+                                    color:
+                                        const Color.fromARGB(255, 255, 120, 40),
                                     elevation: 0,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12.0),
@@ -265,7 +263,7 @@ Future<Object?> verifyAccount(String email, String password) async {
       return false;
     }
   } catch (erro) {
-    print("eae");
+    print(erro.toString());
     return 0;
   }
 }
@@ -281,7 +279,7 @@ Future<List<String>?> getMuscles() async {
     var decodedResponse = jsonDecode(response.body);
     if (decodedResponse != null) {
       var i = 0;
-      while (lista.length <= decodedResponse.length){
+      while (lista.length <= decodedResponse.length) {
         lista.add(utf8.decode(decodedResponse[i]["muscle_name"].codeUnits));
         i++;
       }
