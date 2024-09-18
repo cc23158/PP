@@ -4,39 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bb00d4d3-e614-48f3-8870-72260a2c7812" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Procfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/AdmService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/AdmService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/AdmController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/AdmController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/ClientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/ClientController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IAdm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IAdm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IExercise.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IExercise.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/SF-0.0.1-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/SF-0.0.1-SNAPSHOT.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/SF-0.0.1-SNAPSHOT.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/target/SF-0.0.1-SNAPSHOT.jar.original" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/AdmService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/AdmService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/ClientService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/ClientService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/ExerciseService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/ExerciseService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/MuscleService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/MuscleService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/RecipeService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/RecipeService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/AdmController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/AdmController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/ClientController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/ClientController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/ExerciseController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/ExerciseController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/MuscleController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/MuscleController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/RecipeController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/RecipeController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/DTO/Adm.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/DTO/Adm.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/DTO/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/DTO/Client.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/DTO/Exercise.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/DTO/Exercise.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/DTO/Muscle.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/DTO/Muscle.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/DTO/Recipe.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/DTO/Recipe.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/Repository/IAdm.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/Repository/IAdm.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/Repository/IMuscle.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/Repository/IMuscle.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/Repository/IRecipe.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/Repository/IRecipe.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/SfApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/SfApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/test-classes/com/example/SF/SfApplicationTests.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/test-classes/com/example/SF/SfApplicationTests.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SF_sp.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../SF_sp.sql" afterDir="false" />
-    </list>
+    <list default="true" id="9dd23e01-38f0-453b-9038-d6604ea6e580" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -50,22 +18,21 @@
       </list>
     </option>
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="MarkdownSettingsMigration">
-    <option name="stateVersion" value="1" />
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
   </component>
   <component name="MavenRunner">
     <option name="skipTests" value="true" />
   </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 6
-}</component>
-  <component name="ProjectId" id="2kQOdDB3HmhJqJr6iRZ5VVixMHf" />
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="2mFvmV9kaFKGFQaCvsMYi0DQSqV" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -79,30 +46,19 @@
     "Maven.SF [package].executor": "Run",
     "Maven.SF [validate].executor": "Run",
     "Maven.SF [verify].executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
-    "last_directory_selection": "C:/Users/vymim/OneDrive/Área de Trabalho/PP/SF/src/main/java/com/example/SF",
-    "last_opened_file_path": "C:/Users/vymim/OneDrive/Área de Trabalho/PP/SF"
+    "last_directory_selection": "C:/Users/vymim/OneDrive/Área de Trabalho/Documentos/SF/src/main/java/com/example/SF"
   }
 }]]></component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="jdk-21.0.1-openjdk-21.0.1-4caba194b151-23eed401" />
-      </set>
-    </attachedChunks>
-  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="bb00d4d3-e614-48f3-8870-72260a2c7812" name="Changes" comment="" />
-      <created>1723212418618</created>
+      <changelist id="9dd23e01-38f0-453b-9038-d6604ea6e580" name="Changes" comment="" />
+      <created>1726685302236</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1723212418618</updated>
+      <updated>1726685302236</updated>
     </task>
     <servers />
   </component>

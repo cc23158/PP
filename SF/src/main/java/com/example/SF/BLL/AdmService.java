@@ -10,7 +10,6 @@ import java.util.List;
 
 @Service
 public class AdmService {
-
     private final IAdm iAdm;
 
     @Autowired
@@ -18,7 +17,7 @@ public class AdmService {
         this.iAdm = iAdm;
     }
 
-    public List<Adm> getAll(){
+    public List<Adm> getAll() {
         return iAdm.findAll();
     }
 
@@ -40,7 +39,7 @@ public class AdmService {
 
         catch (Exception e){ throw new Exception(e); }
     }
-    
+
     @Transactional
     public void updateAdmPassword(Integer id, String password) throws Exception{
         try{ iAdm.updateAdmPassword(id, password); }
@@ -49,8 +48,9 @@ public class AdmService {
     }
 
     @Transactional
-    public void deleteAdm(Integer id){
-        iAdm.deleteAdm(id);
-    }
+    public void deleteAdm(Integer id) throws Exception{
+        try{ iAdm.deleteAdm(id); }
 
+        catch (Exception e){ throw new Exception(e); }
+    }
 }

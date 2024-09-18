@@ -4,19 +4,17 @@ import com.example.SF.DTO.Adm;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 
 public interface IAdm extends JpaRepository<Adm, Integer> {
-
-    @Procedure(procedureName = "SF.GET_Adm")
+    @Query("SELECT SF.GET_Adm(:admEmail, :admPassword)")
     boolean verify(
             @Param("admEmail") String email,
             @Param("admPassword") String password
     );
 
     @Modifying
-    @Query("INSERT INTO Adm (adm_email, adm_password, adm_salary, adm_active) VALUES (:admEmail, :admPassword, :admSalary, true)")
+    @Query("INSERT INTO Adm(adm_email, adm_password, adm_salary, adm_active) VALUES (:admEmail, :admPassword, :admSalary, TRUE)")
     void insertAdm(
             @Param("admEmail") String email,
             @Param("admPassword") String password,
@@ -38,6 +36,6 @@ public interface IAdm extends JpaRepository<Adm, Integer> {
     );
 
     @Modifying
-    @Query("UPDATE Adm SET adm_active = false WHERE adm_id = :admId")
+    @Query("UPDATE Adm SET adm_active = FALSE WHERE adm_id = :admId")
     void deleteAdm(@Param("admId") Integer id);
 }

@@ -1,19 +1,23 @@
 package com.example.SF.DTO;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Adm", schema = "SF")
+@Table(name = "adm", schema = "sf")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class Adm {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "adm_id")
@@ -30,5 +34,4 @@ public class Adm {
 
     @Column(name = "adm_active")
     private Boolean adm_active;
-
 }

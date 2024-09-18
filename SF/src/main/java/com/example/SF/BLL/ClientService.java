@@ -11,7 +11,6 @@ import java.util.List;
 
 @Service
 public class ClientService {
-
     private final IClient iClient;
 
     @Autowired
@@ -20,7 +19,7 @@ public class ClientService {
     }
 
     public List<Client> getAll(){
-        return iClient.findAll();
+        return  iClient.findAll();
     }
 
     @Transactional
@@ -29,52 +28,35 @@ public class ClientService {
     }
 
     @Transactional
-    public void insertClient(String name, String email, LocalDate birthday, Character gender, Double weight, String password) throws Exception{
-        try{
-            iClient.insertClient(name, email, birthday, gender, weight, password);
-        }
+    public Client getByEmail(String email){
+        return iClient.getByEmail(email);
+    }
 
-        catch (Exception e){
-            throw new Exception(e);
-        }
+    @Transactional
+    public void insertClient(String name, String email, LocalDate birthday, Character gender, Double weight, String password) throws Exception{
+        try{ iClient.insertClient(name, email, birthday, gender, weight, password); }
+
+        catch (Exception e){ throw new Exception(e); }
     }
 
     @Transactional
     public void updateClientData(Integer id, Double weight) throws Exception{
-        try{
-            iClient.updateClientData(id, weight);
-        }
+        try{ iClient.updateClientData(id, weight); }
 
-        catch (Exception e){
-            throw new Exception(e);
-        }
+        catch (Exception e){ throw new Exception(e); }
     }
 
     @Transactional
     public void updateClientPassword(Integer id, String password) throws Exception{
-        try {
-            iClient.updateClientPassword(id, password);
-        }
+        try{ iClient.updateClientPassword(id, password); }
 
-        catch (Exception e){
-            throw new Exception(e);
-        }
+        catch (Exception e){ throw new Exception(e); }
     }
 
     @Transactional
-    public void deleteClient(Integer id) throws Exception{
-        try{
-            iClient.deleteClient(id);
-        }
+    public void deleteClient(Integer id) throws Exception {
+        try { iClient.deleteClient(id); }
 
-        catch (Exception e){
-            throw new Exception(e);
-        }
+        catch (Exception e){ throw new Exception(e); }
     }
-
-    @Transactional
-    public Client getByEmail(String email){
-            return iClient.getByEmail(email);
-    }
-
 }

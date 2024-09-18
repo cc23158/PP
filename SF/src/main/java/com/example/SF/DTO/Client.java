@@ -1,9 +1,14 @@
 package com.example.SF.DTO;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -15,7 +20,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class Client {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer client_id;
@@ -40,5 +44,4 @@ public class Client {
 
     @Column(name = "client_active")
     private Boolean client_active;
-
 }
