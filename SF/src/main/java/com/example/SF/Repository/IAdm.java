@@ -14,7 +14,7 @@ public interface IAdm extends JpaRepository<Adm, Integer> {
     );
 
     @Modifying
-    @Query("INSERT INTO Adm(adm_email, adm_password, adm_salary, adm_active) VALUES (:admEmail, :admPassword, :admSalary, TRUE)")
+    @Query("INSERT INTO Adm(adm_email, adm_password, adm_salary, adm_active) VALUES(:admEmail, :admPassword, :admSalary, TRUE)")
     void insertAdm(
             @Param("admEmail") String email,
             @Param("admPassword") String password,

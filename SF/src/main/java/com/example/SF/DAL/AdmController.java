@@ -39,7 +39,7 @@ public class AdmController {
     }
 
     @CrossOrigin
-    @PostMapping("/postAdm/{email}/{password}/{salary}")
+    @PostMapping("/insertAdm/{email}/{password}/{salary}")
     // http://localhost:8080/adm/postAdm/adm1@gmail.com/senha1/1250
     public ResponseEntity<String> postAdm(@PathVariable String email, @PathVariable String password, @PathVariable Double salary){
         try{
