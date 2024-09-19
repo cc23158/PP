@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shapefactoryforadms/AddExercice.dart';
+import 'package:shapefactoryforadms/AddExercise.dart';
 import 'package:shapefactoryforadms/EditTraining.dart';
 
 class CentralPage extends StatefulWidget {
@@ -18,7 +18,7 @@ class CentralPageState extends State<CentralPage> {
   
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = <Widget>[AddExercice(widget.musculos), const EditTraining()];
+    final List<Widget> pages = <Widget>[AddExercise(widget.musculos), const EditTraining()];
     return Scaffold(
       backgroundColor: Colors.black,
       body: Center(

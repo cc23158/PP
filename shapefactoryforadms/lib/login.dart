@@ -270,7 +270,7 @@ Future<Object?> verifyAccount(String email, String password) async {
 
 Future<List<String>?> getMuscles() async {
   print("entrou");
-  var lista = List.filled(1, "Músculo", growable: true);
+  var lista = List<String>.empty(growable: true);
   try {
     final response = await http.get(
       Uri.parse('http://localhost:8080/muscle/getAllMuscles'),
@@ -279,14 +279,19 @@ Future<List<String>?> getMuscles() async {
     var decodedResponse = jsonDecode(response.body);
     if (decodedResponse != null) {
       var i = 0;
-      while (lista.length <= decodedResponse.length) {
+      while (lista.length < decodedResponse.length) {
         lista.add(utf8.decode(decodedResponse[i]["muscle_name"].codeUnits));
+        print("adsd");
         i++;
       }
       print(lista.toString());
       return lista;
     }
+    else {
+      return null;
+    }
   } catch (erro) {
     print(erro.toString());
+    return null;
   }
 }

@@ -5,14 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class AddExercice extends StatefulWidget {
+class AddExercise extends StatefulWidget {
   final dynamic musculos;
-  const AddExercice(this.musculos, {super.key});
+  const AddExercise(this.musculos, {super.key});
   @override
   AddExerciceState createState() => AddExerciceState();
 }
 
-class AddExerciceState extends State<AddExercice> {
+class AddExerciceState extends State<AddExercise> {
   final controllerNome = List<TextEditingController>.empty(growable: true);
   final controllerUrl = List<TextEditingController>.empty(growable: true);
   final controllerMusculo = List<TextEditingController>.empty(growable: true);
@@ -157,6 +157,7 @@ class AddExerciceState extends State<AddExercice> {
                     Padding(
                         padding: const EdgeInsets.all(5),
                         child: DropdownMenu<String>(
+                          hintText: "Músculo",
                           controller:
                               controllerMusculo[controllerMusculo.length - 1],
                           inputDecorationTheme: InputDecorationTheme(
@@ -187,6 +188,12 @@ class AddExerciceState extends State<AddExercice> {
                             filled: true,
                             fillColor: const Color(0x00ffffff),
                             isDense: false,
+                            hintStyle: const TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontStyle: FontStyle.normal,
+                              fontSize: 16,
+                              color: Color.fromARGB(255, 0, 0, 0),
+                            ),
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 8, horizontal: 12),
                           ),
@@ -260,7 +267,7 @@ class AddExerciceState extends State<AddExercice> {
             body: Align(
                 alignment: Alignment.center,
                 child: Container(
-                    width: MediaQuery.of(context).size.width * 0.36,
+                    width: MediaQuery.of(context).size.width * 0.5,
                     height: MediaQuery.of(context).size.height * 0.5,
                     constraints:
                         const BoxConstraints(minHeight: 700, minWidth: 400),
@@ -314,13 +321,10 @@ class AddExerciceState extends State<AddExercice> {
                                                       40);
                                             },
                                             color: Colors.orange,
+                                            minWidth: 1000,
                                             shape: const RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(12))),
-                                            minWidth: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.5,
                                             padding: const EdgeInsets.all(20),
                                             child: const Row(
                                               mainAxisAlignment:
