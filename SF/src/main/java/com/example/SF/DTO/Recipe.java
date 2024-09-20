@@ -24,11 +24,11 @@ public class Recipe {
     private Integer recipe_id;
 
     @ManyToOne
-    @Column(name = "recipe_client", nullable = false)
+    @JoinColumn(name = "recipe_client", referencedColumnName = "client_id", nullable = false)
     private Client recipe_client;
 
     @ManyToOne
-    @Column(name = "recipe_exercise", nullable = false)
+    @JoinColumn(name = "recipe_exercise", referencedColumnName = "exercise_id", nullable = false)
     private Exercise recipe_exercise;
 
     @Column(name = "recipe_weight", nullable = true)

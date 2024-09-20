@@ -17,7 +17,7 @@ public interface IExercise extends JpaRepository<Exercise, Integer> {
     @Query("INSERT INTO Exercise(exercise_name, exercise_image, exercise_path, exercise_muscle, exercise_active) VALUES(:exerciseName, :exerciseImage, :exercisePath, :exerciseMuscle, TRUE)")
     void insertExercise(
             @Param("exerciseName") String name,
-            @Param("exerciseImage") byte[] image,
+            @Param("exerciseImage") String image,
             @Param("exercisePath") String path,
             @Param("exerciseMuscle") Integer muscleId
     );
@@ -26,7 +26,7 @@ public interface IExercise extends JpaRepository<Exercise, Integer> {
     @Query("UPDATE Exercise SET exercise_image = :exerciseImage WHERE exercise_id = :exerciseId")
     void updateExerciseImage(
             @Param("exerciseId") Integer id,
-            @Param("exerciseImage") byte[] image
+            @Param("exerciseImage") String image
     );
 
     @Modifying
@@ -37,6 +37,6 @@ public interface IExercise extends JpaRepository<Exercise, Integer> {
     );
 
     @Modifying
-    @Query("UDPATE Exercise SET exercise_active = FALSE WHERE exercise_id = :exerciseId")
+    @Query("UPDATE Exercise SET exercise_active = FALSE WHERE exercise_id = :exerciseId")
     void deleteExercise(@Param("exerciseId") Integer id);
 }

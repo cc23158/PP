@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface IRecipe extends JpaRepository<Recipe, Integer> {
     @Modifying
-    @Query("INSERT INTO Recipe(recipe_client, recipe_exercise, recipe_weight) VALUES(:recipeClient, :recipeExercise, recipeWeight)")
+    @Query("INSERT INTO Recipe(recipe_client, recipe_exercise, recipe_weight) VALUES(:recipeClient, :recipeExercise, :recipeWeight)")
     void insertRecipe(
             @Param("recipeClient") Integer clientId,
             @Param("recipeExercise") Integer exerciseId,

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public class MuscleService {
-    private IMuscle iMuscle;
+    private final IMuscle iMuscle;
 
     @Autowired
     public MuscleService(IMuscle iMuscle){

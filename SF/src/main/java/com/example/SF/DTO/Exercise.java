@@ -22,7 +22,7 @@ public class Exercise {
     private String exercise_name;
 
     @Column(name = "exercise_image", nullable = false)
-    private byte[] exercise_image;
+    private String exercise_image;
 
     @Column(name = "exercise_path", nullable = false)
     private String exercise_path;

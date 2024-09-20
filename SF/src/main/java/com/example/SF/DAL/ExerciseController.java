@@ -29,12 +29,11 @@ public class ExerciseController {
     public ResponseEntity<String> insertExercise(
             @PathVariable Integer muscleId,
             @PathVariable String name,
-            @RequestParam MultipartFile image,
+            @RequestParam String image,
             @RequestParam String path
     ){
         try {
-            byte[] imageBytes = image.getBytes();
-            exerciseService.insertExercise(name, imageBytes, path, muscleId);
+            exerciseService.insertExercise(name, image, path, muscleId);
             return ResponseEntity.ok().body("Exercise inserted");
         }
 
@@ -45,11 +44,10 @@ public class ExerciseController {
     @PutMapping("/updateExerciseImage/{id}")
     public ResponseEntity<String> updateExerciseImage(
             @PathVariable Integer id,
-            @RequestParam MultipartFile image
+            @RequestParam String image
     ){
         try {
-            byte[] imageBytes = image.getBytes();
-            exerciseService.updateExerciseImage(id, imageBytes);
+            exerciseService.updateExerciseImage(id, image);
             return ResponseEntity.ok().body("Exercise updated");
         }
 
@@ -58,7 +56,7 @@ public class ExerciseController {
 
     @CrossOrigin
     @PutMapping("/updateExercisePath/{id}")
-    public ResponseEntity<String> updateExerciseImage(
+    public ResponseEntity<String> updateExercisePath(
             @PathVariable Integer id,
             @RequestParam String path
     ){

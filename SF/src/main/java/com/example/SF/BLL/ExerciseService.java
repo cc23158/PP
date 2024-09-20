@@ -22,14 +22,14 @@ public class ExerciseService {
     }
 
     @Transactional
-    public void insertExercise(String name, byte[] image, String path, Integer muscleId) throws Exception{
+    public void insertExercise(String name, String image, String path, Integer muscleId) throws Exception{
         try{ iExercise.insertExercise(name, image, path, muscleId); }
 
         catch (Exception e){ throw new Exception(e); }
     }
 
     @Transactional
-    public void updateExerciseImage(Integer id, byte[] image) throws Exception{
+    public void updateExerciseImage(Integer id, String image) throws Exception{
         try { iExercise.updateExerciseImage(id, image); }
 
         catch (Exception e){ throw new Exception(e); }
