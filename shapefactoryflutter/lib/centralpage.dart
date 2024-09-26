@@ -11,19 +11,19 @@ class CentralPage extends StatefulWidget {
 }
 
 class CentralPageState extends State<CentralPage> {
-  static const List<Widget> _pages = <Widget>[Home(), Relatorio(), Conta()];
+  static List<Widget> _pages = <Widget>[Home(), Relatorio(), Conta()]; // Remover 'const'
   var _selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: _pages.elementAt(_selectedIndex), //New
+        child: _pages.elementAt(_selectedIndex), // New
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.article_rounded), label: "Relatório"),
+          BottomNavigationBarItem(icon: Icon(Icons.article_rounded), label: "Relatório"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Conta"),
         ],
         backgroundColor: Colors.black,
@@ -39,3 +39,10 @@ class CentralPageState extends State<CentralPage> {
     );
   }
 }
+
+
+
+
+
+
+
