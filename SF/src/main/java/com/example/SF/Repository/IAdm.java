@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface IAdm extends JpaRepository<Adm, Integer> {
-    @Query("SELECT SF.GET_Adm(:admEmail, :admPassword)")
+    @Query(value = "SELECT SF.GET_Adm(:admEmail, :admPassword)", nativeQuery = true)
     boolean verify(
             @Param("admEmail") String email,
             @Param("admPassword") String password

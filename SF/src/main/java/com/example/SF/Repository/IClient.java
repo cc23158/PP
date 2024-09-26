@@ -16,7 +16,6 @@ public interface IClient extends JpaRepository<Client, Integer> {
     @Query(value = "SELECT * FROM SF.GET_ClientByEmail(:clientEmail)", nativeQuery = true)
     Client getByEmail(@Param("clientEmail") String email);
 
-
     @Modifying
     @Query("INSERT INTO Client(client_name, client_email, client_birthday, client_gender, client_weight, client_password, client_active) VALUES(:clientName, :clientEmail, :clientBirthday, :clientGender, :clientWeight, :clientPassword, TRUE)")
     void insertClient(

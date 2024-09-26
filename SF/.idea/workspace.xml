@@ -5,16 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9dd23e01-38f0-453b-9038-d6604ea6e580" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/DTO/History.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/ExerciseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/ExerciseService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/MuscleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/MuscleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/ExerciseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/ExerciseController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/DTO/Exercise.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/DTO/Exercise.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/DTO/Recipe.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/DTO/Recipe.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IExercise.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IExercise.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IMuscle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IMuscle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IRecipe.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IRecipe.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/ClientService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/ClientService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/ClientController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/ClientController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IAdm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IAdm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/SF-0.0.1-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/SF-0.0.1-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/SF-0.0.1-SNAPSHOT.jar.original" beforeDir="false" afterPath="$PROJECT_DIR$/target/SF-0.0.1-SNAPSHOT.jar.original" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/ClientService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/BLL/ClientService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/ClientController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/example/SF/DAL/ClientController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -27,14 +27,14 @@ public class ClientController {
     }
 
     @CrossOrigin
-    @GetMapping("/getClientByName/{name}")
+    @GetMapping("/getByName/{name}")
     // http://localhost:8080/client/getClientByName/Teste A
     public Client getByName(@PathVariable String name){
         return clientService.getByName(name);
     }
 
     @CrossOrigin
-    @GetMapping("/getClientByEmail/{email}")
+    @GetMapping("/getByEmail/{email}")
     // http://localhost:8080/client/getClientByEmail/testeA@gmail.com
     public Client getByEmail(@PathVariable String email){
         Client client = clientService.getByEmail(email);
@@ -44,7 +44,7 @@ public class ClientController {
     }
 
     @CrossOrigin
-    @PostMapping("/insertClient/{name}/{email}/{birthday}/{gender}/{weight}/{password}")
+    @PostMapping("/insert/{name}/{email}/{birthday}/{gender}/{weight}/{password}")
     // http://localhost:8080/client/insertClient/Lucas/lucas@gmail.com/2010-10-10/M/70/lucas123
     public ResponseEntity<String> insertClient(@PathVariable String name, @PathVariable String email, @PathVariable String birthday, @PathVariable Character gender, @PathVariable Double weight, @PathVariable String password){
         try{
@@ -54,7 +54,7 @@ public class ClientController {
             return ResponseEntity.ok("Client inserted");
         }
 
-        catch(Exception e){ return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Client cannot be inserted"); }
+        catch(Exception e){ return ResponseEntity.badRequest().body("Client cannot be inserted"); }
     }
 
     @CrossOrigin
@@ -66,7 +66,7 @@ public class ClientController {
             return ResponseEntity.ok().body("Client updated");
         }
 
-        catch (Exception e){ return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Client's data cannot be changed"); }
+        catch (Exception e){ return ResponseEntity.badRequest().body("Client's data cannot be changed"); }
     }
 
     @CrossOrigin
@@ -78,11 +78,11 @@ public class ClientController {
             return ResponseEntity.ok().body("Client updated");
         }
 
-        catch (Exception e){ return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Client's password cannot be changed"); }
+        catch (Exception e){ return ResponseEntity.badRequest().body("Client's password cannot be changed"); }
     }
 
     @CrossOrigin
-    @DeleteMapping("/deleteClient/{id}")
+    @DeleteMapping("/delete/{id}")
     // http://localhost:8080/client/deleteClient/6
     public ResponseEntity<String> deleteClient(@PathVariable Integer id){
         try{
@@ -90,6 +90,6 @@ public class ClientController {
             return ResponseEntity.ok("Client deleted");
         }
 
-        catch (Exception e){ return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Client cannot be deleted"); }
+        catch (Exception e){ return ResponseEntity.badRequest().body("Client cannot be deleted"); }
     }
 }
