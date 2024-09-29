@@ -4,6 +4,7 @@ import com.example.SF.DTO.Muscle;
 import com.example.SF.Repository.IMuscle;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,13 +19,37 @@ public class MuscleService {
     }
 
     public List<Muscle> getAll(){
-        return iMuscle.findAll();
+        try{
+            return iMuscle.findAll();
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot get muscles: " + e.getMessage());
+            return List.of();
+        }
     }
 
     @Transactional
-    public void insertMuscle(String name) throws Exception{
-        try{ iMuscle.insertMuscle(name); }
+    public Muscle insert(String name){
+        try{
+            Muscle muscle = new Muscle();
+            muscle.setMuscle_name(name);
 
-        catch (Exception e) { throw new Exception(e); }
+            return iMuscle.save(muscle);
+        }
+
+        catch (Exception e){
+            return null;
+        }
+    }
+
+    public void delete(Integer id){
+        try{
+            iMuscle.deleteById(id);
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot delete muscle: " + e.getMessage());
+        }
     }
 }

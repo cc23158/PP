@@ -2,7 +2,7 @@ package com.example.SF.DAL;
 
 import com.example.SF.BLL.ClientService;
 import com.example.SF.DTO.Client;
-import org.springframework.http.HttpStatus;
+import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,22 +21,19 @@ public class ClientController {
 
     @CrossOrigin
     @GetMapping("/getAll")
-    // http://localhost:8080/client/getAll
     public List<Client> getAll(){
         return clientService.getAll();
     }
 
     @CrossOrigin
-    @GetMapping("/getByName/{name}")
-    // http://localhost:8080/client/getClientByName/Teste A
-    public Client getByName(@PathVariable String name){
+    @GetMapping("/getByName")
+    public Client getByName(@RequestParam("name") String name){
         return clientService.getByName(name);
     }
 
     @CrossOrigin
-    @GetMapping("/getByEmail/{email}")
-    // http://localhost:8080/client/getClientByEmail/testeA@gmail.com
-    public Client getByEmail(@PathVariable String email){
+    @GetMapping("/getByEmail")
+    public Client getByEmail(@RequestParam("email") String email){
         Client client = clientService.getByEmail(email);
         if (client != null){ return client; }
 
@@ -44,52 +41,61 @@ public class ClientController {
     }
 
     @CrossOrigin
-    @PostMapping("/insert/{name}/{email}/{birthday}/{gender}/{weight}/{password}")
-    // http://localhost:8080/client/insertClient/Lucas/lucas@gmail.com/2010-10-10/M/70/lucas123
-    public ResponseEntity<String> insertClient(@PathVariable String name, @PathVariable String email, @PathVariable String birthday, @PathVariable Character gender, @PathVariable Double weight, @PathVariable String password){
+    @PostMapping("/insert")
+    public Client insert(
+            @RequestParam("name") String name,
+            @RequestParam("email") String email,
+            @RequestParam("birthday") String birthday,
+            @RequestParam("gender") Character gender,
+            @RequestParam("weight") Double weight,
+            @RequestParam("password") String password
+    ){
         try{
             LocalDate dateBirthday = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-            clientService.insertClient(name, email, dateBirthday, gender, weight, password);
-            return ResponseEntity.ok("Client inserted");
+            return clientService.save(name, email, dateBirthday, gender, weight, password);
         }
 
-        catch(Exception e){ return ResponseEntity.badRequest().body("Client cannot be inserted"); }
+        catch(Exception e){
+            return null;
+        }
     }
 
     @CrossOrigin
-    @PutMapping("/updateClientData/{id}/{weight}")
-    // http://localhost:8080/client/updateClientData/1/80
-    public ResponseEntity<String> updateClientData(@PathVariable Integer id, @PathVariable Double weight){
+    @PutMapping("/updateData")
+    public ResponseEntity<String> updateData(@RequestParam("id") Integer id, @RequestParam("weight") Double weight){
         try{
-            clientService.updateClientData(id, weight);
-            return ResponseEntity.ok().body("Client updated");
+            clientService.updateData(id, weight);
+            return ResponseEntity.ok("Client's data changed");
         }
 
-        catch (Exception e){ return ResponseEntity.badRequest().body("Client's data cannot be changed"); }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body("Cannot change client's data");
+        }
     }
 
     @CrossOrigin
-    @PutMapping("/updateClientPassword/{id}/{password}")
-    // http://localhost:8080/client/updateClientPassword/6/lucas312
-    public ResponseEntity<String> updateClientPassword(@PathVariable Integer id, @PathVariable String password){
+    @PutMapping("/updatePassword")
+    public ResponseEntity<String> updatePassword(@RequestParam("id") Integer id, @RequestParam("password") String password){
         try{
-            clientService.updateClientPassword(id, password);
-            return ResponseEntity.ok().body("Client updated");
+            clientService.updatePassword(id, password);
+            return ResponseEntity.ok("Client's password changed");
         }
 
-        catch (Exception e){ return ResponseEntity.badRequest().body("Client's password cannot be changed"); }
+        catch (Exception e){
+            return ResponseEntity.badRequest().body("Cannot change client's password");
+        }
     }
 
     @CrossOrigin
-    @DeleteMapping("/delete/{id}")
-    // http://localhost:8080/client/deleteClient/6
-    public ResponseEntity<String> deleteClient(@PathVariable Integer id){
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> delete(@RequestParam("id") Integer id){
         try{
-            clientService.deleteClient(id);
+            clientService.delete(id);
             return ResponseEntity.ok("Client deleted");
         }
 
-        catch (Exception e){ return ResponseEntity.badRequest().body("Client cannot be deleted"); }
+        catch (Exception e){
+            return ResponseEntity.badRequest().body("Cannot delete client");
+        }
     }
 }

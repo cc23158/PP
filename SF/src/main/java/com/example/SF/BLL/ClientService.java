@@ -25,8 +25,33 @@ public class ClientService {
         }
 
         catch (Exception e){
-            System.out.println("Não foi possível pegar os dados dos clientes: " + e.getMessage());
+            System.out.println("Cannot get clients: " + e.getMessage());
             return List.of();
+        }
+    }
+
+    public Client save(String name, String email, LocalDate birthday, Character gender, Double weight, String password){
+        try{
+            Client client = new Client();
+            client.setClient_name(name);
+            client.setClient_email(email);
+            client.setClient_birthday(birthday);
+            client.setClient_gender(gender);
+            client.setClient_weight(weight);
+            client.setClient_password(password);
+            client.setClient_active(true);
+
+            return iClient.save(client);
+        }
+
+        catch (DataIntegrityViolationException e){
+            System.out.println("Email already exists");
+            return null;
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot insert client: " + e.getMessage());
+            return null;
         }
     }
 
@@ -37,7 +62,7 @@ public class ClientService {
         }
 
         catch (Exception e) {
-            System.out.println("Não foi possível pegar os dados do cliente: " + e.getMessage());
+            System.out.println("Cannot get client: " + e.getMessage());
             return null;
         }
     }
@@ -49,56 +74,41 @@ public class ClientService {
         }
 
         catch (Exception e) {
-            System.out.println("Não foi possível pegar os dados do cliente: " + e.getMessage());
+            System.out.println("Cannot get client: " + e.getMessage());
             return null;
         }
     }
 
     @Transactional
-    public void insertClient(String name, String email, LocalDate birthday, Character gender, Double weight, String password){
+    public void updateData(Integer id, Double weight){
         try{
-            iClient.insertClient(name, email, birthday, gender, weight, password);
-        }
-
-        catch (DataIntegrityViolationException e){
-            System.out.println("Erro: O email já está cadastrado");
+            iClient.updateData(id, weight);
         }
 
         catch (Exception e){
-            System.out.println("Erro ao inserir cliente: " + e.getMessage());
+            System.out.println("Cannot change client's data: " + e.getMessage());
         }
     }
 
     @Transactional
-    public void updateClientData(Integer id, Double weight){
+    public void updatePassword(Integer id, String password){
         try{
-            iClient.updateClientData(id, weight);
+            iClient.updatePassword(id, password);
         }
 
         catch (Exception e){
-            System.out.println("Erro ao atualizar dados do cliente: " + e.getMessage());
+            System.out.println("Cannot change client's password: " + e.getMessage());
         }
     }
 
     @Transactional
-    public void updateClientPassword(Integer id, String password){
-        try{
-            iClient.updateClientPassword(id, password);
-        }
-
-        catch (Exception e){
-            System.out.println("Erro ao atualizar dados do cliente: " + e.getMessage());
-        }
-    }
-
-    @Transactional
-    public void deleteClient(Integer id) {
+    public void delete(Integer id) {
         try {
-            iClient.deleteClient(id);
+            iClient.delete(id);
         }
 
         catch (Exception e){
-            System.out.println("Erro ao deletar cliente: " + e.getMessage());
+            System.out.println("Cannot delete client: " + e.getMessage());
         }
     }
 }

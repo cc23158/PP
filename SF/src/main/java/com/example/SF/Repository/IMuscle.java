@@ -7,7 +7,4 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface IMuscle extends JpaRepository<Muscle, Integer> {
-    @Modifying
-    @Query("INSERT INTO Muscle(muscle_name) VALUES(:muscleName)")
-    void insertMuscle(@Param("muscleName") String name);
 }

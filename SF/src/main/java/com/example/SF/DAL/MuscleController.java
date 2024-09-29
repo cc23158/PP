@@ -25,13 +25,27 @@ public class MuscleController {
     }
 
     @CrossOrigin
-    @PostMapping("/insertMuscle/{name}")
-    public ResponseEntity<String> insertMuscle(@PathVariable String name){
+    @PostMapping("/insert")
+    public Muscle insert(@RequestParam("name") String name){
         try{
-            muscleService.insertMuscle(name);
-            return ResponseEntity.ok("Muscle inserted");
+            return muscleService.insert(name);
         }
 
-        catch (Exception e){ return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Muscle cannot be inserted"); }
+        catch (Exception e){
+            return null;
+        }
+    }
+
+    @CrossOrigin
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> delete(@RequestParam("id") Integer id){
+        try{
+            muscleService.delete(id);
+            return ResponseEntity.ok("Muscle deleted");
+        }
+
+        catch (Exception e){
+            return ResponseEntity.badRequest().body("Cannot delete muscle");
+        }
     }
 }

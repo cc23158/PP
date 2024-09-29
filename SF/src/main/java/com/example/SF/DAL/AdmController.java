@@ -19,15 +19,13 @@ public class AdmController {
 
     @CrossOrigin
     @GetMapping("/getAll")
-    // http://localhost:8080/adm/getAll
     public List<Adm> getAll(){
         return admService.getAll();
     }
 
     @CrossOrigin
-    @GetMapping("/verify/{email}/{password}")
-    // http://localhost:8080/adm/verify/testeA@gmail.com/senhaNova
-    public ResponseEntity<String> verify(@PathVariable String email, @PathVariable String password) {
+    @GetMapping("/verify")
+    public ResponseEntity<String> verify(@RequestParam("email") String email, @RequestParam("password") String password) {
         try {
             boolean exists = admService.verify(email, password);
             if (exists) { return ResponseEntity.ok().body("Account verified"); }
@@ -35,54 +33,63 @@ public class AdmController {
             else { return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials"); }
         }
 
-        catch (Exception e) { return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred"); }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body("An error occured");
+        }
     }
 
     @CrossOrigin
-    @PostMapping("/insertAdm/{email}/{password}/{salary}")
-    // http://localhost:8080/adm/postAdm/adm1@gmail.com/senha1/1250
-    public ResponseEntity<String> postAdm(@PathVariable String email, @PathVariable String password, @PathVariable Double salary){
+    @PostMapping("/insert")
+    public Adm insert(
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam("salary") Double salary
+    ){
         try{
-            admService.insertAdm(email, password, salary);
-            return ResponseEntity.ok().body("Adm inserted");
+            return admService.insert(email, password, salary);
         }
 
-        catch (Exception e){ return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Adm cannot be inserted"); }
+        catch (Exception e){
+            return null;
+        }
     }
 
     @CrossOrigin
-    @PutMapping("/updateAdmSalary/{id}/{salary}")
-    // http://localhost:8080/adm/updateAdmSalary/1/5000.0
-    public ResponseEntity<String> updateAdmSalary(@PathVariable Integer id, @PathVariable Double salary){
+    @PutMapping("/updateSalary")
+    public ResponseEntity<String> updateSalary(@RequestParam("id") Integer id, @RequestParam("salary") Double salary){
         try{
-            admService.updateAdmSalary(id, salary);
+            admService.updateSalary(id, salary);
             return ResponseEntity.ok().body("Adm updated");
         }
 
-        catch (Exception e){ return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Adm's salary cannot be changed"); }
+        catch (Exception e){
+            return ResponseEntity.badRequest().body("Adm's salary cannot be changed");
+        }
     }
 
     @CrossOrigin
-    @PutMapping("/updateAdmPassword/{id}/{password}")
-    // http://localhost:8080/adm/updateAdmPassword/1/newPassCode
-    public ResponseEntity<String> updateAdmPassword(@PathVariable Integer id, @PathVariable String password){
+    @PutMapping("/updatePassword")
+    public ResponseEntity<String> updatePassword(@RequestParam("id") Integer id, @RequestParam("password") String password){
         try{
-            admService.updateAdmPassword(id, password);
+            admService.updatePassword(id, password);
             return ResponseEntity.ok().body("Adm updated");
         }
 
-        catch (Exception e){ return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Adm's password cannot be changed"); }
+        catch (Exception e){
+            return ResponseEntity.badRequest().body("Adm's password cannot be changed");
+        }
     }
 
     @CrossOrigin
-    @DeleteMapping("/deleteAdm/{id}")
-    // http://localhost:8080/adm/deleteAdm/1
-    public ResponseEntity<String> deleteAdm(@PathVariable Integer id){
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> delete(@RequestParam("id") Integer id){
         try{
-            admService.deleteAdm(id);
+            admService.delete(id);
             return ResponseEntity.ok().body("Adm deleted");
         }
 
-        catch (Exception e){ return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Adm cannot be deleted"); }
+        catch (Exception e){
+            return ResponseEntity.badRequest().body("Adm cannot be deleted");
+        }
     }
 }

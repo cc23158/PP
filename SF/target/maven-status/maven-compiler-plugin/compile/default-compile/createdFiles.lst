@@ -4,6 +4,7 @@ com\example\SF\DAL\MuscleController.class
 com\example\SF\Repository\IAdm.class
 com\example\SF\DAL\RecipeController.class
 com\example\SF\Repository\IRecipe.class
+com\example\SF\DTO\History.class
 com\example\SF\DAL\AdmController.class
 com\example\SF\DTO\Exercise.class
 com\example\SF\DTO\Client.class

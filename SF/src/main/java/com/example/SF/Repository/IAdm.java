@@ -14,28 +14,20 @@ public interface IAdm extends JpaRepository<Adm, Integer> {
     );
 
     @Modifying
-    @Query("INSERT INTO Adm(adm_email, adm_password, adm_salary, adm_active) VALUES(:admEmail, :admPassword, :admSalary, TRUE)")
-    void insertAdm(
-            @Param("admEmail") String email,
-            @Param("admPassword") String password,
-            @Param("admSalary") Double salary
-    );
-
-    @Modifying
     @Query("UPDATE Adm SET adm_salary = :admSalary WHERE adm_id = :admId")
-    void updateAdmSalary(
+    void updateSalary(
             @Param("admId") Integer id,
             @Param("admSalary") Double salary
     );
 
     @Modifying
     @Query("UPDATE Adm SET adm_password = :admPassword WHERE adm_id = :admId")
-    void updateAdmPassword(
+    void updatePassword(
             @Param("admId") Integer id,
             @Param("admPassword") String password
     );
 
     @Modifying
     @Query("UPDATE Adm SET adm_active = FALSE WHERE adm_id = :admId")
-    void deleteAdm(@Param("admId") Integer id);
+    void delete(@Param("admId") Integer id);
 }
