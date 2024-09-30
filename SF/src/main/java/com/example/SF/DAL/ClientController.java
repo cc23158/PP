@@ -35,9 +35,13 @@ public class ClientController {
     @GetMapping("/getByEmail")
     public Client getByEmail(@RequestParam("email") String email){
         Client client = clientService.getByEmail(email);
-        if (client != null){ return client; }
+        if (client != null){
+            return client;
+        }
 
-        else { return null; }
+        else{
+            return null;
+        }
     }
 
     @CrossOrigin
@@ -50,14 +54,8 @@ public class ClientController {
             @RequestParam("weight") Double weight,
             @RequestParam("password") String password
     ){
-        try{
-            LocalDate dateBirthday = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            return clientService.save(name, email, dateBirthday, gender, weight, password);
-        }
-
-        catch(Exception e){
-            return null;
-        }
+        LocalDate dateBirthday = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return clientService.save(name, email, dateBirthday, gender, weight, password);
     }
 
     @CrossOrigin
@@ -68,7 +66,7 @@ public class ClientController {
             return ResponseEntity.ok("Client's data changed");
         }
 
-        catch (Exception e) {
+        catch (Exception e){
             return ResponseEntity.badRequest().body("Cannot change client's data");
         }
     }

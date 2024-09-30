@@ -27,13 +27,7 @@ public class MuscleController {
     @CrossOrigin
     @PostMapping("/insert")
     public Muscle insert(@RequestParam("name") String name){
-        try{
-            return muscleService.insert(name);
-        }
-
-        catch (Exception e){
-            return null;
-        }
+        return muscleService.insert(name);
     }
 
     @CrossOrigin

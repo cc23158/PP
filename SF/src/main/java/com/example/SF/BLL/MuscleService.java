@@ -29,6 +29,10 @@ public class MuscleService {
         }
     }
 
+    public Muscle getById(Integer id){
+        return iMuscle.findById(id).orElse(null);
+    }
+
     @Transactional
     public Muscle insert(String name){
         try{

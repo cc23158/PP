@@ -25,15 +25,19 @@ public class AdmController {
 
     @CrossOrigin
     @GetMapping("/verify")
-    public ResponseEntity<String> verify(@RequestParam("email") String email, @RequestParam("password") String password) {
-        try {
+    public ResponseEntity<String> verify(@RequestParam("email") String email, @RequestParam("password") String password){
+        try{
             boolean exists = admService.verify(email, password);
-            if (exists) { return ResponseEntity.ok().body("Account verified"); }
+            if (exists){
+                return ResponseEntity.ok("Account verified");
+            }
 
-            else { return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials"); }
+            else{
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            }
         }
 
-        catch (Exception e) {
+        catch (Exception e){
             return ResponseEntity.badRequest().body("An error occured");
         }
     }
@@ -45,13 +49,7 @@ public class AdmController {
             @RequestParam("password") String password,
             @RequestParam("salary") Double salary
     ){
-        try{
-            return admService.insert(email, password, salary);
-        }
-
-        catch (Exception e){
-            return null;
-        }
+        return admService.insert(email, password, salary);
     }
 
     @CrossOrigin
@@ -59,7 +57,7 @@ public class AdmController {
     public ResponseEntity<String> updateSalary(@RequestParam("id") Integer id, @RequestParam("salary") Double salary){
         try{
             admService.updateSalary(id, salary);
-            return ResponseEntity.ok().body("Adm updated");
+            return ResponseEntity.ok("Adm updated");
         }
 
         catch (Exception e){
@@ -72,7 +70,7 @@ public class AdmController {
     public ResponseEntity<String> updatePassword(@RequestParam("id") Integer id, @RequestParam("password") String password){
         try{
             admService.updatePassword(id, password);
-            return ResponseEntity.ok().body("Adm updated");
+            return ResponseEntity.ok("Adm updated");
         }
 
         catch (Exception e){
@@ -85,7 +83,7 @@ public class AdmController {
     public ResponseEntity<String> delete(@RequestParam("id") Integer id){
         try{
             admService.delete(id);
-            return ResponseEntity.ok().body("Adm deleted");
+            return ResponseEntity.ok("Adm deleted");
         }
 
         catch (Exception e){

@@ -2,6 +2,8 @@ package com.example.SF.DAL;
 
 import com.example.SF.BLL.ExerciseService;
 import com.example.SF.DTO.Exercise;
+import com.example.SF.ImageService;
+import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +15,11 @@ import java.util.List;
 @RequestMapping("/exercise")
 public class ExerciseController {
     private final ExerciseService exerciseService;
+    private final ImageService imageService;
 
-    public ExerciseController(ExerciseService exerciseService){
+    public ExerciseController(ExerciseService exerciseService, ImageService imageService){
         this.exerciseService = exerciseService;
+        this.imageService = imageService;
     }
 
     @CrossOrigin
@@ -25,59 +29,53 @@ public class ExerciseController {
     }
 
     @CrossOrigin
-    @PostMapping("/insertExercise/{muscleId}/{name}")
-    public ResponseEntity<String> insertExercise(
-            @PathVariable Integer muscleId,
-            @PathVariable String name,
-            @RequestParam String image,
-            @RequestParam String path
+    @PostMapping("/insert")
+    public Exercise insert(
+            @RequestParam("muscleId") Integer muscleId,
+            @RequestParam("name") String name,
+            @RequestParam("image") MultipartFile image,
+            @RequestParam("path") String path
     ){
-        try {
-            exerciseService.insertExercise(name, image, path, muscleId);
-            return ResponseEntity.ok().body("Exercise inserted");
-        }
-
-        catch (Exception e) { return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Exercise cannot be inserted"); }
+        String imageUrl = imageService.uploadImage(image);
+        return exerciseService.save(name, imageUrl, path, muscleId);
     }
 
     @CrossOrigin
-    @PutMapping("/updateExerciseImage/{id}")
-    public ResponseEntity<String> updateExerciseImage(
-            @PathVariable Integer id,
-            @RequestParam String image
-    ){
-        try {
-            exerciseService.updateExerciseImage(id, image);
+    @PutMapping("/updateImage")
+    public ResponseEntity<String> updateExerciseImage(@RequestParam("id") Integer id, @RequestParam("image") String image){
+        try{
+            exerciseService.updateImage(id, image);
             return ResponseEntity.ok().body("Exercise updated");
         }
 
-        catch (Exception e) { return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Exercise's image cannot be changed"); }
+        catch (Exception e){
+            return ResponseEntity.badRequest().body("Cannot change exercise's image");
+        }
     }
 
     @CrossOrigin
-    @PutMapping("/updateExercisePath/{id}")
-    public ResponseEntity<String> updateExercisePath(
-            @PathVariable Integer id,
-            @RequestParam String path
-    ){
-        try {
-            exerciseService.updateExercisePath(id, path);
+    @PutMapping("/updatePath")
+    public ResponseEntity<String> updateExercisePath(@RequestParam("id") Integer id, @RequestParam("path") String path){
+        try{
+            exerciseService.updatePath(id, path);
             return ResponseEntity.ok().body("Exercise updated");
         }
 
-        catch (Exception e) { return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Exercise's path cannot be changed"); }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Exercise's path cannot be changed");
+        }
     }
 
     @CrossOrigin
-    @DeleteMapping("/deleteExercise/{id}")
-    public ResponseEntity<String> deleteExercise(
-            @PathVariable Integer id
-    ){
-        try {
-            exerciseService.deleteExercise(id);
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> delete(@RequestParam("id") Integer id){
+        try{
+            exerciseService.delete(id);
             return ResponseEntity.ok().body("Exercise deleted");
         }
 
-        catch (Exception e) { return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Exercise cannot be deleted"); }
+        catch (Exception e){
+            return ResponseEntity.badRequest().body("Cannot delete exercise");
+        }
     }
 }

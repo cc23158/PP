@@ -18,7 +18,7 @@ public class AdmService {
         this.iAdm = iAdm;
     }
 
-    public List<Adm> getAll() {
+    public List<Adm> getAll(){
         try{
             return iAdm.findAll();
         }
@@ -43,7 +43,7 @@ public class AdmService {
 
     @Transactional
     public Adm insert(String email, String password, Double salary){
-        try {
+        try{
             Adm adm = new Adm();
             adm.setAdm_email(email);
             adm.setAdm_password(password);

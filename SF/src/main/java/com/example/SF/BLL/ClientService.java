@@ -61,7 +61,7 @@ public class ClientService {
             return iClient.getByName(name);
         }
 
-        catch (Exception e) {
+        catch (Exception e){
             System.out.println("Cannot get client: " + e.getMessage());
             return null;
         }
@@ -73,7 +73,7 @@ public class ClientService {
             return iClient.getByEmail(email);
         }
 
-        catch (Exception e) {
+        catch (Exception e){
             System.out.println("Cannot get client: " + e.getMessage());
             return null;
         }
@@ -102,8 +102,8 @@ public class ClientService {
     }
 
     @Transactional
-    public void delete(Integer id) {
-        try {
+    public void delete(Integer id){
+        try{
             iClient.delete(id);
         }
 
