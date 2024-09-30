@@ -36,6 +36,18 @@ public class ExerciseService {
         }
     }
 
+    public Exercise getById(Integer id){
+        try{
+            return iExercise.findById(id).orElse(null);
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot get exercise: " + e.getMessage());
+            return null;
+        }
+    }
+
+    @Transactional
     public List<Exercise> findByImage(String image) {
         try{
             return iExercise.findByImage(image);

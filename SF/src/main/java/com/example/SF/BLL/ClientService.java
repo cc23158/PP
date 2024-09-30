@@ -30,27 +30,13 @@ public class ClientService {
         }
     }
 
-    public Client save(String name, String email, LocalDate birthday, Character gender, Double weight, String password){
+    public Client getById(Integer id){
         try{
-            Client client = new Client();
-            client.setClient_name(name);
-            client.setClient_email(email);
-            client.setClient_birthday(birthday);
-            client.setClient_gender(gender);
-            client.setClient_weight(weight);
-            client.setClient_password(password);
-            client.setClient_active(true);
-
-            return iClient.save(client);
-        }
-
-        catch (DataIntegrityViolationException e){
-            System.out.println("Email already exists");
-            return null;
+            return iClient.findById(id).orElse(null);
         }
 
         catch (Exception e){
-            System.out.println("Cannot insert client: " + e.getMessage());
+            System.out.println("Cannot get client: " + e.getMessage());
             return null;
         }
     }
@@ -75,6 +61,31 @@ public class ClientService {
 
         catch (Exception e){
             System.out.println("Cannot get client: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public Client save(String name, String email, LocalDate birthday, Character gender, Double weight, String password){
+        try{
+            Client client = new Client();
+            client.setClient_name(name);
+            client.setClient_email(email);
+            client.setClient_birthday(birthday);
+            client.setClient_gender(gender);
+            client.setClient_weight(weight);
+            client.setClient_password(password);
+            client.setClient_active(true);
+
+            return iClient.save(client);
+        }
+
+        catch (DataIntegrityViolationException e){
+            System.out.println("Email already exists");
+            return null;
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot insert client: " + e.getMessage());
             return null;
         }
     }
