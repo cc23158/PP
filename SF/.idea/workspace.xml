@@ -5,9 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9dd23e01-38f0-453b-9038-d6604ea6e580" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/HistoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/BLL/HistoryService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/HistoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/DAL/HistoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/SF/Repository/IHistory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Insomnia/adm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Insomnia/exercise" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Insomnia/history" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Insomnia/muscle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Insomnia/recipe" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
