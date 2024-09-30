@@ -15,12 +15,13 @@ class AddExercise extends StatefulWidget {
 class AddExerciceState extends State<AddExercise> {
   final controllerNome = List<TextEditingController>.empty(growable: true);
   final controllerUrl = List<TextEditingController>.empty(growable: true);
-  final controllerMusculo = List<TextEditingController>.empty(growable: true);
+  final controllerMusculo = List<String>.empty(growable: true);
   final controllerList = ScrollController();
   final controllerRow = List<ScrollController>.empty(growable: true);
-
+  bool podeMudar = true;
   var mensagemErro = "";
   var listElement = List<Widget>.empty(growable: true);
+  var listCamera = List<Widget>.empty(growable: true);
   var corBorda;
   var dropdownvalue;
 
@@ -55,7 +56,7 @@ class AddExerciceState extends State<AddExercise> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10, 5, 5, 5),
                       child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.37,
+                        width: MediaQuery.of(context).size.width * 0.33,
                         child: TextField(
                           cursorColor: Colors.orange,
                           controller: controllerNome[controllerIndex],
@@ -157,8 +158,8 @@ class AddExerciceState extends State<AddExercise> {
                     Padding(
                         padding: const EdgeInsets.all(5),
                         child: DropdownMenu<String>(
+                          width: 210,
                           hintText: "Músculo",
-                          controller: controllerMusculo[controllerIndex],
                           inputDecorationTheme: InputDecorationTheme(
                             disabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(4.0),
@@ -196,11 +197,12 @@ class AddExerciceState extends State<AddExercise> {
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 8, horizontal: 12),
                           ),
-                          
+                          initialSelection: controllerMusculo[controllerIndex],
                           onSelected: (String? value) {
                             // This is called when the user selects an item.
                             setState(() {
                               dropdownvalue = value!;
+                              controllerMusculo[controllerIndex] = value;
                             });
                           },
                           dropdownMenuEntries: musculos
@@ -218,15 +220,42 @@ class AddExerciceState extends State<AddExercise> {
                               borderRadius: BorderRadius.circular(12),
                               side: BorderSide(color: Colors.black)),
                           padding: EdgeInsets.all(10),
-                          child: const Icon(Icons.camera_alt),
+                          child: listCamera[controllerIndex],
                           onPressed: () async {
                             var picked = await FilePicker.platform
                                 .pickFiles(type: FileType.image);
 
                             if (picked != null) {
                               print(picked.files.first.name);
+                              listCamera[controllerIndex] = Image.asset(picked.files.first.path!);
+
                             }
                           }),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
+                      child: MaterialButton(
+                        minWidth: 56,
+                        height: 56,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(color: Colors.red)),
+                        padding: EdgeInsets.all(10),
+                        child: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          setState(() {
+                            // Remove the widget first
+                            podeMudar = false;
+                            listElement.removeAt(controllerIndex);
+                            controllerRow.removeAt(controllerIndex);
+                            controllerNome.remove(controllerNome[controllerIndex]);
+                            controllerUrl.remove(controllerUrl[controllerIndex]);
+                            controllerMusculo.remove(controllerMusculo[controllerIndex]);
+                            listCamera.remove(listCamera[controllerIndex]);
+                            
+                          });
+                        },
+                      ),
                     )
                   ],
                 ),
@@ -238,6 +267,7 @@ class AddExerciceState extends State<AddExercise> {
 
   @override
   Widget build(BuildContext context) {
+    print("build");
     if (MediaQuery.of(context).size.width >
         MediaQuery.of(context).size.height) {
       setState(() {
@@ -253,8 +283,9 @@ class AddExerciceState extends State<AddExercise> {
       setState(() {
         controllerNome.add(TextEditingController());
         controllerUrl.add(TextEditingController());
-        controllerMusculo.add(TextEditingController());
+        controllerMusculo.add("");
         controllerRow.add(ScrollController());
+        listCamera.add(Icon(Icons.camera_alt));
         listElement.add(getWidget(widget.musculos, 0));
       });
     } else {
@@ -317,14 +348,14 @@ class AddExerciceState extends State<AddExercise> {
                                                 child: MaterialButton(
                                                   height: 50,
                                                   onPressed: () {
-
                                                     setState(() {
+                                                      listCamera.add(Icon(Icons.camera_alt));
                                                       controllerNome.add(
                                                           TextEditingController());
                                                       controllerUrl.add(
                                                           TextEditingController());
                                                       controllerMusculo.add(
-                                                          TextEditingController());
+                                                          "");
                                                       controllerRow.add(
                                                           ScrollController());
                                                       listElement.add(getWidget(
@@ -356,11 +387,11 @@ class AddExerciceState extends State<AddExercise> {
                                                     children: [
                                                       Icon(Icons.add),
                                                       Text(
-                                                        "Adicionar a lista",
+                                                        "Adicionar",
                                                         style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.w600,
-                                                            fontSize: 16),
+                                                            fontSize: 15),
                                                       ),
                                                     ],
                                                   ),
@@ -369,10 +400,24 @@ class AddExerciceState extends State<AddExercise> {
                                               Flexible(
                                                 child: MaterialButton(
                                                   height: 50,
-                                                  onPressed: () {},
+                                                  onPressed: () async {
+                                                    print(controllerMusculo[0]
+                                                        );
+                                                    for (int i = 0;
+                                                        i <
+                                                            controllerRow
+                                                                .length;
+                                                        i++) {
+                                                      postExercise(
+                                                          controllerNome[i]
+                                                              .text,
+                                                          controllerUrl[i].text,
+                                                          controllerMusculo[i]
+                                                              );
+                                                    }
+                                                  },
                                                   color: Colors.orange,
                                                   shape: const RoundedRectangleBorder(
-                                                    
                                                       borderRadius:
                                                           BorderRadius.only(
                                                               topRight: Radius
@@ -390,11 +435,11 @@ class AddExerciceState extends State<AddExercise> {
                                                     children: [
                                                       Icon(Icons.save_as),
                                                       Text(
-                                                        "Salvar alterações",
+                                                        "Salvar",
                                                         style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.w600,
-                                                            fontSize: 16),
+                                                            fontSize: 15),
                                                       ),
                                                     ],
                                                   ),
@@ -407,5 +452,26 @@ class AddExerciceState extends State<AddExercise> {
                                 )))
                       ],
                     )))));
+  }
+
+}
+
+Future<int> postExercise(String nome, String path, String muscle) async {
+  try {
+    final info = await http.post(
+      Uri.parse('http://localhost:8080/exercise/insert/'),
+    );
+
+    if (info.statusCode == 200) {
+      // Successful POST request, handle the response here
+      print("Usuário registrado");
+      return 1;
+    } else {
+      // If the server returns an error response, throw an exception
+      throw Exception('Failed to post data');
+    }
+  } catch (e) {
+    print(e.toString());
+    return 0;
   }
 }
