@@ -25,6 +25,12 @@ public class HistoryController {
     }
 
     @CrossOrigin
+    @GetMapping("/getByClient")
+    public List<History> getByClient(@RequestParam("clientId") Integer clientId){
+        return historyService.getByClient(clientId);
+    }
+
+    @CrossOrigin
     @PostMapping("/insert")
     public History insert(@RequestParam("clientId") Integer clientId, @RequestParam("recipeId") Integer recipeId){
         return historyService.insert(clientId, recipeId);

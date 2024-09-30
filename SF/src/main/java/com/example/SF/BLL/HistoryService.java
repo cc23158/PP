@@ -34,6 +34,17 @@ public class HistoryService {
         }
     }
 
+    public List<History> getByClient(Integer clientId){
+        try{
+            return iHistory.getByClient(clientId);
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot get histories for client: " + clientId);
+            return List.of();
+        }
+    }
+
     public History insert(Integer clientId, Integer recipeId){
         if (clientId == null || recipeId == null){
             System.out.println("ClientId or recipeId must not be empty");
