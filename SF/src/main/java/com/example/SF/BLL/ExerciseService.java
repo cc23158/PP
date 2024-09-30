@@ -48,6 +48,18 @@ public class ExerciseService {
     }
 
     @Transactional
+    public List<Exercise> getByMuscle(Integer muscleId){
+        try{
+            return iExercise.getByMuscle(muscleId);
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot find exercise by muscle ID: " + muscleId);
+            return List.of();
+        }
+    }
+
+    @Transactional
     public List<Exercise> findByImage(String image) {
         try{
             return iExercise.findByImage(image);
@@ -59,7 +71,7 @@ public class ExerciseService {
         }
     }
 
-    public Exercise save(String name, String image, String path, Integer muscleId){
+    public Exercise insert(String name, String image, String path, Integer muscleId){
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(path) || muscleId == null){
             System.out.println("Name, path or muscleId must not be empty");
             return null;

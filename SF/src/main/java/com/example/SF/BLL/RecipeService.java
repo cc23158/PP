@@ -28,8 +28,24 @@ public class RecipeService {
     public List<Recipe> getAll(){
         return iRecipe.findAll();
     }
+
+    public Recipe getById(Integer id){
+        try{
+            return iRecipe.findById(id).orElse(null);
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot find recipe for ID: " + id);
+            return null;
+        }
+    }
     
     public Recipe insert(Integer clientId, Integer exerciseId, Double weight){
+        if (clientId == null || exerciseId == null){
+            System.out.println("ClientId or exerciseId must not be empty");
+            return null;
+        }
+
         try{
             Recipe recipe = new Recipe();
             recipe.setRecipe_weight(weight);

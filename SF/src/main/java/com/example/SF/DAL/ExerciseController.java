@@ -29,6 +29,12 @@ public class ExerciseController {
     }
 
     @CrossOrigin
+    @GetMapping("/getByMuscle")
+    public List<Exercise> getByMuscle(@RequestParam("muscleId") Integer muscleId){
+        return exerciseService.getByMuscle(muscleId);
+    }
+
+    @CrossOrigin
     @PostMapping("/insert")
     public Exercise insert(
             @RequestParam("muscleId") Integer muscleId,
@@ -37,7 +43,7 @@ public class ExerciseController {
             @RequestParam("path") String path
     ){
         String imageUrl = imageService.uploadImage(image);
-        return exerciseService.save(name, imageUrl, path, muscleId);
+        return exerciseService.insert(name, imageUrl, path, muscleId);
     }
 
     @CrossOrigin

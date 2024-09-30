@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface IExercise extends JpaRepository<Exercise, Integer> {
     @Query(value = "SELECT * FROM SF.GET_Exercise(:muscleId)", nativeQuery = true)
-    List<Client> getByMuscle(@Param("muscleId") Integer id);
+    List<Exercise> getByMuscle(@Param("muscleId") Integer id);
 
     @Query(value = "SELECT * FROM SF.Exercise WHERE exercise_image = :exerciseImage AND exercise_active = TRUE", nativeQuery = true)
     List<Exercise> findByImage(@Param("exerciseImage") String image);
