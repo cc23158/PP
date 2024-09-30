@@ -24,7 +24,7 @@ class AddExerciceState extends State<AddExercise> {
   var corBorda;
   var dropdownvalue;
 
-  Widget getWidget(dynamic musculos) {
+  Widget getWidget(dynamic musculos, int controllerIndex) {
     return Card(
         color: const Color(0xffe0e0e0),
         shadowColor: const Color(0xff000000),
@@ -39,13 +39,13 @@ class AddExerciceState extends State<AddExercise> {
             padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
             thumbColor: Colors.black,
             radius: Radius.circular(12),
-            controller: controllerRow[controllerRow.length - 1],
+            controller: controllerRow[controllerIndex],
             scrollbarOrientation: ScrollbarOrientation.bottom,
             interactive: true,
             child: Padding(
               padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
               child: SingleChildScrollView(
-                controller: controllerRow[controllerRow.length - 1],
+                controller: controllerRow[controllerIndex],
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -53,12 +53,12 @@ class AddExerciceState extends State<AddExercise> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(5),
+                      padding: const EdgeInsets.fromLTRB(10, 5, 5, 5),
                       child: SizedBox(
-                        width: 100,
+                        width: MediaQuery.of(context).size.width * 0.37,
                         child: TextField(
                           cursorColor: Colors.orange,
-                          controller: controllerNome[controllerNome.length - 1],
+                          controller: controllerNome[controllerIndex],
                           obscureText: false,
                           textAlign: TextAlign.start,
                           maxLines: 1,
@@ -106,10 +106,10 @@ class AddExerciceState extends State<AddExercise> {
                     Padding(
                       padding: const EdgeInsets.all(5),
                       child: SizedBox(
-                        width: 200,
+                        width: MediaQuery.of(context).size.width * 0.4,
                         child: TextField(
                           cursorColor: Colors.orange,
-                          controller: controllerUrl[controllerUrl.length - 1],
+                          controller: controllerUrl[controllerIndex],
                           obscureText: false,
                           textAlign: TextAlign.start,
                           maxLines: 1,
@@ -158,8 +158,7 @@ class AddExerciceState extends State<AddExercise> {
                         padding: const EdgeInsets.all(5),
                         child: DropdownMenu<String>(
                           hintText: "Músculo",
-                          controller:
-                              controllerMusculo[controllerMusculo.length - 1],
+                          controller: controllerMusculo[controllerIndex],
                           inputDecorationTheme: InputDecorationTheme(
                             disabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(4.0),
@@ -197,7 +196,7 @@ class AddExerciceState extends State<AddExercise> {
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 8, horizontal: 12),
                           ),
-                          initialSelection: musculos.first,
+                          
                           onSelected: (String? value) {
                             // This is called when the user selects an item.
                             setState(() {
@@ -211,7 +210,7 @@ class AddExerciceState extends State<AddExercise> {
                           }).toList(),
                         )),
                     Padding(
-                      padding: EdgeInsets.all(5),
+                      padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
                       child: MaterialButton(
                           minWidth: 56,
                           height: 56,
@@ -256,7 +255,14 @@ class AddExerciceState extends State<AddExercise> {
         controllerUrl.add(TextEditingController());
         controllerMusculo.add(TextEditingController());
         controllerRow.add(ScrollController());
-        listElement.add(getWidget(widget.musculos));
+        listElement.add(getWidget(widget.musculos, 0));
+      });
+    } else {
+      setState(() {
+        listElement.clear();
+        for (int i = 0; i < controllerRow.length; i++) {
+          listElement.add(getWidget(widget.musculos, i));
+        }
       });
     }
 
@@ -267,11 +273,12 @@ class AddExerciceState extends State<AddExercise> {
             body: Align(
                 alignment: Alignment.center,
                 child: Container(
-                    width: MediaQuery.of(context).size.width * 0.5,
+                    width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height * 0.5,
                     constraints:
                         const BoxConstraints(minHeight: 700, minWidth: 400),
                     child: Column(
+                      mainAxisSize: MainAxisSize.max,
                       children: [
                         const Text("Lista de novas formas de fábricar o corpo",
                             style: TextStyle(
@@ -300,46 +307,100 @@ class AddExerciceState extends State<AddExercise> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.fromLTRB(
-                                              20, 0, 20, 20),
-                                          child: MaterialButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                controllerNome.add(
-                                                    TextEditingController());
-                                                controllerUrl.add(
-                                                    TextEditingController());
-                                                controllerMusculo.add(
-                                                    TextEditingController());
-                                                controllerRow
-                                                    .add(ScrollController());
-                                                listElement.add(
-                                                    getWidget(widget.musculos));
-                                              });
-                                              controllerList.jumpTo(
-                                                  controllerList.position
-                                                          .maxScrollExtent +
-                                                      40);
-                                            },
-                                            color: Colors.orange,
-                                            minWidth: 1000,
-                                            shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(12))),
-                                            padding: const EdgeInsets.all(20),
-                                            child: const Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Icon(Icons.add),
-                                                Text(
-                                                  "Adicionar a lista",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 16),
+                                              26, 0, 26, 20),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              Flexible(
+                                                child: MaterialButton(
+                                                  height: 50,
+                                                  onPressed: () {
+
+                                                    setState(() {
+                                                      controllerNome.add(
+                                                          TextEditingController());
+                                                      controllerUrl.add(
+                                                          TextEditingController());
+                                                      controllerMusculo.add(
+                                                          TextEditingController());
+                                                      controllerRow.add(
+                                                          ScrollController());
+                                                      listElement.add(getWidget(
+                                                          widget.musculos,
+                                                          controllerRow.length -
+                                                              1));
+                                                    });
+                                                    controllerList.jumpTo(
+                                                      controllerList.position
+                                                              .maxScrollExtent +
+                                                          40,
+                                                    );
+                                                  },
+                                                  color: Colors.orange,
+                                                  shape: const RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                              topLeft: Radius
+                                                                  .circular(12),
+                                                              bottomLeft: Radius
+                                                                  .circular(
+                                                                      12))),
+                                                  child: const Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    children: [
+                                                      Icon(Icons.add),
+                                                      Text(
+                                                        "Adicionar a lista",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            fontSize: 16),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                              Flexible(
+                                                child: MaterialButton(
+                                                  height: 50,
+                                                  onPressed: () {},
+                                                  color: Colors.orange,
+                                                  shape: const RoundedRectangleBorder(
+                                                    
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                              topRight: Radius
+                                                                  .circular(12),
+                                                              bottomRight:
+                                                                  Radius
+                                                                      .circular(
+                                                                          12))),
+                                                  child: const Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    children: [
+                                                      Icon(Icons.save_as),
+                                                      Text(
+                                                        "Salvar alterações",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            fontSize: 16),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                            ],
                                           ),
                                         )
                                       ]),
