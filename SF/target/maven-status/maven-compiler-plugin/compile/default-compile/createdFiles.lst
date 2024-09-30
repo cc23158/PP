@@ -20,3 +20,4 @@ com\example\SF\Repository\IExercise.class
 com\example\SF\BLL\RecipeService.class
 com\example\SF\BLL\ExerciseService.class
 com\example\SF\DAL\ClientController.class
+com\example\SF\ImageService.class

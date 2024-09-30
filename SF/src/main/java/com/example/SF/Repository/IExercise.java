@@ -13,6 +13,9 @@ public interface IExercise extends JpaRepository<Exercise, Integer> {
     @Query(value = "SELECT * FROM SF.GET_Exercise(:muscleId)", nativeQuery = true)
     List<Client> getByMuscle(@Param("muscleId") Integer id);
 
+    @Query(value = "SELECT * FROM SF.Exercise WHERE exercise_image = :exerciseImage AND exercise_active = TRUE", nativeQuery = true)
+    List<Exercise> findByImage(@Param("exerciseImage") String image);
+
     @Modifying
     @Query("UPDATE Exercise SET exercise_image = :exerciseImage WHERE exercise_id = :exerciseId")
     void updateImage(

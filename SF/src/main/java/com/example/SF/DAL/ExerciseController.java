@@ -42,9 +42,11 @@ public class ExerciseController {
 
     @CrossOrigin
     @PutMapping("/updateImage")
-    public ResponseEntity<String> updateExerciseImage(@RequestParam("id") Integer id, @RequestParam("image") String image){
+    public ResponseEntity<String> updateImage(@RequestParam("id") Integer id, @RequestParam("image") MultipartFile image){
         try{
-            exerciseService.updateImage(id, image);
+            String imageUrl = imageService.uploadImage(image);
+
+            exerciseService.updateImage(id, imageUrl);
             return ResponseEntity.ok().body("Exercise updated");
         }
 
