@@ -226,9 +226,18 @@ class AddExerciceState extends State<AddExercise> {
                                 .pickFiles(type: FileType.image);
 
                             if (picked != null) {
-                              print(picked.files.first.name);
-                              listCamera[controllerIndex] = Image.asset(picked.files.first.path!);
-
+                              setState(() {
+                                print(picked.files.first.name);
+                                listCamera[controllerIndex] = ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12)),
+                                    child: Image.memory(
+                                      picked.files.first.bytes!,
+                                      height: 46,
+                                      width: 46,
+                                      fit: BoxFit.cover,
+                                    ));
+                              });
                             }
                           }),
                     ),
@@ -248,11 +257,13 @@ class AddExerciceState extends State<AddExercise> {
                             podeMudar = false;
                             listElement.removeAt(controllerIndex);
                             controllerRow.removeAt(controllerIndex);
-                            controllerNome.remove(controllerNome[controllerIndex]);
-                            controllerUrl.remove(controllerUrl[controllerIndex]);
-                            controllerMusculo.remove(controllerMusculo[controllerIndex]);
+                            controllerNome
+                                .remove(controllerNome[controllerIndex]);
+                            controllerUrl
+                                .remove(controllerUrl[controllerIndex]);
+                            controllerMusculo
+                                .remove(controllerMusculo[controllerIndex]);
                             listCamera.remove(listCamera[controllerIndex]);
-                            
                           });
                         },
                       ),
@@ -304,7 +315,7 @@ class AddExerciceState extends State<AddExercise> {
             body: Align(
                 alignment: Alignment.center,
                 child: Container(
-                    width: MediaQuery.of(context).size.width,
+                    width: MediaQuery.of(context).size.width * 0.96,
                     height: MediaQuery.of(context).size.height * 0.5,
                     constraints:
                         const BoxConstraints(minHeight: 700, minWidth: 400),
@@ -349,13 +360,13 @@ class AddExerciceState extends State<AddExercise> {
                                                   height: 50,
                                                   onPressed: () {
                                                     setState(() {
-                                                      listCamera.add(Icon(Icons.camera_alt));
+                                                      listCamera.add(Icon(
+                                                          Icons.camera_alt));
                                                       controllerNome.add(
                                                           TextEditingController());
                                                       controllerUrl.add(
                                                           TextEditingController());
-                                                      controllerMusculo.add(
-                                                          "");
+                                                      controllerMusculo.add("");
                                                       controllerRow.add(
                                                           ScrollController());
                                                       listElement.add(getWidget(
@@ -401,8 +412,7 @@ class AddExerciceState extends State<AddExercise> {
                                                 child: MaterialButton(
                                                   height: 50,
                                                   onPressed: () async {
-                                                    print(controllerMusculo[0]
-                                                        );
+                                                    print(controllerMusculo[0]);
                                                     for (int i = 0;
                                                         i <
                                                             controllerRow
@@ -412,8 +422,7 @@ class AddExerciceState extends State<AddExercise> {
                                                           controllerNome[i]
                                                               .text,
                                                           controllerUrl[i].text,
-                                                          controllerMusculo[i]
-                                                              );
+                                                          controllerMusculo[i]);
                                                     }
                                                   },
                                                   color: Colors.orange,
@@ -453,7 +462,6 @@ class AddExerciceState extends State<AddExercise> {
                       ],
                     )))));
   }
-
 }
 
 Future<int> postExercise(String nome, String path, String muscle) async {
