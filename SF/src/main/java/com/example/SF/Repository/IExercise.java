@@ -1,28 +1,36 @@
 package com.example.SF.Repository;
 
+import com.example.SF.DTO.Client;
 import com.example.SF.DTO.Exercise;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface IExercise extends JpaRepository<Exercise, Integer> {
+    @Query(value = "SELECT * FROM SF.GET_Exercise(:muscleId)", nativeQuery = true)
+    List<Exercise> getByMuscle(@Param("muscleId") Integer id);
 
-    @Procedure(procedureName = "SF.GET_Exercise")
-    List<Exercise> getExercise(Integer muscleId);
+    @Query(value = "SELECT * FROM SF.Exercise WHERE exercise_image = :exerciseImage AND exercise_active = TRUE", nativeQuery = true)
+    List<Exercise> findByImage(@Param("exerciseImage") String image);
 
-    @Procedure(procedureName = "SF.POST_Exercise")
-    void postExercise(
-            @Param("exerciseName") String name,
-            @Param("exercisePath") String path,
-            @Param("exerciseMuscle") Integer muscleId);
-
-    @Procedure(procedureName = "SF.UPDATE_Exercise")
-    void updateExercise(
+    @Modifying
+    @Query("UPDATE Exercise SET exercise_image = :exerciseImage WHERE exercise_id = :exerciseId")
+    void updateImage(
             @Param("exerciseId") Integer id,
-            @Param("exercisePath") String path);
+            @Param("exerciseImage") String image
+    );
 
-    @Procedure(procedureName = "SF.DELETE_Exercise")
-    void deleteExercise(@Param("exerciseId") Integer id);
+    @Modifying
+    @Query("UPDATE Exercise SET exercise_path = :exercisePath WHERE exercise_id = :exerciseId")
+    void updatePath(
+            @Param("exerciseId") Integer id,
+            @Param("exercisePath") String path
+    );
+
+    @Modifying
+    @Query("UPDATE Exercise SET exercise_active = FALSE WHERE exercise_id = :exerciseId")
+    void delete(@Param("exerciseId") Integer id);
 }

@@ -7,18 +7,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Muscle", schema = "SF")
+@Table(name = "muscle", schema = "sf")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class Muscle {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "muscle_id")
+    @Column(name = "muscle_id", nullable = false)
     private Integer muscle_id;
 
-    @Column(name = "muscle_name")
+    @Column(name = "muscle_name", nullable = false)
     private String muscle_name;
 }

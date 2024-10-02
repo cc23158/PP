@@ -4,6 +4,7 @@ import com.example.SF.DTO.Client;
 import com.example.SF.Repository.IClient;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -11,7 +12,6 @@ import java.util.List;
 
 @Service
 public class ClientService {
-
     private final IClient iClient;
 
     @Autowired
@@ -20,61 +20,106 @@ public class ClientService {
     }
 
     public List<Client> getAll(){
-        return iClient.findAll();
+        try{
+            return  iClient.findAll();
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot get clients: " + e.getMessage());
+            return List.of();
+        }
+    }
+
+    public Client getById(Integer id){
+        try{
+            return iClient.findById(id).orElse(null);
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot get client: " + e.getMessage());
+            return null;
+        }
     }
 
     @Transactional
     public Client getByName(String name){
-        return iClient.getByName(name);
-    }
-
-    @Transactional
-    public void insertClient(String name, String email, LocalDate birthday, Character gender, Double weight, String password) throws Exception{
         try{
-            iClient.insertClient(name, email, birthday, gender, weight, password);
+            return iClient.getByName(name);
         }
 
         catch (Exception e){
-            throw new Exception(e);
-        }
-    }
-
-    @Transactional
-    public void updateClientData(Integer id, Double weight) throws Exception{
-        try{
-            iClient.updateClientData(id, weight);
-        }
-
-        catch (Exception e){
-            throw new Exception(e);
-        }
-    }
-
-    @Transactional
-    public void updateClientPassword(Integer id, String password) throws Exception{
-        try {
-            iClient.updateClientPassword(id, password);
-        }
-
-        catch (Exception e){
-            throw new Exception(e);
-        }
-    }
-
-    @Transactional
-    public void deleteClient(Integer id) throws Exception{
-        try{
-            iClient.deleteClient(id);
-        }
-
-        catch (Exception e){
-            throw new Exception(e);
+            System.out.println("Cannot get client: " + e.getMessage());
+            return null;
         }
     }
 
     @Transactional
     public Client getByEmail(String email){
+        try{
             return iClient.getByEmail(email);
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot get client: " + e.getMessage());
+            return null;
+        }
     }
 
+    public Client save(String name, String email, LocalDate birthday, Character gender, Double weight, String password){
+        try{
+            Client client = new Client();
+            client.setClient_name(name);
+            client.setClient_email(email);
+            client.setClient_birthday(birthday);
+            client.setClient_gender(gender);
+            client.setClient_weight(weight);
+            client.setClient_password(password);
+            client.setClient_active(true);
+
+            return iClient.save(client);
+        }
+
+        catch (DataIntegrityViolationException e){
+            System.out.println("Email already exists");
+            return null;
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot insert client: " + e.getMessage());
+            return null;
+        }
+    }
+
+    @Transactional
+    public void updateData(Integer id, Double weight){
+        try{
+            iClient.updateData(id, weight);
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot change client's data: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void updatePassword(Integer id, String password){
+        try{
+            iClient.updatePassword(id, password);
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot change client's password: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void delete(Integer id){
+        try{
+            iClient.delete(id);
+        }
+
+        catch (Exception e){
+            System.out.println("Cannot delete client: " + e.getMessage());
+        }
+    }
 }

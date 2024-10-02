@@ -11,89 +11,83 @@ import java.util.List;
 @RestController
 @RequestMapping("/adm")
 public class AdmController {
-
     private final AdmService admService;
 
     public AdmController(AdmService admService){
         this.admService = admService;
     }
 
-    @GetMapping("/getAllAdms")
-    // http://localhost:8080/adm/getAllAdms
+    @CrossOrigin
+    @GetMapping("/getAll")
     public List<Adm> getAll(){
         return admService.getAll();
     }
 
     @CrossOrigin
-    @GetMapping("/verify/{email}/{password}")
-    // http://localhost:8080/adm/verify/adm1@gmail.com/password1
-    public ResponseEntity<String> verify(@PathVariable String email, @PathVariable String password) {
-        try {
+    @GetMapping("/verify")
+    public ResponseEntity<String> verify(@RequestParam("email") String email, @RequestParam("password") String password){
+        try{
             boolean exists = admService.verify(email, password);
-            if (exists) {
-                return ResponseEntity.ok().body("Account verified");
+            if (exists){
+                return ResponseEntity.ok("Account verified");
             }
 
-            else {
+            else{
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
             }
         }
 
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
+        catch (Exception e){
+            return ResponseEntity.badRequest().body("An error occured");
         }
     }
 
-    @PostMapping("/postAdm/{email}/{password}/{salary}")
-    // http://localhost:8080/adm/postAdm/adm3@gmail.com/password3/1250
-    public ResponseEntity<String> postAdm(@PathVariable String email, @PathVariable String password, @PathVariable Double salary){
+    @CrossOrigin
+    @PostMapping("/insert")
+    public Adm insert(
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam("salary") Double salary
+    ){
+        return admService.insert(email, password, salary);
+    }
+
+    @CrossOrigin
+    @PutMapping("/updateSalary")
+    public ResponseEntity<String> updateSalary(@RequestParam("id") Integer id, @RequestParam("salary") Double salary){
         try{
-            admService.insertAdm(email, password, salary);
-            return ResponseEntity.ok().body("Adm inserted");
+            admService.updateSalary(id, salary);
+            return ResponseEntity.ok("Adm updated");
         }
 
         catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured");
+            return ResponseEntity.badRequest().body("Adm's salary cannot be changed");
         }
     }
 
-    @PutMapping("/updateAdmSalary/{id}/{salary}")
-    // http://localhost:8080/adm/updateAdmSalary/1/5000.0
-    public ResponseEntity<String> updateAdmSalary(@PathVariable Integer id, @PathVariable Double salary){
+    @CrossOrigin
+    @PutMapping("/updatePassword")
+    public ResponseEntity<String> updatePassword(@RequestParam("id") Integer id, @RequestParam("password") String password){
         try{
-            admService.updateAdmSalary(id, salary);
-            return ResponseEntity.ok().body("Adm updated");
+            admService.updatePassword(id, password);
+            return ResponseEntity.ok("Adm updated");
         }
 
         catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured");
+            return ResponseEntity.badRequest().body("Adm's password cannot be changed");
         }
     }
 
-    @PutMapping("/updateAdmPassword/{id}/{password}")
-    // http://localhost:8080/adm/updateAdmPassword/1/newPassCode
-    public ResponseEntity<String> updateAdmPassword(@PathVariable Integer id, @PathVariable String password){
+    @CrossOrigin
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> delete(@RequestParam("id") Integer id){
         try{
-            admService.updateAdmPassword(id, password);
-            return ResponseEntity.ok().body("Adm updated");
+            admService.delete(id);
+            return ResponseEntity.ok("Adm deleted");
         }
 
         catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured");
+            return ResponseEntity.badRequest().body("Adm cannot be deleted");
         }
     }
-
-    @DeleteMapping("/deleteAdm/{id}")
-    // http://localhost:8080/adm/deleteAdm/1
-    public ResponseEntity<String> deleteAdm(@PathVariable Integer id){
-        try{
-            admService.deleteAdm(id);
-            return ResponseEntity.ok().body("Adm deleted");
-        }
-
-        catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occured");
-        }
-    }
-
 }
