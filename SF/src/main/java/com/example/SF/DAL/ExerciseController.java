@@ -3,7 +3,6 @@ package com.example.SF.DAL;
 import com.example.SF.BLL.ExerciseService;
 import com.example.SF.DTO.Exercise;
 import com.example.SF.ImageService;
-import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,42 +47,14 @@ public class ExerciseController {
 
     @CrossOrigin
     @PostMapping("/sync")
-    public ResponseEntity<String> syncExercises(@RequestBody List<Exercise> exercises) {
+    public ResponseEntity<String> syncExercises(@RequestParam("exercise") Exercise exercise) {
         try {
-            exerciseService.syncData(exercises);
+            exerciseService.syncData(exercise);
             return ResponseEntity.ok("Exercises synchronized successfully");
         }
 
         catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error synchronizing exercises");
-        }
-    }
-
-    @CrossOrigin
-    @PutMapping("/updateImage")
-    public ResponseEntity<String> updateImage(@RequestParam("id") Integer id, @RequestParam("image") MultipartFile image){
-        try{
-            String imageUrl = imageService.uploadImage(image);
-
-            exerciseService.updateImage(id, imageUrl);
-            return ResponseEntity.ok().body("Exercise updated");
-        }
-
-        catch (Exception e){
-            return ResponseEntity.badRequest().body("Cannot change exercise's image");
-        }
-    }
-
-    @CrossOrigin
-    @PutMapping("/updatePath")
-    public ResponseEntity<String> updateExercisePath(@RequestParam("id") Integer id, @RequestParam("path") String path){
-        try{
-            exerciseService.updatePath(id, path);
-            return ResponseEntity.ok().body("Exercise updated");
-        }
-
-        catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Exercise's path cannot be changed");
         }
     }
 

@@ -30,7 +30,4 @@ public class Exercise {
     @ManyToOne
     @JoinColumn(name = "exercise_muscle", referencedColumnName = "muscle_id", nullable = false)
     private Muscle exercise_muscle;
-
-    @Column(name = "exercise_active", nullable = false)
-    private Boolean exercise_active;
 }

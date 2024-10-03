@@ -84,7 +84,6 @@ public class ExerciseService {
             Exercise exercise = new Exercise();
             exercise.setExercise_name(name);
             exercise.setExercise_path(path);
-            exercise.setExercise_active(true);
 
             if (StringUtils.isNotEmpty(image)){
                 exercise.setExercise_image(image);
@@ -107,82 +106,44 @@ public class ExerciseService {
     }
 
     @Transactional
-    public void updateImage(Integer id, String image){
-        try{
-            Optional<Exercise> optionalExercise = iExercise.findById(id);
+    public void syncData(Exercise exercise){
+        try {
+            Optional<Exercise> optionalExercise = iExercise.findById(exercise.getExercise_id());
             if (optionalExercise.isPresent()){
-                Exercise exercise = optionalExercise.get();
-                String oldImageUrl = exercise.getExercise_image();
+                Exercise existingExercise = optionalExercise.get();
+                String oldImageUrl = existingExercise.getExercise_image();
 
-                exercise.setExercise_image(image);
-                iExercise.save(exercise);  // Isso atualiza a entidade no banco
+                Muscle muscle = muscleService.getById(exercise.getExercise_muscle().getMuscle_id());
+                if (muscle == null) {
+                    return;
+                }
 
-                // Verifica se há outras entidades usando a imagem antiga
+                existingExercise.setExercise_name(exercise.getExercise_name());
+                existingExercise.setExercise_image(exercise.getExercise_image());
+                existingExercise.setExercise_path(exercise.getExercise_path());
+                existingExercise.setExercise_muscle(muscle);
+
                 List<Exercise> exercisesWithOldImage = iExercise.findByImage(oldImageUrl);
                 if (exercisesWithOldImage.isEmpty()){
-                    imageService.deleteImageFromBucket(oldImageUrl); // Exclui a imagem se não estiver mais em uso
+                    imageService.deleteImageFromBucket(oldImageUrl);
                 }
-            }
 
-            else{
-                System.out.println("Exercise not found for ID: " + id);
-            }
-        }
-
-        catch (Exception e){
-            System.out.println("Cannot change exercise's image: " + e.getMessage());
-        }
-    }
-
-    @Transactional
-    public void updatePath(Integer id, String path){
-        try{
-            iExercise.updatePath(id, path);
-        }
-
-        catch (Exception e){
-            System.out.println("Cannot change exercise's path: " + e.getMessage());
-        }
-    }
-
-    @Transactional
-    public void syncData(List<Exercise> exercises) {
-        List<Exercise> existingExercises = getAll();
-        Map<Integer, Exercise> existingMap = existingExercises.stream()
-                .collect(Collectors.toMap(Exercise::getExercise_id, Function.identity()));
-
-        for (Exercise newExercise : exercises) {
-            Exercise existingExercise = existingMap.get(newExercise.getExercise_id());
-
-            if (existingExercise == null) {
-                insert(newExercise.getExercise_name(), newExercise.getExercise_image(),
-                        newExercise.getExercise_path(), newExercise.getExercise_muscle().getMuscle_id());
+                iExercise.save(existingExercise);
             }
 
             else {
-                boolean needsUpdate = !existingExercise.equals(newExercise);
-
-                if (needsUpdate) {
-                    iExercise.updateExercise(newExercise.getExercise_id(), newExercise.getExercise_name(), newExercise.getExercise_image(), newExercise.getExercise_path(), newExercise.getExercise_muscle().getMuscle_id());
-                }
+                insert(exercise.getExercise_name(), exercise.getExercise_image(), exercise.getExercise_path(), exercise.getExercise_muscle().getMuscle_id());
             }
         }
 
-        for (Exercise existingExercise : existingExercises) {
-            boolean existsInNewList = exercises.stream()
-                    .anyMatch(e -> e.getExercise_id().equals(existingExercise.getExercise_id()));
-
-            if (!existsInNewList) {
-                delete(existingExercise.getExercise_id());
-            }
+        catch (Exception e) {
+            System.out.println("Cannot sync exercise data: " + e.getMessage());
         }
     }
 
     @Transactional
     public void delete(Integer id) {
         try{
-            iExercise.delete(id);
-
             Optional<Exercise> optionalExercise = iExercise.findById(id);
             if (optionalExercise.isPresent()){
                 Exercise exercise = optionalExercise.get();
@@ -192,6 +153,8 @@ public class ExerciseService {
                 if (exercisesWithOldImage.isEmpty()){
                     imageService.deleteImageFromBucket(oldImageUrl);
                 }
+
+                iExercise.deleteById(id);
             }
 
             else{
