@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:js_interop';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:mime/mime.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:dio/dio.dart';
 class AddExercise extends StatefulWidget {
   final dynamic musculos;
   const AddExercise(this.musculos, {super.key});
@@ -15,13 +18,14 @@ class AddExercise extends StatefulWidget {
 class AddExerciceState extends State<AddExercise> {
   final controllerNome = List<TextEditingController>.empty(growable: true);
   final controllerUrl = List<TextEditingController>.empty(growable: true);
-  final controllerMusculo = List<String>.empty(growable: true);
+  final controllerMusculo = List<int>.empty(growable: true);
   final controllerList = ScrollController();
   final controllerRow = List<ScrollController>.empty(growable: true);
   bool podeMudar = true;
   var mensagemErro = "";
   var listElement = List<Widget>.empty(growable: true);
   var listCamera = List<Widget>.empty(growable: true);
+  var controllerCamera = List<PlatformFile>.empty(growable: true);
   var corBorda;
   var dropdownvalue;
 
@@ -157,7 +161,7 @@ class AddExerciceState extends State<AddExercise> {
                     ),
                     Padding(
                         padding: const EdgeInsets.all(5),
-                        child: DropdownMenu<String>(
+                        child: DropdownMenu<int>(
                           width: 210,
                           hintText: "Músculo",
                           inputDecorationTheme: InputDecorationTheme(
@@ -198,7 +202,7 @@ class AddExerciceState extends State<AddExercise> {
                                 vertical: 8, horizontal: 12),
                           ),
                           initialSelection: controllerMusculo[controllerIndex],
-                          onSelected: (String? value) {
+                          onSelected: (int? value) {
                             // This is called when the user selects an item.
                             setState(() {
                               dropdownvalue = value!;
@@ -206,10 +210,12 @@ class AddExerciceState extends State<AddExercise> {
                             });
                           },
                           dropdownMenuEntries: musculos
-                              .map<DropdownMenuEntry<String>>((String value) {
-                            return DropdownMenuEntry<String>(
-                                value: value, label: value);
-                          }).toList(),
+                    .map<DropdownMenuEntry<int>>((Map<String, dynamic> musculo) {
+                  return DropdownMenuEntry<int>(
+                    value: musculo['id'] as int,
+                    label: musculo['nome'] as String,
+                  );
+                }).toList(),
                         )),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
@@ -228,6 +234,7 @@ class AddExerciceState extends State<AddExercise> {
                             if (picked != null) {
                               setState(() {
                                 print(picked.files.first.name);
+                                controllerCamera[controllerIndex] = picked.files.first;
                                 listCamera[controllerIndex] = ClipRRect(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(12)),
@@ -262,8 +269,9 @@ class AddExerciceState extends State<AddExercise> {
                             controllerUrl
                                 .remove(controllerUrl[controllerIndex]);
                             controllerMusculo
-                                .remove(controllerMusculo[controllerIndex]);
+                                .removeAt(controllerIndex);
                             listCamera.remove(listCamera[controllerIndex]);
+                            controllerCamera.remove(controllerCamera[controllerIndex]);
                           });
                         },
                       ),
@@ -290,23 +298,15 @@ class AddExerciceState extends State<AddExercise> {
       });
     }
 
-    if (listElement.isEmpty == true) {
-      setState(() {
-        controllerNome.add(TextEditingController());
-        controllerUrl.add(TextEditingController());
-        controllerMusculo.add("");
-        controllerRow.add(ScrollController());
-        listCamera.add(Icon(Icons.camera_alt));
-        listElement.add(getWidget(widget.musculos, 0));
-      });
-    } else {
+
+    
       setState(() {
         listElement.clear();
         for (int i = 0; i < controllerRow.length; i++) {
           listElement.add(getWidget(widget.musculos, i));
         }
       });
-    }
+    
 
     return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -366,7 +366,8 @@ class AddExerciceState extends State<AddExercise> {
                                                           TextEditingController());
                                                       controllerUrl.add(
                                                           TextEditingController());
-                                                      controllerMusculo.add("");
+                                                      controllerCamera.add(PlatformFile(name: 'null', size: 0));
+                                                      controllerMusculo.add(0);
                                                       controllerRow.add(
                                                           ScrollController());
                                                       listElement.add(getWidget(
@@ -422,7 +423,7 @@ class AddExerciceState extends State<AddExercise> {
                                                           controllerNome[i]
                                                               .text,
                                                           controllerUrl[i].text,
-                                                          controllerMusculo[i]);
+                                                          controllerMusculo[i], controllerCamera[i]);
                                                     }
                                                   },
                                                   color: Colors.orange,
@@ -464,22 +465,33 @@ class AddExerciceState extends State<AddExercise> {
   }
 }
 
-Future<int> postExercise(String nome, String path, String muscle) async {
+
+Future<int> postExercise(String nome, String path, int muscle, PlatformFile imagem) async {
   try {
-    final info = await http.post(
-      Uri.parse('http://localhost:8080/exercise/insert/'),
+    var dio = Dio();
+
+    var formData = FormData.fromMap({
+      'muscleId': muscle.toString(),
+      'name': nome,
+      'path': path,
+      'image': MultipartFile.fromBytes(imagem.bytes!, filename: imagem.name),
+    });
+
+    var response = await dio.post(
+      'http://localhost:8080/exercise/insert/',
+      data: formData,
+      options: Options(contentType: 'multipart/form-data'),
     );
 
-    if (info.statusCode == 200) {
-      // Successful POST request, handle the response here
-      print("Usuário registrado");
+    if (response.statusCode == 200) {
+      print("Exercício registrado com sucesso");
       return 1;
     } else {
-      // If the server returns an error response, throw an exception
-      throw Exception('Failed to post data');
+      throw Exception('Falha ao enviar dados');
     }
   } catch (e) {
     print(e.toString());
     return 0;
   }
 }
+

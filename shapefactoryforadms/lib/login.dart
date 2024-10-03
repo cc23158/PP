@@ -253,8 +253,12 @@ class LoginState extends State<Login> {
 
 Future<Object?> verifyAccount(String email, String password) async {
   try {
+    final queryParameters = {
+  'email': email,
+  'password': password,
+};
     final response = await http.get(
-      Uri.parse('http://localhost:8080/adm/verify/$email/$password'),
+      Uri.http('localhost:8080', '/adm/verify', queryParameters ), 
     );
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -268,30 +272,35 @@ Future<Object?> verifyAccount(String email, String password) async {
   }
 }
 
-Future<List<String>?> getMuscles() async {
-  print("entrou");
-  var lista = List<String>.empty(growable: true);
+Future<List<Map<String, dynamic>>?> getMuscles() async {
+  print("Iniciando busca de músculos");
+  var lista = <Map<String, dynamic>>[];
   try {
     final response = await http.get(
-      Uri.parse('http://localhost:8080/muscle/getAllMuscles'),
+      Uri.parse('http://localhost:8080/muscle/getAll'),
     );
-    print("chegou");
-    var decodedResponse = jsonDecode(response.body);
-    if (decodedResponse != null) {
-      var i = 0;
-      while (lista.length < decodedResponse.length) {
-        lista.add(utf8.decode(decodedResponse[i]["muscle_name"].codeUnits));
-        print("adsd");
-        i++;
+    print("Resposta recebida");
+    if (response.statusCode == 200) {
+      var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      if (decodedResponse != null && decodedResponse is List) {
+        for (var muscle in decodedResponse) {
+          lista.add({
+            'id': muscle['muscle_id'],
+            'nome': muscle['muscle_name'],
+          });
+        }
+        print("Lista de músculos: $lista");
+        return lista;
+      } else {
+        print("Resposta não é uma lista ou está vazia");
+        return null;
       }
-      print(lista.toString());
-      return lista;
-    }
-    else {
+    } else {
+      print("Erro na resposta: ${response.statusCode}");
       return null;
     }
   } catch (erro) {
-    print(erro.toString());
+    print("Erro ao buscar músculos: ${erro.toString()}");
     return null;
   }
 }
