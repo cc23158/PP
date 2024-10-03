@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -45,9 +46,9 @@ public class HistoryService {
         }
     }
 
-    public History insert(Integer clientId, Integer recipeId){
-        if (clientId == null || recipeId == null){
-            System.out.println("ClientId or recipeId must not be empty");
+    public History insert(Integer clientId, Integer recipeId, LocalTime time){
+        if (clientId == null || recipeId == null || time == null){
+            System.out.println("ClientId, recipeId and time must not be empty");
             return null;
         }
 
@@ -64,6 +65,7 @@ public class HistoryService {
             history.setHistory_client(client);
             history.setHistory_recipe(recipe);
             history.setHistory_date(LocalDate.now());
+            history.setHistory_time(time);
 
             return iHistory.save(history);
         }

@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class ExerciseService {
@@ -139,6 +142,39 @@ public class ExerciseService {
 
         catch (Exception e){
             System.out.println("Cannot change exercise's path: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void syncData(List<Exercise> exercises) {
+        List<Exercise> existingExercises = getAll();
+        Map<Integer, Exercise> existingMap = existingExercises.stream()
+                .collect(Collectors.toMap(Exercise::getExercise_id, Function.identity()));
+
+        for (Exercise newExercise : exercises) {
+            Exercise existingExercise = existingMap.get(newExercise.getExercise_id());
+
+            if (existingExercise == null) {
+                insert(newExercise.getExercise_name(), newExercise.getExercise_image(),
+                        newExercise.getExercise_path(), newExercise.getExercise_muscle().getMuscle_id());
+            }
+
+            else {
+                boolean needsUpdate = !existingExercise.equals(newExercise);
+
+                if (needsUpdate) {
+                    iExercise.updateExercise(newExercise.getExercise_id(), newExercise.getExercise_name(), newExercise.getExercise_image(), newExercise.getExercise_path(), newExercise.getExercise_muscle().getMuscle_id());
+                }
+            }
+        }
+
+        for (Exercise existingExercise : existingExercises) {
+            boolean existsInNewList = exercises.stream()
+                    .anyMatch(e -> e.getExercise_id().equals(existingExercise.getExercise_id()));
+
+            if (!existsInNewList) {
+                delete(existingExercise.getExercise_id());
+            }
         }
     }
 

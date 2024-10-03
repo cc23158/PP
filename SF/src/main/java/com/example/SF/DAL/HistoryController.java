@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -32,8 +33,8 @@ public class HistoryController {
 
     @CrossOrigin
     @PostMapping("/insert")
-    public History insert(@RequestParam("clientId") Integer clientId, @RequestParam("recipeId") Integer recipeId){
-        return historyService.insert(clientId, recipeId);
+    public History insert(@RequestParam("clientId") Integer clientId, @RequestParam("recipeId") Integer recipeId, @RequestParam("time") LocalTime time){
+        return historyService.insert(clientId, recipeId, time);
     }
 
     @CrossOrigin

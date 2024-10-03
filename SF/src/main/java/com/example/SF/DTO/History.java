@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "history", schema = "sf")
@@ -30,4 +31,7 @@ public class History {
 
     @Column(name = "history_date", nullable = false)
     private LocalDate history_date;
+
+    @Column(name = "history_time", nullable = true)
+    private LocalTime history_time;
 }

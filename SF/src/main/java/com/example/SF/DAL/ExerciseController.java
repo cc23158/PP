@@ -47,6 +47,19 @@ public class ExerciseController {
     }
 
     @CrossOrigin
+    @PostMapping("/sync")
+    public ResponseEntity<String> syncExercises(@RequestBody List<Exercise> exercises) {
+        try {
+            exerciseService.syncData(exercises);
+            return ResponseEntity.ok("Exercises synchronized successfully");
+        }
+
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error synchronizing exercises");
+        }
+    }
+
+    @CrossOrigin
     @PutMapping("/updateImage")
     public ResponseEntity<String> updateImage(@RequestParam("id") Integer id, @RequestParam("image") MultipartFile image){
         try{
