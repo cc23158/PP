@@ -26,9 +26,62 @@ class AddExerciceState extends State<AddExercise> {
   var mensagemErro = "";
   var listElement = List<Widget>.empty(growable: true);
   var listCamera = List<Widget>.empty(growable: true);
-  var controllerCamera = List<PlatformFile>.empty(growable: true);
+  var controllerCamera = List.empty(growable: true);
+  var controllerId = List<int>.empty(growable: true);
+  var controllerExcluir = List<int>.empty(growable: true);
   var corBorda;
   var dropdownvalue;
+
+  void getExercises() async {
+    print("Iniciando busca de exercícios");
+    var lista = <Map<String, dynamic>>[];
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:8080/exercise/getAll'),
+      );
+      print("Resposta recebida");
+      if (response.statusCode == 200) {
+        var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes));
+        if (decodedResponse != null && decodedResponse is List) {
+          setState(() {
+            for (var exercise in decodedResponse){
+            listCamera.add(Icon(Icons.camera_alt));
+            controllerNome.add(TextEditingController());
+            controllerUrl.add(TextEditingController());
+            controllerCamera.add(PlatformFile(name: 'null', size: 0));
+            controllerMusculo.add(-1);
+            controllerRow.add(ScrollController());
+            listElement
+                .add(getWidget(widget.musculos, controllerRow.length - 1));
+            controllerNome[controllerNome.length - 1].text = exercise["exercise_name"];
+            controllerUrl[controllerUrl.length - 1].text = exercise["exercise_path"];
+            controllerMusculo[controllerMusculo.length - 1] = exercise["exercise_muscle"]["muscle_id"];
+            controllerId.add(exercise["exercise_id"]);
+            listCamera[listCamera.length - 1] = ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12)),
+                                    child: Image.network(
+                                      exercise["exercise_image"],
+                                      height: 46,
+                                      width: 46,
+                                      fit: BoxFit.cover,
+                                    ));
+          }});
+
+          print("Lista de exércicios: $lista");
+        } else {
+          print("Resposta não é uma lista ou está vazia");
+          return null;
+        }
+      } else {
+        print("Erro na resposta: ${response.statusCode}");
+        return null;
+      }
+    } catch (erro) {
+      print("Erro ao buscar exercícios: ${erro.toString()}");
+      return null;
+    }
+  }
 
   Widget getWidget(dynamic musculos, int controllerIndex) {
     return Card(
@@ -163,56 +216,58 @@ class AddExerciceState extends State<AddExercise> {
                     Padding(
                         padding: const EdgeInsets.all(5),
                         child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.1,
-                        child: DropdownButtonFormField<int>(
-  decoration: InputDecoration(
-    disabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(4.0),
-      borderSide: const BorderSide(
-        color: Color.fromARGB(255, 0, 0, 0),
-        width: 1,
-      ),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(4.0),
-      borderSide: const BorderSide(
-        color: Color.fromARGB(255, 0, 0, 0),
-        width: 1,
-      ),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12.0),
-      borderSide: const BorderSide(
-        color: Color.fromARGB(255, 0, 0, 0),
-        width: 1,
-      ),
-    ),
-    labelText: "Músculo", // Define o rótulo
-    labelStyle: const TextStyle(
-      fontWeight: FontWeight.w400,
-      fontStyle: FontStyle.normal,
-      fontSize: 16,
-      color: Color.fromARGB(255, 0, 0, 0),
-    ),
-    contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-  ),
-value: controllerMusculo[controllerIndex] == -1 
-  ? null 
-  : controllerMusculo[controllerIndex] - 1,
-  onChanged: (int? newValue) {
-    setState(() {
-      dropdownvalue = newValue!;
-      controllerMusculo[controllerIndex] = newValue + 1;
-    });
-  },
-  items: musculos.map<DropdownMenuItem<int>>((Map<String, dynamic> musculo) {
-    return DropdownMenuItem<int>(
-      value: (musculo['id'] as int) - 1 ,
-      child: Text(musculo['nome'] as String),
-    );
-  }).toList(),
-))
-),
+                            width: MediaQuery.of(context).size.width * 0.1,
+                            child: DropdownButtonFormField<int>(
+                              decoration: InputDecoration(
+                                disabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                  borderSide: const BorderSide(
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    width: 1,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                  borderSide: const BorderSide(
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    width: 1,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderSide: const BorderSide(
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    width: 1,
+                                  ),
+                                ),
+                                labelText: "Músculo", // Define o rótulo
+                                labelStyle: const TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                  fontSize: 16,
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 12),
+                              ),
+                              value: controllerMusculo[controllerIndex] == -1
+                                  ? null
+                                  : controllerMusculo[controllerIndex] - 1,
+                              onChanged: (int? newValue) {
+                                setState(() {
+                                  dropdownvalue = newValue!;
+                                  controllerMusculo[controllerIndex] =
+                                      newValue + 1;
+                                });
+                              },
+                              items: musculos.map<DropdownMenuItem<int>>(
+                                  (Map<String, dynamic> musculo) {
+                                return DropdownMenuItem<int>(
+                                  value: (musculo['id'] as int) - 1,
+                                  child: Text(musculo['nome'] as String),
+                                );
+                              }).toList(),
+                            ))),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
                       child: MaterialButton(
@@ -269,6 +324,9 @@ value: controllerMusculo[controllerIndex] == -1
                             listCamera.remove(listCamera[controllerIndex]);
                             controllerCamera
                                 .remove(controllerCamera[controllerIndex]);
+                            controllerExcluir.add(controllerId[controllerIndex]);
+                            controllerId.removeAt(controllerIndex);
+                            
                           });
                         },
                       ),
@@ -294,6 +352,9 @@ value: controllerMusculo[controllerIndex] == -1
         corBorda = const BorderSide(color: Colors.black);
       });
     }
+    if (listElement.isEmpty) {
+      getExercises();
+    }
 
     setState(() {
       listElement.clear();
@@ -316,11 +377,6 @@ value: controllerMusculo[controllerIndex] == -1
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        const Text("Lista de novas formas de fábricar o corpo",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700)),
                         Expanded(
                             child: Card(
                                 color: Colors.black,
@@ -367,6 +423,7 @@ value: controllerMusculo[controllerIndex] == -1
                                                       controllerMusculo.add(-1);
                                                       controllerRow.add(
                                                           ScrollController());
+                                                      controllerId.add(-1);
                                                       listElement.add(getWidget(
                                                           widget.musculos,
                                                           controllerRow.length -
@@ -416,12 +473,20 @@ value: controllerMusculo[controllerIndex] == -1
                                                             controllerRow
                                                                 .length;
                                                         i++) {
+                                                          if (controllerId[i] == -1){
                                                       postExercise(
                                                           controllerNome[i]
                                                               .text,
                                                           controllerUrl[i].text,
                                                           controllerMusculo[i],
-                                                          controllerCamera[i]);
+                                                          controllerCamera[i]);}
+                                                          else {
+                                                            
+                                                          }
+                                                    }
+                                                    for (int i = 0; i < controllerExcluir.length; i++){
+                                                      if (controllerExcluir[i] != -1){
+                                                      deleteExercise(controllerExcluir[i]);}
                                                     }
                                                   },
                                                   color: Colors.orange,
@@ -493,3 +558,46 @@ Future<int> postExercise(
     return 0;
   }
 }
+
+Future<int> deleteExercise(int id) async{
+
+  try {
+    final queryParameters = {
+  'id': id.toString(),
+};
+    final response = await http.delete(
+      Uri.http('localhost:8080', '/exercise/delete', queryParameters ), 
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return 1;
+    } else {
+          throw Exception('Falha ao deletar');
+    }
+  } catch (erro) {
+    print(erro.toString());
+    return 0;
+  }
+}
+
+Future<int> uptadeExercise(int id) async{
+
+  try {
+    final queryParameters = {
+  'id': id.toString(),
+};
+    final response = await http.delete(
+      Uri.http('localhost:8080', '/exercise/delete', queryParameters ), 
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return 1;
+    } else {
+          throw Exception('Falha ao deletar');
+    }
+  } catch (erro) {
+    print(erro.toString());
+    return 0;
+  }
+}
+
