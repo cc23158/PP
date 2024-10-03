@@ -17,6 +17,16 @@ public interface IExercise extends JpaRepository<Exercise, Integer> {
     List<Exercise> findByImage(@Param("exerciseImage") String image);
 
     @Modifying
+    @Query("UPDATE Exercise SET exercise_name = :name, exercise_image = :image, exercise_path = :path, exercise_muscle = :muscleId WHERE exercise_id = :id")
+    void updateExercise(
+            @Param("id") Integer id,
+            @Param("name") String name,
+            @Param("image") String image,
+            @Param("path") String path,
+            @Param("muscleId") Integer muscleId
+    );
+
+    @Modifying
     @Query("UPDATE Exercise SET exercise_image = :exerciseImage WHERE exercise_id = :exerciseId")
     void updateImage(
             @Param("exerciseId") Integer id,
