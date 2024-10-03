@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
+
 class AddExercise extends StatefulWidget {
   final dynamic musculos;
   const AddExercise(this.musculos, {super.key});
@@ -111,7 +112,7 @@ class AddExerciceState extends State<AddExercise> {
                     Padding(
                       padding: const EdgeInsets.all(5),
                       child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.4,
+                        width: MediaQuery.of(context).size.width * 0.39,
                         child: TextField(
                           cursorColor: Colors.orange,
                           controller: controllerUrl[controllerIndex],
@@ -161,62 +162,57 @@ class AddExerciceState extends State<AddExercise> {
                     ),
                     Padding(
                         padding: const EdgeInsets.all(5),
-                        child: DropdownMenu<int>(
-                          width: 210,
-                          hintText: "Músculo",
-                          inputDecorationTheme: InputDecorationTheme(
-                            disabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                              borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 0, 0, 0),
-                                  width: 1),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                              borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 0, 0, 0),
-                                  width: 1),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 0, 0, 0),
-                                  width: 1),
-                            ),
-                            labelStyle: const TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.normal,
-                              fontSize: 16,
-                              color: Color.fromARGB(255, 0, 0, 0),
-                            ),
-                            filled: true,
-                            fillColor: const Color(0x00ffffff),
-                            isDense: false,
-                            hintStyle: const TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.normal,
-                              fontSize: 16,
-                              color: Color.fromARGB(255, 0, 0, 0),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                          ),
-                          initialSelection: controllerMusculo[controllerIndex],
-                          onSelected: (int? value) {
-                            // This is called when the user selects an item.
-                            setState(() {
-                              dropdownvalue = value!;
-                              controllerMusculo[controllerIndex] = value;
-                            });
-                          },
-                          dropdownMenuEntries: musculos
-                    .map<DropdownMenuEntry<int>>((Map<String, dynamic> musculo) {
-                  return DropdownMenuEntry<int>(
-                    value: musculo['id'] as int,
-                    label: musculo['nome'] as String,
-                  );
-                }).toList(),
-                        )),
+                        child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.1,
+                        child: DropdownButtonFormField<int>(
+  decoration: InputDecoration(
+    disabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(4.0),
+      borderSide: const BorderSide(
+        color: Color.fromARGB(255, 0, 0, 0),
+        width: 1,
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(4.0),
+      borderSide: const BorderSide(
+        color: Color.fromARGB(255, 0, 0, 0),
+        width: 1,
+      ),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      borderSide: const BorderSide(
+        color: Color.fromARGB(255, 0, 0, 0),
+        width: 1,
+      ),
+    ),
+    labelText: "Músculo", // Define o rótulo
+    labelStyle: const TextStyle(
+      fontWeight: FontWeight.w400,
+      fontStyle: FontStyle.normal,
+      fontSize: 16,
+      color: Color.fromARGB(255, 0, 0, 0),
+    ),
+    contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+  ),
+value: controllerMusculo[controllerIndex] == -1 
+  ? null 
+  : controllerMusculo[controllerIndex] - 1,
+  onChanged: (int? newValue) {
+    setState(() {
+      dropdownvalue = newValue!;
+      controllerMusculo[controllerIndex] = newValue + 1;
+    });
+  },
+  items: musculos.map<DropdownMenuItem<int>>((Map<String, dynamic> musculo) {
+    return DropdownMenuItem<int>(
+      value: (musculo['id'] as int) - 1 ,
+      child: Text(musculo['nome'] as String),
+    );
+  }).toList(),
+))
+),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
                       child: MaterialButton(
@@ -234,7 +230,8 @@ class AddExerciceState extends State<AddExercise> {
                             if (picked != null) {
                               setState(() {
                                 print(picked.files.first.name);
-                                controllerCamera[controllerIndex] = picked.files.first;
+                                controllerCamera[controllerIndex] =
+                                    picked.files.first;
                                 listCamera[controllerIndex] = ClipRRect(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(12)),
@@ -268,10 +265,10 @@ class AddExerciceState extends State<AddExercise> {
                                 .remove(controllerNome[controllerIndex]);
                             controllerUrl
                                 .remove(controllerUrl[controllerIndex]);
-                            controllerMusculo
-                                .removeAt(controllerIndex);
+                            controllerMusculo.removeAt(controllerIndex);
                             listCamera.remove(listCamera[controllerIndex]);
-                            controllerCamera.remove(controllerCamera[controllerIndex]);
+                            controllerCamera
+                                .remove(controllerCamera[controllerIndex]);
                           });
                         },
                       ),
@@ -298,15 +295,12 @@ class AddExerciceState extends State<AddExercise> {
       });
     }
 
-
-    
-      setState(() {
-        listElement.clear();
-        for (int i = 0; i < controllerRow.length; i++) {
-          listElement.add(getWidget(widget.musculos, i));
-        }
-      });
-    
+    setState(() {
+      listElement.clear();
+      for (int i = 0; i < controllerRow.length; i++) {
+        listElement.add(getWidget(widget.musculos, i));
+      }
+    });
 
     return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -366,8 +360,11 @@ class AddExerciceState extends State<AddExercise> {
                                                           TextEditingController());
                                                       controllerUrl.add(
                                                           TextEditingController());
-                                                      controllerCamera.add(PlatformFile(name: 'null', size: 0));
-                                                      controllerMusculo.add(0);
+                                                      controllerCamera.add(
+                                                          PlatformFile(
+                                                              name: 'null',
+                                                              size: 0));
+                                                      controllerMusculo.add(-1);
                                                       controllerRow.add(
                                                           ScrollController());
                                                       listElement.add(getWidget(
@@ -423,7 +420,8 @@ class AddExerciceState extends State<AddExercise> {
                                                           controllerNome[i]
                                                               .text,
                                                           controllerUrl[i].text,
-                                                          controllerMusculo[i], controllerCamera[i]);
+                                                          controllerMusculo[i],
+                                                          controllerCamera[i]);
                                                     }
                                                   },
                                                   color: Colors.orange,
@@ -465,8 +463,9 @@ class AddExerciceState extends State<AddExercise> {
   }
 }
 
-
-Future<int> postExercise(String nome, String path, int muscle, PlatformFile imagem) async {
+Future<int> postExercise(
+    String nome, String path, int muscle, PlatformFile imagem) async {
+  print(imagem.name);
   try {
     var dio = Dio();
 
@@ -478,7 +477,7 @@ Future<int> postExercise(String nome, String path, int muscle, PlatformFile imag
     });
 
     var response = await dio.post(
-      'http://localhost:8080/exercise/insert/',
+      'http://localhost:8080/exercise/insert',
       data: formData,
       options: Options(contentType: 'multipart/form-data'),
     );
@@ -494,4 +493,3 @@ Future<int> postExercise(String nome, String path, int muscle, PlatformFile imag
     return 0;
   }
 }
-
