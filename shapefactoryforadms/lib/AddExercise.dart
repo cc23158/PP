@@ -326,7 +326,7 @@ class AddExerciceState extends State<AddExercise> {
                                 .remove(controllerCamera[controllerIndex]);
                             controllerExcluir.add(controllerId[controllerIndex]);
                             controllerId.removeAt(controllerIndex);
-                            
+                            podeMudar = false;
                           });
                         },
                       ),
@@ -352,7 +352,7 @@ class AddExerciceState extends State<AddExercise> {
         corBorda = const BorderSide(color: Colors.black);
       });
     }
-    if (listElement.isEmpty) {
+    if (listElement.isEmpty && podeMudar) {
       getExercises();
     }
 
@@ -474,7 +474,7 @@ class AddExerciceState extends State<AddExercise> {
                                                                 .length;
                                                         i++) {
                                                           if (controllerId[i] == -1){
-                                                      postExercise(
+                                                      await postExercise(
                                                           controllerNome[i]
                                                               .text,
                                                           controllerUrl[i].text,
@@ -486,8 +486,19 @@ class AddExerciceState extends State<AddExercise> {
                                                     }
                                                     for (int i = 0; i < controllerExcluir.length; i++){
                                                       if (controllerExcluir[i] != -1){
-                                                      deleteExercise(controllerExcluir[i]);}
+                                                      await deleteExercise(controllerExcluir[i]);}
                                                     }
+                                                    controllerCamera.clear();
+                                                    controllerExcluir.clear();
+                                                    controllerId.clear();
+                                                    controllerMusculo.clear();
+                                                    controllerNome.clear();
+                                                    controllerRow.clear();
+                                                    controllerUrl.clear();
+                                                    listCamera.clear();
+                                                    listElement.clear();
+                                                    getExercises();
+                                                    podeMudar = true;
                                                   },
                                                   color: Colors.orange,
                                                   shape: const RoundedRectangleBorder(
