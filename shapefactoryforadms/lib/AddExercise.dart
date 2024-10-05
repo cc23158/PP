@@ -92,8 +92,6 @@ class AddExerciceState extends State<AddExercise> {
           borderRadius: BorderRadius.circular(12.0),
           side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
         ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
           child: RawScrollbar(
             padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
             thumbColor: Colors.black,
@@ -113,8 +111,9 @@ class AddExerciceState extends State<AddExercise> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10, 5, 5, 5),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.33,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        constraints: BoxConstraints(maxWidth: 500),
                         child: TextField(
                           cursorColor: Colors.orange,
                           controller: controllerNome[controllerIndex],
@@ -164,8 +163,9 @@ class AddExerciceState extends State<AddExercise> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(5),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.39,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        constraints: BoxConstraints(maxWidth: 680),
                         child: TextField(
                           cursorColor: Colors.orange,
                           controller: controllerUrl[controllerIndex],
@@ -216,7 +216,7 @@ class AddExerciceState extends State<AddExercise> {
                     Padding(
                         padding: const EdgeInsets.all(5),
                         child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.1,
+                            width: 200,
                             child: DropdownButtonFormField<int>(
                               decoration: InputDecoration(
                                 disabledBorder: OutlineInputBorder(
@@ -336,7 +336,7 @@ class AddExerciceState extends State<AddExercise> {
               ),
             ),
           ),
-        ));
+        );
   }
 
   @override
@@ -370,7 +370,7 @@ class AddExerciceState extends State<AddExercise> {
             body: Align(
                 alignment: Alignment.center,
                 child: Container(
-                    width: MediaQuery.of(context).size.width * 0.96,
+                    width: 1600,
                     height: MediaQuery.of(context).size.height * 0.5,
                     constraints:
                         const BoxConstraints(minHeight: 700, minWidth: 400),
