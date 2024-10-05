@@ -36,6 +36,7 @@ class AddExerciceState extends State<AddExercise> {
     print("Iniciando busca de exercícios");
     var lista = <Map<String, dynamic>>[];
     try {
+      
       final response = await http.get(
         Uri.parse('http://localhost:8080/exercise/getAll'),
       );
@@ -81,6 +82,7 @@ class AddExerciceState extends State<AddExercise> {
       print("Erro ao buscar exercícios: ${erro.toString()}");
       return null;
     }
+
   }
 
   Widget getWidget(dynamic musculos, int controllerIndex) {
@@ -339,6 +341,8 @@ class AddExerciceState extends State<AddExercise> {
         );
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     print("build");
@@ -477,7 +481,7 @@ class AddExerciceState extends State<AddExercise> {
                                                           controllerMusculo[i],
                                                           controllerCamera[i]);}
                                                           else {
-                                                            
+                                                            await uptadeExercise(controllerId[i], controllerNome[i].text, controllerUrl[i].text, controllerMusculo[i], controllerCamera[i]);
                                                           }
                                                     }
                                                     for (int i = 0; i < controllerExcluir.length; i++){
@@ -531,9 +535,8 @@ class AddExerciceState extends State<AddExercise> {
                                             ],
                                           ),
                                         )
-                                      ]),
-                                )))
-                      ],
+                                      ]))))
+                      ]
                     )))));
   }
 }
@@ -590,23 +593,32 @@ Future<int> deleteExercise(int id) async{
   }
 }
 
-Future<int> uptadeExercise(int id) async{
-
+Future<int> uptadeExercise(int id, String nome, String path, int muscle, PlatformFile imagem) async{
   try {
-    final queryParameters = {
-  'id': id.toString(),
-};
-    final response = await http.delete(
-      Uri.http('localhost:8080', '/exercise/update', queryParameters ), 
+    var dio = Dio();
+
+    var formData = FormData.fromMap({
+      'id' : id.toString(),
+      'muscleId': muscle.toString(),
+      'name': nome,
+      'path': path,
+      'image': MultipartFile.fromBytes(imagem.bytes!, filename: imagem.name),
+    });
+
+    var response = await dio.put(
+      'http://localhost:8080/exercise/update',
+      data: formData,
+      options: Options(contentType: 'multipart/form-data'),
     );
-    print(response.statusCode);
+
     if (response.statusCode == 200) {
+      print("Exercício registrado com sucesso");
       return 1;
     } else {
-          throw Exception('Falha ao deletar');
+      throw Exception('Falha ao enviar dados');
     }
-  } catch (erro) {
-    print(erro.toString());
+  } catch (e) {
+    print(e.toString());
     return 0;
   }
 }
