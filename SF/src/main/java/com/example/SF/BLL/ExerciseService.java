@@ -30,7 +30,7 @@ public class ExerciseService {
 
     public List<Exercise> getAll(){
         try{
-            return iExercise.findAll();
+            return iExercise.getAllOrder();
         }
 
         catch (Exception e){
