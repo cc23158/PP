@@ -106,38 +106,35 @@ public class ExerciseService {
     }
 
     @Transactional
-    public void syncData(Exercise exercise){
+    public void update(Integer id, String name, String image, String path, Integer muscleId){
         try {
-            Optional<Exercise> optionalExercise = iExercise.findById(exercise.getExercise_id());
+            Optional<Exercise> optionalExercise = iExercise.findById(id);
             if (optionalExercise.isPresent()){
-                Exercise existingExercise = optionalExercise.get();
-                String oldImageUrl = existingExercise.getExercise_image();
-
-                Muscle muscle = muscleService.getById(exercise.getExercise_muscle().getMuscle_id());
-                if (muscle == null) {
-                    return;
-                }
-
-                existingExercise.setExercise_name(exercise.getExercise_name());
-                existingExercise.setExercise_image(exercise.getExercise_image());
-                existingExercise.setExercise_path(exercise.getExercise_path());
-                existingExercise.setExercise_muscle(muscle);
+                Exercise exercise = optionalExercise.get();
+                String oldImageUrl = exercise.getExercise_image();
 
                 List<Exercise> exercisesWithOldImage = iExercise.findByImage(oldImageUrl);
                 if (exercisesWithOldImage.isEmpty()){
                     imageService.deleteImageFromBucket(oldImageUrl);
                 }
 
-                iExercise.save(existingExercise);
+                Muscle muscle = muscleService.getById(muscleId);
+                if (muscle != null) {
+                    iExercise.update(id, name, image, path, muscle);
+                }
+
+                else {
+                    System.out.println("Muscle not found for ID: " + muscleId);
+                }
             }
 
-            else {
-                insert(exercise.getExercise_name(), exercise.getExercise_image(), exercise.getExercise_path(), exercise.getExercise_muscle().getMuscle_id());
+            else{
+                System.out.println("Exercise not found for ID: " + id);
             }
         }
 
         catch (Exception e) {
-            System.out.println("Cannot sync exercise data: " + e.getMessage());
+            System.out.println("Cannot update exercise's data: " + e.getMessage());
         }
     }
 
