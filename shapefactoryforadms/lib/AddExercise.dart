@@ -598,7 +598,7 @@ Future<int> uptadeExercise(int id) async{
   'id': id.toString(),
 };
     final response = await http.delete(
-      Uri.http('localhost:8080', '/exercise/delete', queryParameters ), 
+      Uri.http('localhost:8080', '/exercise/update', queryParameters ), 
     );
     print(response.statusCode);
     if (response.statusCode == 200) {
