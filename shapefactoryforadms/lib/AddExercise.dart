@@ -467,12 +467,8 @@ class AddExerciceState extends State<AddExercise> {
                                                 child: MaterialButton(
                                                   height: 50,
                                                   onPressed: () async {
-                                                    print(controllerMusculo[0]);
-                                                    for (int i = 0;
-                                                        i <
-                                                            controllerRow
-                                                                .length;
-                                                        i++) {
+                                                    for (int i = 0; i < controllerRow.length;i++) {
+                                                          print("entrou aqui");
                                                           if (controllerId[i] == -1){
                                                       await postExercise(
                                                           controllerNome[i]
@@ -485,6 +481,7 @@ class AddExerciceState extends State<AddExercise> {
                                                           }
                                                     }
                                                     for (int i = 0; i < controllerExcluir.length; i++){
+                                                      print("aaaaaaa");
                                                       if (controllerExcluir[i] != -1){
                                                       await deleteExercise(controllerExcluir[i]);}
                                                     }
@@ -499,6 +496,8 @@ class AddExerciceState extends State<AddExercise> {
                                                     listElement.clear();
                                                     getExercises();
                                                     podeMudar = true;
+
+
                                                   },
                                                   color: Colors.orange,
                                                   shape: const RoundedRectangleBorder(
