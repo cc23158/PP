@@ -47,7 +47,7 @@ public class ExerciseController {
 
     @CrossOrigin
     @PostMapping("/sync")
-    public ResponseEntity<String> syncExercises(@RequestBody Exercise exercise) {
+    public ResponseEntity<String> syncExercises(@RequestParam("exercise") Exercise exercise) {
         try {
             exerciseService.syncData(exercise);
             return ResponseEntity.ok("Exercises synchronized successfully");
