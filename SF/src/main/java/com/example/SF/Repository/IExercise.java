@@ -11,6 +11,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface IExercise extends JpaRepository<Exercise, Integer> {
+    @Query(value = "SELECT * FROM V_ExerciseOrder", nativeQuery = true)
+    List<Exercise> getAllOrder();
+
     @Query(value = "SELECT * FROM SF.GET_Exercise(:muscleId)", nativeQuery = true)
     List<Exercise> getByMuscle(@Param("muscleId") Integer id);
 
