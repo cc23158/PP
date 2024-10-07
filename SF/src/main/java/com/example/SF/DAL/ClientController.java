@@ -1,14 +1,21 @@
 package com.example.SF.DAL;
 
-import com.example.SF.BLL.ClientService;
-import com.example.SF.DTO.Client;
-import org.apache.catalina.connector.Response;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.SF.BLL.ClientService;
+import com.example.SF.DTO.Client;
 
 @RestController
 @RequestMapping("/client")
@@ -54,7 +61,7 @@ public class ClientController {
             @RequestParam("weight") Double weight,
             @RequestParam("password") String password
     ){
-        LocalDate dateBirthday = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate dateBirthday = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         return clientService.save(name, email, dateBirthday, gender, weight, password);
     }
 

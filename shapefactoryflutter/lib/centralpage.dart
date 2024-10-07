@@ -4,7 +4,8 @@ import 'package:shapefactory/home.dart';
 import 'package:shapefactory/relatorio.dart';
 
 class CentralPage extends StatefulWidget {
-  const CentralPage({super.key});
+  final int clientId;
+  const CentralPage({required this.clientId,super.key});
 
   @override
   State<StatefulWidget> createState() => CentralPageState();

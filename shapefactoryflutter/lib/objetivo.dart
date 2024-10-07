@@ -366,7 +366,7 @@ mostrarPopUp(BuildContext context, String objetivo, AssetImage imagem) {
                     child: const Icon(Icons.verified, color: Colors.green),
                     onPressed: () {
                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => const CentralPage()));
+                          MaterialPageRoute(builder: (context) => const CentralPage(clientId: 0,)));
                     },
                   ),
                 ],

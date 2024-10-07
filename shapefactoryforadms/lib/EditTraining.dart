@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shapefactoryforadms/SelectExercise.dart';
 class EditTraining extends StatefulWidget {
 const EditTraining({super.key});
   @override
@@ -13,8 +14,9 @@ class EditTrainingState extends State<EditTraining>{
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
+      home: SelectExercise()
     );
   }
 }

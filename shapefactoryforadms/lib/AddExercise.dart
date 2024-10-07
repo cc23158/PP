@@ -271,14 +271,14 @@ class AddExerciceState extends State<AddExercise> {
                               }).toList(),
                             ))),
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
+                      padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
                       child: MaterialButton(
                           minWidth: 56,
                           height: 56,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                               side: BorderSide(color: Colors.black)),
-                          padding: EdgeInsets.all(10),
+                          padding: EdgeInsets.all(9),
                           child: listCamera[controllerIndex],
                           onPressed: () async {
                             var picked = await FilePicker.platform
@@ -371,6 +371,7 @@ class AddExerciceState extends State<AddExercise> {
         debugShowCheckedModeBanner: false,
         home: Scaffold(
             backgroundColor: Colors.black,
+            
             body: Align(
                 alignment: Alignment.center,
                 child: Container(

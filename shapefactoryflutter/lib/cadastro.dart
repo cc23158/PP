@@ -565,7 +565,7 @@ class CardMonthInputFormatter extends TextInputFormatter {
 Future<String> getClient(String email) async {
   try {
     final response = await http.get(
-      Uri.parse('http://localhost:8080/client/getClientByEmail/$email'),
+      Uri.http('localhost:8080','/client/getByEmail', {'email' : email}),
     );
     print(response.body);
     return response.body;
@@ -578,14 +578,24 @@ Future<int> postClient(String nome, String email, String data, String sexo,
     String peso, String senha) async {
   try {
     var dataReal = data.replaceAll(RegExp(r'/'),'-');
-    print('http://localhost:8080/client/insertClient/$nome/$email/$dataReal/$sexo/$peso/$senha');
+    var queryParameters = {
+      'name': nome,
+      'email': email,
+      'birthday': dataReal,
+      'gender': sexo,
+      'weight': peso,
+      'password': senha
+    };
+    print(Uri.http('localhost:8080','/client/insert', queryParameters));
     final info = await http.post(
-      Uri.parse('http://localhost:8080/client/insertClient/$nome/$email/$dataReal/$sexo/$peso/$senha'),
+      
+      Uri.http('localhost:8080','/client/insert', queryParameters),
      
     );
 
     if (info.statusCode == 200) {
       // Successful POST request, handle the response here
+      print(info.toString());
       print("Usuário registrado");
       return 1;
     } else {

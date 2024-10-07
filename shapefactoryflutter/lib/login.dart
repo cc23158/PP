@@ -173,8 +173,8 @@ class LoginState extends State<Login>{
                         flex: 1,
                         child: MaterialButton(
                           onPressed: () async {
-                            var senha = await getClientPassword(controllerEmail.text);
-                            if (senha == controllerSenha.text) {
+                            List? cliente = await getClientPassword(controllerEmail.text);
+                            if (cliente != null && cliente[0] == controllerSenha.text) {
                               setState(() {
                                 mensagemErro = "";
                               });
@@ -182,7 +182,7 @@ class LoginState extends State<Login>{
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          const CentralPage()));
+                                          CentralPage(clientId: int.parse(cliente[1]),)));
                             }
                             else {
                               setState(() {
@@ -252,18 +252,26 @@ class LoginState extends State<Login>{
  
 
 
-Future<Object?> getClientPassword(String email) async {
+Future<List?> getClientPassword(String email) async {
   try {
+  var listReturn = List.empty(growable: true);
+  final queryParameters = {
+  'email': email
+};
     final response = await http.get(
-      Uri.parse('http://localhost:8080/client/getClientByEmail/$email'),
+      Uri.http('localhost:8080','/client/getByEmail', queryParameters),
     );
+    print(Uri.http('localhost:8080','/client/getByEmail', queryParameters));
+
     var decodedResponse = jsonDecode(response.body);
     if (decodedResponse != null && decodedResponse['client_password'] != null) {
-      return decodedResponse['client_password'];
+      listReturn.add(decodedResponse['client_password']);
+      listReturn.add(decodedResponse['client_id']);
+      return listReturn;
     } else {
-      return "Senha não encontrada";
+      return List.empty();
     }
   } catch (erro) {
-    return "0";
+    return List.empty();
   }
 }
