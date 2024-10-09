@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class ExerciseService {
@@ -22,41 +19,42 @@ public class ExerciseService {
     private final ImageService imageService;
 
     @Autowired
-    public ExerciseService(IExercise iExercise, MuscleService muscleService, ImageService imageService){
+    public ExerciseService(IExercise iExercise, MuscleService muscleService, ImageService imageService) {
         this.iExercise = iExercise;
         this.muscleService = muscleService;
         this.imageService = imageService;
     }
 
-    public List<Exercise> getAll(){
-        try{
+    @Transactional
+    public List<Exercise> getAll() {
+        try {
             return iExercise.getAllOrder();
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot get exercises: " + e.getMessage());
             return List.of();
         }
     }
 
-    public Exercise getById(Integer id){
-        try{
+    public Exercise getById(Integer id) {
+        try {
             return iExercise.findById(id).orElse(null);
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot get exercise: " + e.getMessage());
             return null;
         }
     }
 
     @Transactional
-    public List<Exercise> getByMuscle(Integer muscleId){
-        try{
+    public List<Exercise> getByMuscle(Integer muscleId) {
+        try {
             return iExercise.getByMuscle(muscleId);
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot find exercise by muscle ID: " + muscleId);
             return List.of();
         }
@@ -74,23 +72,23 @@ public class ExerciseService {
         }
     }
 
-    public Exercise insert(String name, String image, String path, Integer muscleId){
-        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(path) || muscleId == null){
+    public Exercise insert(String name, String image, String path, Integer muscleId) {
+        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(path) || muscleId == null) {
             System.out.println("Name, path or muscleId must not be empty");
             return null;
         }
 
-        try{
+        try {
             Exercise exercise = new Exercise();
             exercise.setExercise_name(name);
             exercise.setExercise_path(path);
 
-            if (StringUtils.isNotEmpty(image)){
+            if (StringUtils.isNotEmpty(image)) {
                 exercise.setExercise_image(image);
             }
 
             Muscle muscle = muscleService.getById(muscleId);
-            if (muscle == null){
+            if (muscle == null) {
                 System.out.println("Muscle not found for ID: " + muscleId);
                 return null;
             }
@@ -99,22 +97,22 @@ public class ExerciseService {
             return iExercise.save(exercise);
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot insert exercise: " + e.getMessage());
             return null;
         }
     }
 
     @Transactional
-    public void update(Integer id, String name, String image, String path, Integer muscleId){
+    public void update(Integer id, String name, String image, String path, Integer muscleId) {
         try {
             Optional<Exercise> optionalExercise = iExercise.findById(id);
-            if (optionalExercise.isPresent()){
+            if (optionalExercise.isPresent()) {
                 Exercise exercise = optionalExercise.get();
                 String oldImageUrl = exercise.getExercise_image();
 
                 List<Exercise> exercisesWithOldImage = iExercise.findByImage(oldImageUrl);
-                if (exercisesWithOldImage.isEmpty()){
+                if (exercisesWithOldImage.size() == 1) {
                     imageService.deleteImageFromBucket(oldImageUrl);
                 }
 
@@ -122,13 +120,9 @@ public class ExerciseService {
                 if (muscle != null) {
                     iExercise.update(id, name, image, path, muscle);
                 }
-
-                else {
-                    System.out.println("Muscle not found for ID: " + muscleId);
-                }
             }
 
-            else{
+            else {
                 System.out.println("Exercise not found for ID: " + id);
             }
         }
@@ -140,26 +134,26 @@ public class ExerciseService {
 
     @Transactional
     public void delete(Integer id) {
-        try{
+        try {
             Optional<Exercise> optionalExercise = iExercise.findById(id);
-            if (optionalExercise.isPresent()){
+            if (optionalExercise.isPresent()) {
                 Exercise exercise = optionalExercise.get();
                 String oldImageUrl = exercise.getExercise_image();
 
                 List<Exercise> exercisesWithOldImage = iExercise.findByImage(oldImageUrl);
-                if (exercisesWithOldImage.isEmpty()){
+                if (exercisesWithOldImage.size() == 1) {
                     imageService.deleteImageFromBucket(oldImageUrl);
                 }
 
                 iExercise.deleteById(id);
             }
 
-            else{
+            else {
                 System.out.println("Exercise not found for ID: " + id);
             }
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot delete exercise: " + e.getMessage());
         }
     }

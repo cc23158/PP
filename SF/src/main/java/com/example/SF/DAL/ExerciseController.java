@@ -23,37 +23,38 @@ public class ExerciseController {
 
     @CrossOrigin
     @GetMapping("/getAll")
-    public List<Exercise> getAll(){
-        return exerciseService.getAll();
+    public List<Exercise> getAll() {
+        try {
+            return exerciseService.getAll();
+        }
+
+        catch (Exception e) {
+            return List.of();
+        }
     }
 
     @CrossOrigin
     @GetMapping("/getByMuscle")
     public List<Exercise> getByMuscle(@RequestParam("muscleId") Integer muscleId){
-        return exerciseService.getByMuscle(muscleId);
+        try {
+            return exerciseService.getByMuscle(muscleId);
+        }
+
+        catch (Exception e) {
+            return null;
+        }
     }
 
     @CrossOrigin
     @PostMapping("/insert")
-    public Exercise insert(
-            @RequestParam("muscleId") Integer muscleId,
-            @RequestParam("name") String name,
-            @RequestParam("image") MultipartFile image,
-            @RequestParam("path") String path
-    ){
+    public Exercise insert(@RequestParam("muscleId") Integer muscleId, @RequestParam("name") String name, @RequestParam("image") MultipartFile image, @RequestParam("path") String path) {
         String imageUrl = imageService.uploadImage(image);
         return exerciseService.insert(name, imageUrl, path, muscleId);
     }
 
     @CrossOrigin
     @PutMapping("/update")
-    public ResponseEntity<String> update(
-            @RequestParam("id") Integer id,
-            @RequestParam("muscleId") Integer muscleId,
-            @RequestParam("name") String name,
-            @RequestParam("image") MultipartFile image,
-            @RequestParam("path") String path
-    ){
+    public ResponseEntity<String> update(@RequestParam("id") Integer id, @RequestParam("muscleId") Integer muscleId, @RequestParam("name") String name, @RequestParam("image") MultipartFile image, @RequestParam("path") String path) {
         try {
             String imageUrl = imageService.uploadImage(image);
             exerciseService.update(id, name, imageUrl, path, muscleId);
@@ -67,13 +68,13 @@ public class ExerciseController {
 
     @CrossOrigin
     @DeleteMapping("/delete")
-    public ResponseEntity<String> delete(@RequestParam("id") Integer id){
-        try{
+    public ResponseEntity<String> delete(@RequestParam("id") Integer id) {
+        try {
             exerciseService.delete(id);
             return ResponseEntity.ok().body("Exercise deleted");
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             return ResponseEntity.badRequest().body("Cannot delete exercise");
         }
     }

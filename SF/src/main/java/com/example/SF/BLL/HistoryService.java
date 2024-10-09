@@ -18,46 +18,46 @@ public class HistoryService {
     private final RecipeService recipeService;
 
     @Autowired
-    public HistoryService(IHistory iHistory, ClientService clientService, RecipeService recipeService){
+    public HistoryService(IHistory iHistory, ClientService clientService, RecipeService recipeService) {
         this.iHistory = iHistory;
         this.clientService = clientService;
         this.recipeService = recipeService;
     }
 
-    public List<History> getAll(){
-        try{
+    public List<History> getAll() {
+        try {
             return iHistory.findAll();
         }
 
-        catch (Exception e){
-            System.out.println();
+        catch (Exception e) {
+            System.out.println("Cannot get histories: " + e.getMessage());
             return List.of();
         }
     }
 
-    public List<History> getByClient(Integer clientId){
-        try{
+    public List<History> getByClient(Integer clientId) {
+        try {
             return iHistory.getByClient(clientId);
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot get histories for client: " + clientId);
             return List.of();
         }
     }
 
-    public History insert(Integer clientId, Integer recipeId, LocalTime time){
-        if (clientId == null || recipeId == null || time == null){
+    public History insert(Integer clientId, Integer recipeId, LocalTime time) {
+        if (clientId == null || recipeId == null || time == null) {
             System.out.println("ClientId, recipeId and time must not be empty");
             return null;
         }
 
-        try{
+        try {
             History history = new History();
             Client client = clientService.getById(clientId);
             Recipe recipe = recipeService.getById(recipeId);
 
-            if (client == null || recipe == null){
+            if (client == null || recipe == null) {
                 System.out.println("Client or Recipe not found for ID: " + clientId + " or " + recipeId);
                 return null;
             }
@@ -70,18 +70,18 @@ public class HistoryService {
             return iHistory.save(history);
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot insert history: " + e.getMessage());
             return null;
         }
     }
 
-    public void delete(Integer id){
-        try{
+    public void delete(Integer id) {
+        try {
             iHistory.deleteById(id);
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot delete history: " + e.getMessage());
         }
     }

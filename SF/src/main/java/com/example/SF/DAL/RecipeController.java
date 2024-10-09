@@ -14,50 +14,56 @@ import java.util.List;
 public class RecipeController {
     private final RecipeService recipeService;
 
-    public RecipeController(RecipeService recipeService){
+    public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }
 
     @CrossOrigin
     @GetMapping("/getAll")
-    public List<Recipe> getAll(){
-        return recipeService.getAll();
+    public List<Recipe> getAll() {
+        try {
+            return recipeService.getAll();
+        }
+
+        catch (Exception e) {
+            return List.of();
+        }
     }
 
     @CrossOrigin
     @PostMapping("/insert")
-    public Recipe insert(@RequestParam("clientId") Integer clientId, @RequestParam("exerciseId") Integer exerciseId, @RequestParam("weight") Double weight){
-        try{
+    public Recipe insert(@RequestParam("clientId") Integer clientId, @RequestParam("exerciseId") Integer exerciseId, @RequestParam("weight") Double weight) {
+        try {
             return recipeService.insert(clientId, exerciseId, weight);
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             return null;
         }
     }
 
     @CrossOrigin
     @PutMapping("/update")
-    public ResponseEntity<String> update(@RequestParam("id") Integer id, @RequestParam("weight") Double weight){
-        try{
+    public ResponseEntity<String> update(@RequestParam("id") Integer id, @RequestParam("weight") Double weight) {
+        try {
             recipeService.update(id, weight);
             return ResponseEntity.ok("Recipe updated");
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             return ResponseEntity.badRequest().body("Cannot change recipe's weight");
         }
     }
 
     @CrossOrigin
     @DeleteMapping("/delete")
-    public ResponseEntity<String> delete(@RequestParam("id") Integer id){
-        try{
+    public ResponseEntity<String> delete(@RequestParam("id") Integer id) {
+        try {
             recipeService.delete(id);
             return ResponseEntity.ok("Recipe deleted");
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             return ResponseEntity.badRequest().body("Cannot delete recipe");
         }
     }

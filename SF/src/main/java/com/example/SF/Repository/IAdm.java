@@ -6,28 +6,33 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface IAdm extends JpaRepository<Adm, Integer> {
-    @Query(value = "SELECT SF.GET_Adm(:admEmail, :admPassword)", nativeQuery = true)
+    @Query(value = "SELECT * FROM V_AdmOrder", nativeQuery = true)
+    List<Adm> getAllOrder();
+
+    @Query(value = "SELECT SF.GET_Adm(:email, :password)", nativeQuery = true)
     boolean verify(
-            @Param("admEmail") String email,
-            @Param("admPassword") String password
+            @Param("email") String email,
+            @Param("password") String password
     );
 
     @Modifying
-    @Query("UPDATE Adm SET adm_salary = :admSalary WHERE adm_id = :admId")
+    @Query("UPDATE Adm SET adm_salary = :salary WHERE adm_id = :id")
     void updateSalary(
-            @Param("admId") Integer id,
-            @Param("admSalary") Double salary
+            @Param("id") Integer id,
+            @Param("salary") Double salary
     );
 
     @Modifying
-    @Query("UPDATE Adm SET adm_password = :admPassword WHERE adm_id = :admId")
+    @Query("UPDATE Adm SET adm_password = :password WHERE adm_id = :id")
     void updatePassword(
-            @Param("admId") Integer id,
-            @Param("admPassword") String password
+            @Param("id") Integer id,
+            @Param("password") String password
     );
 
     @Modifying
-    @Query("UPDATE Adm SET adm_active = FALSE WHERE adm_id = :admId")
-    void delete(@Param("admId") Integer id);
+    @Query("UPDATE Adm SET adm_active = FALSE WHERE adm_id = :id")
+    void delete(@Param("id") Integer id);
 }

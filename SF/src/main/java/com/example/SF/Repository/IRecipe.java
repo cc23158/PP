@@ -8,9 +8,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface IRecipe extends JpaRepository<Recipe, Integer> {
     @Modifying
-    @Query("UPDATE Recipe SET recipe_weight = :recipeWeight WHERE recipe_id = :recipeId")
+    @Query("UPDATE Recipe SET recipe_weight = :weight WHERE recipe_id = :id")
     void updateRecipe(
-            @Param("recipeId") Integer id,
-            @Param("recipeWeight") Double weight
+            @Param("id") Integer id,
+            @Param("weight") Double weight
     );
 }

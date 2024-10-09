@@ -1,15 +1,9 @@
 package com.example.SF.DTO;
 
-import com.example.SF.DTO.Client;
-import com.example.SF.DTO.Exercise;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
