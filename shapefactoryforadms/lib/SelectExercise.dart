@@ -220,9 +220,8 @@ class SelectExerciseState extends State<SelectExercise> {
                         color: Color(0xff000000),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      child: Text(
+ 
+                      Text(
                         musculo,
                         textAlign: TextAlign.left,
                         maxLines: 10,
@@ -233,7 +232,7 @@ class SelectExerciseState extends State<SelectExercise> {
                           fontSize: 14,
                           color: Color(0xff6c6c6c),
                         ),
-                      ),
+                      
                     ),
                   ],
                 ),
@@ -299,8 +298,9 @@ class SelectExerciseState extends State<SelectExercise> {
               : Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.02,
+                      padding: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width * 0.02, 0, MediaQuery.of(context).size.width * 0.02, 10
+                        
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -374,13 +374,14 @@ class SelectExerciseState extends State<SelectExercise> {
                     if (selectedMuscles.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.symmetric(
-                      vertical: 10,
+                      vertical: 0,
                       horizontal: MediaQuery.of(context).size.width * 0.02,
                     ),
                     child: Wrap(
                       spacing: 8.0, // Espaço entre as tags
                       children: selectedMuscles.map((muscle) {
                         return Chip(
+                          side: BorderSide(style: BorderStyle.none),
                           label: Text(
                             muscle,
                             style: TextStyle(color: Colors.white),
