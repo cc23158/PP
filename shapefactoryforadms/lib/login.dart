@@ -82,6 +82,7 @@ class LoginState extends State<Login> {
                               obscureText: false,
                               textAlign: TextAlign.start,
                               maxLines: 1,
+                              cursorColor: Colors.orange,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontStyle: FontStyle.normal,
@@ -120,6 +121,7 @@ class LoginState extends State<Login> {
                             ),
                           ),
                           TextField(
+                            cursorColor: Colors.orange,
                             controller: controllerSenha,
                             obscureText: true,
                             textAlign: TextAlign.start,
@@ -254,11 +256,11 @@ class LoginState extends State<Login> {
 Future<Object?> verifyAccount(String email, String password) async {
   try {
     final queryParameters = {
-  'email': email,
-  'password': password,
-};
+      'email': email,
+      'password': password,
+    };
     final response = await http.get(
-      Uri.http('localhost:8080', '/adm/verify', queryParameters ), 
+      Uri.http('localhost:8080', '/adm/verify', queryParameters),
     );
     print(response.statusCode);
     if (response.statusCode == 200) {

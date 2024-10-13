@@ -152,21 +152,29 @@ class AddExerciceState extends State<AddExercise> {
                     fit: BoxFit.cover,
                   ));
             }
-          });
-
-          setState(() {
             isLoading = false;
           });
+
+
           print("Lista de exércicios: $lista");
         } else {
+                    setState(() {
+            isLoading = false;
+          });
           print("Resposta não é uma lista ou está vazia");
           return null;
         }
       } else {
+                  setState(() {
+            isLoading = false;
+          });
         print("Erro na resposta: ${response.statusCode}");
         return null;
       }
     } catch (erro) {
+                setState(() {
+            isLoading = false;
+          });
       print("Erro ao buscar exercícios: ${erro.toString()}");
       return null;
     }
