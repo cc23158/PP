@@ -260,7 +260,7 @@ Future<Object?> verifyAccount(String email, String password) async {
       'password': password,
     };
     final response = await http.get(
-      Uri.http('localhost:8080', '/adm/verify', queryParameters),
+      Uri.https('shape-factory-5.onrender.com', '/adm/verify', queryParameters),
     );
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -279,7 +279,7 @@ Future<List<Map<String, dynamic>>?> getMuscles() async {
   var lista = <Map<String, dynamic>>[];
   try {
     final response = await http.get(
-      Uri.parse('http://localhost:8080/muscle/getAll'),
+      Uri.parse('https://shape-factory-5.onrender.com/muscle/getAll'),
     );
     print("Resposta recebida");
     if (response.statusCode == 200) {
