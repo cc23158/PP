@@ -32,6 +32,7 @@ class AddExerciceState extends State<AddExercise> {
   var corBorda;
   var dropdownvalue;
   bool isLoading = true;
+  var controllerUpdate = List<int>.empty(growable: true);
 
   Future<int> postExercise(
       String nome, String path, int muscle, PlatformFile imagem) async {
@@ -47,7 +48,7 @@ class AddExerciceState extends State<AddExercise> {
       });
 
       var response = await dio.post(
-        'http://localhost:8080/exercise/insert',
+        'https://shape-factory-5.onrender.com/exercise/insert',
         data: formData,
         options: Options(contentType: 'multipart/form-data'),
       );
@@ -70,7 +71,8 @@ class AddExerciceState extends State<AddExercise> {
         'id': id.toString(),
       };
       final response = await http.delete(
-        Uri.http('localhost:8080', '/exercise/delete', queryParameters),
+        Uri.https('shape-factory-5.onrender.com', '/exercise/delete',
+            queryParameters),
       );
       print(response.statusCode);
       if (response.statusCode == 200) {
@@ -85,42 +87,49 @@ class AddExerciceState extends State<AddExercise> {
   }
 
   Future<int> uptadeExercise(
-      int id, String nome, String path, int muscle, PlatformFile imagem) async {
-    try {
-      var dio = Dio();
+    int id, String nome, String path, int muscle, PlatformFile? imagem) async {
+  try {
+    var dio = Dio();
 
-      var formData = FormData.fromMap({
-        'id': id.toString(),
-        'muscleId': muscle.toString(),
-        'name': nome,
-        'path': path,
-        'image': MultipartFile.fromBytes(imagem.bytes!, filename: imagem.name),
-      });
+    var formData = FormData.fromMap({
+      'id': id.toString(),
+      'muscleId': muscle.toString(),
+      'name': nome,
+      'path': path,
+    });
 
-      var response = await dio.put(
-        'http://localhost:8080/exercise/update',
-        data: formData,
-        options: Options(contentType: 'multipart/form-data'),
-      );
-
-      if (response.statusCode == 200) {
-        print("Exercício registrado com sucesso");
-        return 1;
-      } else {
-        throw Exception('Falha ao enviar dados');
-      }
-    } catch (e) {
-      print(e.toString());
-      return 0;
+    // Adiciona a imagem apenas se uma nova imagem foi selecionada
+    if (imagem != null && imagem.name != 'null') {
+      formData.files.add(MapEntry(
+        'image',
+        MultipartFile.fromBytes(imagem.bytes!, filename: imagem.name),
+      ));
     }
+
+    var response = await dio.put(
+      'https://shape-factory-5.onrender.com/exercise/update',
+      data: formData,
+      options: Options(contentType: 'multipart/form-data'),
+    );
+
+    if (response.statusCode == 200) {
+      print("Exercício atualizado com sucesso");
+      return 1;
+    } else {
+      throw Exception('Falha ao enviar dados');
+    }
+  } catch (e) {
+    print(e.toString());
+    return 0;
   }
+}
 
   void getExercises() async {
     print("Iniciando busca de exercícios");
     var lista = <Map<String, dynamic>>[];
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:8080/exercise/getAll'),
+        Uri.parse('https://shape-factory-5.onrender.com/exercise/getAll'),
       );
       print("Resposta recebida");
       if (response.statusCode == 200) {
@@ -155,26 +164,25 @@ class AddExerciceState extends State<AddExercise> {
             isLoading = false;
           });
 
-
           print("Lista de exércicios: $lista");
         } else {
-                    setState(() {
+          setState(() {
             isLoading = false;
           });
           print("Resposta não é uma lista ou está vazia");
           return null;
         }
       } else {
-                  setState(() {
-            isLoading = false;
-          });
+        setState(() {
+          isLoading = false;
+        });
         print("Erro na resposta: ${response.statusCode}");
         return null;
       }
     } catch (erro) {
-                setState(() {
-            isLoading = false;
-          });
+      setState(() {
+        isLoading = false;
+      });
       print("Erro ao buscar exercícios: ${erro.toString()}");
       return null;
     }
@@ -212,6 +220,17 @@ class AddExerciceState extends State<AddExercise> {
                     width: MediaQuery.of(context).size.width * 0.4,
                     constraints: BoxConstraints(maxWidth: 500),
                     child: TextField(
+                      onChanged: (value) => {
+                        if (controllerUpdate
+                                .contains(controllerId[controllerIndex]) ==
+                            false)
+                          {
+                            setState(() {
+                              controllerUpdate
+                                  .add(controllerId[controllerIndex]);
+                            })
+                          }
+                      },
                       cursorColor: Colors.orange,
                       controller: controllerNome[controllerIndex],
                       obscureText: false,
@@ -261,6 +280,17 @@ class AddExerciceState extends State<AddExercise> {
                     width: MediaQuery.of(context).size.width * 0.5,
                     constraints: BoxConstraints(maxWidth: 680),
                     child: TextField(
+                      onChanged: (value) => {
+                        if (controllerUpdate
+                                .contains(controllerId[controllerIndex]) ==
+                            false)
+                          {
+                            setState(() {
+                              controllerUpdate
+                                  .add(controllerId[controllerIndex]);
+                            })
+                          }
+                      },
                       cursorColor: Colors.orange,
                       controller: controllerUrl[controllerIndex],
                       obscureText: false,
@@ -348,6 +378,12 @@ class AddExerciceState extends State<AddExercise> {
                             setState(() {
                               dropdownvalue = newValue!;
                               controllerMusculo[controllerIndex] = newValue + 1;
+                              if (controllerUpdate.contains(
+                                      controllerId[controllerIndex]) ==
+                                  false) {
+                                controllerUpdate
+                                    .add(controllerId[controllerIndex]);
+                              }
                             });
                           },
                           items: musculos.map<DropdownMenuItem<int>>(
@@ -374,6 +410,12 @@ class AddExerciceState extends State<AddExercise> {
 
                         if (picked != null) {
                           setState(() {
+                            if (controllerUpdate
+                                    .contains(controllerId[controllerIndex]) ==
+                                false) {
+                              controllerUpdate
+                                  .add(controllerId[controllerIndex]);
+                            }
                             print(picked.files.first.name);
                             controllerCamera[controllerIndex] =
                                 picked.files.first;
@@ -566,9 +608,8 @@ class AddExerciceState extends State<AddExercise> {
                                                     child: MaterialButton(
                                                       height: 50,
                                                       onPressed: () async {
-                                     
-                                                          isLoading = true;
-                                             
+                                                        isLoading = true;
+
                                                         for (int i = 0;
                                                             i <
                                                                 controllerRow
@@ -587,7 +628,7 @@ class AddExerciceState extends State<AddExercise> {
                                                                     i],
                                                                 controllerCamera[
                                                                     i]);
-                                                          } else {
+                                                          } else if (controllerUpdate.contains(controllerId[i])){
                                                             await uptadeExercise(
                                                                 controllerId[i],
                                                                 controllerNome[
@@ -597,8 +638,7 @@ class AddExerciceState extends State<AddExercise> {
                                                                     .text,
                                                                 controllerMusculo[
                                                                     i],
-                                                                controllerCamera[
-                                                                    i]);
+                                                               controllerCamera[i].name != 'null' ? controllerCamera[i] : null);
                                                           }
                                                         }
                                                         for (int i = 0;
@@ -615,6 +655,7 @@ class AddExerciceState extends State<AddExercise> {
                                                                     i]);
                                                           }
                                                         }
+                                                        controllerUpdate.clear();
                                                         controllerCamera
                                                             .clear();
                                                         controllerExcluir
