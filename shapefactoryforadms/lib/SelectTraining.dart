@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
+import 'package:shapefactoryforadms/EditTraining.dart';
 
 class SelectTraining extends StatefulWidget {
   const SelectTraining({super.key});
@@ -15,25 +16,17 @@ class SelectTraining extends StatefulWidget {
   SelectTrainingState createState() => SelectTrainingState();
 }
 
-class SelectTrainingState extends State<SelectTraining> with SingleTickerProviderStateMixin{
-  final controllerNome = List<TextEditingController>.empty(growable: true);
-  final controllerUrl = List<TextEditingController>.empty(growable: true);
-  final controllerMusculo = List<int>.empty(growable: true);
+class SelectTrainingState extends State<SelectTraining>
+    with SingleTickerProviderStateMixin {
   final controllerList = ScrollController();
   final controllerRow = List<ScrollController>.empty(growable: true);
   bool podeMudar = true;
   var mensagemErro = "";
   var listElement = List<Widget>.empty(growable: true);
-  var listCamera = List<Widget>.empty(growable: true);
-  var controllerCamera = List.empty(growable: true);
-  var controllerId = List<int>.empty(growable: true);
-  var controllerExcluir = List<int>.empty(growable: true);
   var corBorda;
   var dropdownvalue;
   late TabController tabController;
   bool isLoading = false;
-
-
 
   Future<int> deleteExercise(int id) async {
     try {
@@ -55,72 +48,7 @@ class SelectTrainingState extends State<SelectTraining> with SingleTickerProvide
     }
   }
 
-
-  void getTraining() async {
-    print("Iniciando busca de exercícios");
-    var lista = <Map<String, dynamic>>[];
-    try {
-      final response = await http.get(
-        Uri.parse('http://localhost:8080/training/getAll'),
-      );
-      print("Resposta recebida");
-      if (response.statusCode == 200) {
-        var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes));
-        if (decodedResponse != null && decodedResponse is List) {
-          setState(() {
-            for (var exercise in decodedResponse) {
-              listCamera.add(Icon(Icons.camera_alt));
-              controllerNome.add(TextEditingController());
-              controllerUrl.add(TextEditingController());
-              controllerCamera.add(PlatformFile(name: 'null', size: 0));
-              controllerMusculo.add(-1);
-              controllerRow.add(ScrollController());
-              listElement
-                  .add(getWidget(controllerRow.length - 1));
-              controllerNome[controllerNome.length - 1].text =
-                  exercise["exercise_name"];
-              controllerUrl[controllerUrl.length - 1].text =
-                  exercise["exercise_path"];
-              controllerMusculo[controllerMusculo.length - 1] =
-                  exercise["exercise_muscle"]["muscle_id"];
-              controllerId.add(exercise["exercise_id"]);
-              listCamera[listCamera.length - 1] = ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                  child: Image.network(
-                    exercise["exercise_image"],
-                    height: 46,
-                    width: 46,
-                    fit: BoxFit.cover,
-                  ));
-            }
-            isLoading =false;
-          });
-
-
-          print("Lista de exércicios: $lista");
-        } else {
-                    setState(() {
-            isLoading = false;
-          });
-          print("Resposta não é uma lista ou está vazia");
-          return null;
-        }
-      } else {
-                  setState(() {
-            isLoading = false;
-          });
-        print("Erro na resposta: ${response.statusCode}");
-        return null;
-      }
-    } catch (erro) {
-      print("Erro ao buscar exercícios: ${erro.toString()}");
-      
-          setState(() {
-            isLoading = false;
-          });
-      return null;
-    }
-  }
+  void getTraining() async {}
 
   Widget getWidget(int controllerIndex) {
     return Card(
@@ -131,11 +59,10 @@ class SelectTrainingState extends State<SelectTraining> with SingleTickerProvide
         borderRadius: BorderRadius.circular(12.0),
         side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
       ),
-
     );
   }
 
-    @override
+  @override
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this); // 3 tipos de treino
@@ -155,7 +82,7 @@ class SelectTrainingState extends State<SelectTraining> with SingleTickerProvide
       });
     }
     if (listElement.isEmpty && podeMudar) {
-   //   getTraining();
+      //   getTraining();
     }
 
     setState(() {
@@ -175,8 +102,8 @@ class SelectTrainingState extends State<SelectTraining> with SingleTickerProvide
                 child: Container(
                   width: 1600,
                   height: MediaQuery.of(context).size.height * 0.5,
-                  constraints: const BoxConstraints(
-                      minHeight: 700, minWidth: 400),
+                  constraints:
+                      const BoxConstraints(minHeight: 700, minWidth: 400),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -219,8 +146,7 @@ class SelectTrainingState extends State<SelectTraining> with SingleTickerProvide
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.all(20),
-                                        child: Column(
-                                            children: listElement),
+                                        child: Column(children: listElement),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.fromLTRB(
@@ -228,33 +154,15 @@ class SelectTrainingState extends State<SelectTraining> with SingleTickerProvide
                                         child: MaterialButton(
                                           height: 50,
                                           onPressed: () {
-                                            setState(() {
-                                              listCamera.add(Icon(
-                                                  Icons.camera_alt));
-                                              controllerNome.add(
-                                                  TextEditingController());
-                                              controllerUrl.add(
-                                                  TextEditingController());
-                                              controllerCamera.add(
-                                                  PlatformFile(
-                                                      name: 'null', size: 0));
-                                              controllerMusculo.add(-1);
-                                              controllerRow.add(
-                                                  ScrollController());
-                                              controllerId.add(-1);
-                                              listElement.add(getWidget(
-                                                  controllerRow.length - 1));
-                                            });
-                                            controllerList.jumpTo(
-                                              controllerList
-                                                      .position.maxScrollExtent +
-                                                  40,
-                                            );
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        EditTraining(category: tabController.index,)));
                                           },
                                           color: Colors.orange,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12)
-                                          ),
+                                              borderRadius:
+                                                  BorderRadius.circular(12)),
                                           child: const Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
@@ -287,4 +195,3 @@ class SelectTrainingState extends State<SelectTraining> with SingleTickerProvide
     );
   }
 }
-

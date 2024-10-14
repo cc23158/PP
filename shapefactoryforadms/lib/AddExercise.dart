@@ -107,7 +107,7 @@ class AddExerciceState extends State<AddExercise> {
     }
 
     var response = await dio.put(
-      'https://shape-factory-5.onrender.com/exercise/update',
+      'http://localhost:8080/exercise/update',
       data: formData,
       options: Options(contentType: 'multipart/form-data'),
     );
@@ -125,6 +125,9 @@ class AddExerciceState extends State<AddExercise> {
 }
 
   void getExercises() async {
+    setState(() {
+      isLoading = true;
+    });
     print("Iniciando busca de exercícios");
     var lista = <Map<String, dynamic>>[];
     try {
@@ -218,7 +221,7 @@ class AddExerciceState extends State<AddExercise> {
                   padding: const EdgeInsets.fromLTRB(10, 5, 5, 5),
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.4,
-                    constraints: BoxConstraints(maxWidth: 500),
+                    constraints: BoxConstraints(maxWidth: 500, minWidth: 300),
                     child: TextField(
                       onChanged: (value) => {
                         if (controllerUpdate
@@ -277,8 +280,8 @@ class AddExerciceState extends State<AddExercise> {
                 Padding(
                   padding: const EdgeInsets.all(5),
                   child: Container(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    constraints: BoxConstraints(maxWidth: 680),
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    constraints: BoxConstraints(maxWidth: 680, minWidth: 300),
                     child: TextField(
                       onChanged: (value) => {
                         if (controllerUpdate
@@ -469,243 +472,228 @@ class AddExerciceState extends State<AddExercise> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    print("build");
-    if (MediaQuery.of(context).size.width >
-        MediaQuery.of(context).size.height) {
-      setState(() {
-        corBorda = const BorderSide(color: Colors.grey, width: 2);
-      });
-    } else {
-      setState(() {
-        corBorda = const BorderSide(color: Colors.black);
-      });
-    }
-    if (listElement.isEmpty && podeMudar) {
-      getExercises();
-    }
-
-    setState(() {
-      listElement.clear();
-      for (int i = 0; i < controllerRow.length; i++) {
-        listElement.add(getWidget(widget.musculos, i));
-      }
-    });
-
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-            backgroundColor: Colors.black,
-            body: isLoading
-                ? Center(child: CircularProgressIndicator())
-                : Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                        width: 1600,
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        constraints:
-                            const BoxConstraints(minHeight: 700, minWidth: 400),
-                        child:
-                            Column(mainAxisSize: MainAxisSize.max, children: [
-                          Expanded(
-                              child: Card(
-                                  color: Colors.black,
-                                  shape: RoundedRectangleBorder(
-                                      side: corBorda,
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(12))),
-                                  child: RawScrollbar(
-                                      thumbColor: Colors.orange,
-                                      controller: controllerList,
-                                      interactive: true,
-                                      radius: Radius.circular(12),
-                                      padding: EdgeInsets.all(10),
-                                      child: ListView(
-                                          controller: controllerList,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.all(20),
-                                              child:
-                                                  Column(children: listElement),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      26, 0, 26, 20),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                  Flexible(
-                                                    child: MaterialButton(
-                                                      height: 50,
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          listCamera.add(Icon(
-                                                              Icons
-                                                                  .camera_alt));
-                                                          controllerNome.add(
-                                                              TextEditingController());
-                                                          controllerUrl.add(
-                                                              TextEditingController());
-                                                          controllerCamera.add(
-                                                              PlatformFile(
-                                                                  name: 'null',
-                                                                  size: 0));
-                                                          controllerMusculo
-                                                              .add(-1);
-                                                          controllerRow.add(
-                                                              ScrollController());
-                                                          controllerId.add(-1);
-                                                          listElement.add(
-                                                              getWidget(
-                                                                  widget
-                                                                      .musculos,
-                                                                  controllerRow
-                                                                          .length -
-                                                                      1));
-                                                        });
-                                                        controllerList.jumpTo(
-                                                          controllerList
-                                                                  .position
-                                                                  .maxScrollExtent +
-                                                              40,
-                                                        );
-                                                      },
-                                                      color: Colors.orange,
-                                                      shape: const RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          12),
-                                                                  bottomLeft: Radius
-                                                                      .circular(
-                                                                          12))),
-                                                      child: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          Icon(Icons.add),
-                                                          Text(
-                                                            "Adicionar",
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontSize: 15),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Flexible(
-                                                    child: MaterialButton(
-                                                      height: 50,
-                                                      onPressed: () async {
-                                                        isLoading = true;
-
-                                                        for (int i = 0;
-                                                            i <
-                                                                controllerRow
-                                                                    .length;
-                                                            i++) {
-                                                          print("entrou aqui");
-                                                          if (controllerId[i] ==
-                                                              -1) {
-                                                            await postExercise(
-                                                                controllerNome[
-                                                                        i]
-                                                                    .text,
-                                                                controllerUrl[i]
-                                                                    .text,
-                                                                controllerMusculo[
-                                                                    i],
-                                                                controllerCamera[
-                                                                    i]);
-                                                          } else if (controllerUpdate.contains(controllerId[i])){
-                                                            await uptadeExercise(
-                                                                controllerId[i],
-                                                                controllerNome[
-                                                                        i]
-                                                                    .text,
-                                                                controllerUrl[i]
-                                                                    .text,
-                                                                controllerMusculo[
-                                                                    i],
-                                                               controllerCamera[i].name != 'null' ? controllerCamera[i] : null);
-                                                          }
-                                                        }
-                                                        for (int i = 0;
-                                                            i <
-                                                                controllerExcluir
-                                                                    .length;
-                                                            i++) {
-                                                          print("aaaaaaa");
-                                                          if (controllerExcluir[
-                                                                  i] !=
-                                                              -1) {
-                                                            await deleteExercise(
-                                                                controllerExcluir[
-                                                                    i]);
-                                                          }
-                                                        }
-                                                        controllerUpdate.clear();
-                                                        controllerCamera
-                                                            .clear();
-                                                        controllerExcluir
-                                                            .clear();
-                                                        controllerId.clear();
-                                                        controllerMusculo
-                                                            .clear();
-                                                        controllerNome.clear();
-                                                        controllerRow.clear();
-                                                        controllerUrl.clear();
-                                                        listCamera.clear();
-                                                        listElement.clear();
-                                                        isLoading = false;
-                                                        getExercises();
-                                                        podeMudar = true;
-                                                      },
-                                                      color: Colors.orange,
-                                                      shape: const RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          12),
-                                                                  bottomRight:
-                                                                      Radius.circular(
-                                                                          12))),
-                                                      child: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        children: [
-                                                          Icon(Icons.save_as),
-                                                          Text(
-                                                            "Salvar",
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontSize: 15),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ]))))
-                        ])))));
+ @override
+Widget build(BuildContext context) {
+  print("build");
+  
+  // Ajusta a cor da borda com base na orientação da tela
+  if (MediaQuery.of(context).size.width > MediaQuery.of(context).size.height) {
+    corBorda = const BorderSide(color: Colors.grey, width: 2);
+  } else {
+    corBorda = const BorderSide(color: Colors.black);
   }
+
+  // Carrega os exercícios apenas uma vez
+  if (listElement.isEmpty && podeMudar) {
+    getExercises();
+  }
+
+  // Atualiza a lista de widgets
+  listElement.clear();
+  for (int i = 0; i < controllerRow.length; i++) {
+    listElement.add(getWidget(widget.musculos, i));
+  }
+
+  return MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // Conteúdo principal
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              width: 1600,
+              height: MediaQuery.of(context).size.height * 0.5,
+              constraints: const BoxConstraints(minHeight: 700, minWidth: 400),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+  child: Card(
+    color: Colors.black,
+    shape: RoundedRectangleBorder(
+      side: corBorda,
+      borderRadius: const BorderRadius.all(
+        Radius.circular(12),
+      ),
+    ),
+    child: RawScrollbar(
+      thumbColor: Colors.orange,
+      controller: controllerList,
+      interactive: true,
+      minThumbLength: 50, // Tamanho mínimo do thumb da scrollbar
+      radius: const Radius.circular(12),
+      padding: const EdgeInsets.all(10),
+      child: ListView.builder(
+        controller: controllerList,
+        itemCount: listElement.length + 1,
+        itemBuilder: (context, index) {
+          if (index < listElement.length) {
+            // Renderiza os elementos dinâmicos
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 23),
+              child: listElement[index],
+            );
+          } else {
+            return
+            Padding(
+                              padding: const EdgeInsets.fromLTRB(27, 6, 27, 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  // Botão Adicionar
+                                  Flexible(
+                                    child: MaterialButton(
+                                      height: 50,
+                                      onPressed: () {
+                                        setState(() {
+                                          listCamera.add(Icon(Icons.camera_alt));
+                                          controllerNome.add(TextEditingController());
+                                          controllerUrl.add(TextEditingController());
+                                          controllerCamera.add(
+                                              PlatformFile(name: 'null', size: 0));
+                                          controllerMusculo.add(-1);
+                                          controllerRow.add(ScrollController());
+                                          controllerId.add(-1);
+                                          listElement.add(getWidget(
+                                              widget.musculos,
+                                              controllerRow.length - 1));
+                                        });
+                                        controllerList.jumpTo(
+                                          controllerList.position.maxScrollExtent + 40,
+                                        );
+                                      },
+                                      color: Colors.orange,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(12),
+                                          bottomLeft: Radius.circular(12),
+                                        ),
+                                      ),
+                                      child: const Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Icon(Icons.add),
+                                          Text(
+                                            "Adicionar",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 15),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  // Botão Salvar
+                                  Flexible(
+                                    child: MaterialButton(
+                                      height: 50,
+                                      onPressed: () async {
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+
+                                        for (int i = 0; i < controllerRow.length; i++) {
+                                          if (controllerId[i] == -1) {
+                                            await postExercise(
+                                              controllerNome[i].text,
+                                              controllerUrl[i].text,
+                                              controllerMusculo[i],
+                                              controllerCamera[i],
+                                            );
+                                          } else if (controllerUpdate
+                                              .contains(controllerId[i])) {
+                                            await uptadeExercise(
+                                              controllerId[i],
+                                              controllerNome[i].text,
+                                              controllerUrl[i].text,
+                                              controllerMusculo[i],
+                                              controllerCamera[i].name != 'null'
+                                                  ? controllerCamera[i]
+                                                  : null,
+                                            );
+                                          }
+                                        }
+
+                                        for (int i = 0;
+                                            i < controllerExcluir.length;
+                                            i++) {
+                                          if (controllerExcluir[i] != -1) {
+                                            await deleteExercise(controllerExcluir[i]);
+                                          }
+                                        }
+
+                                        setState(() {
+                                          controllerUpdate.clear();
+                                          controllerCamera.clear();
+                                          controllerExcluir.clear();
+                                          controllerId.clear();
+                                          controllerMusculo.clear();
+                                          controllerNome.clear();
+                                          controllerRow.clear();
+                                          controllerUrl.clear();
+                                          listCamera.clear();
+                                          listElement.clear();
+                                          isLoading = false;
+                                        });
+
+                                        podeMudar = true;
+                                      },
+                                      color: Colors.orange,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(12),
+                                          bottomRight: Radius.circular(12),
+                                        ),
+                                      ),
+                                      child: const Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Icon(Icons.save_as),
+                                          Text(
+                                            "Salvar",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 15),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ));
+                            
+          }
+
+        },
+      ),
+    ),
+  ),
+),
+                            
+                          ],
+                        ),
+                      ),
+                    ),
+                            if (isLoading)
+            Container(
+              color: Colors.black.withOpacity(1), // Fundo semitransparente
+              child: const Center(
+                child: CircularProgressIndicator(color: Colors.orange,),
+              ),
+            ),
+                ],
+              ),
+            ),
+          // Exibe o CircularProgressIndicator durante o carregamento
+
+        
+      );
+}
+
 }
