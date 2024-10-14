@@ -306,9 +306,12 @@ class SelectExerciseState extends State<SelectExercise> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(
+                          GestureDetector(child: Icon(
                             Icons.keyboard_return_rounded,
-                            color: Colors.white,
+                            color: Colors.white,),
+                            onTap:() {
+                              Navigator.pop(context);
+                            },
                           ),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.8,
@@ -379,6 +382,7 @@ class SelectExerciseState extends State<SelectExercise> {
                     ),
                     child: Wrap(
                       spacing: 8.0, // Espaço entre as tags
+                      runSpacing: 8,
                       children: selectedMuscles.map((muscle) {
                         return Chip(
                           side: BorderSide(style: BorderStyle.none),
