@@ -19,7 +19,6 @@ public class ClientService {
         this.iClient = iClient;
     }
 
-    @Transactional
     public List<Client> getAll() {
         try {
             return  iClient.getAllOrder();
@@ -31,38 +30,28 @@ public class ClientService {
         }
     }
 
-    @Transactional
     public Client getById(Integer id) {
-        try {
-            return iClient.findById(id).orElse(null);
-        }
-
-        catch (Exception e) {
-            System.out.println("Cannot get client: " + e.getMessage());
-            return null;
-        }
+        return iClient.findById(id).orElse(null);
     }
 
-    @Transactional
     public Client getByName(String name) {
         try {
             return iClient.getByName(name);
         }
 
         catch (Exception e) {
-            System.out.println("Cannot get client: " + e.getMessage());
+            System.out.println("Cannot find client by name: " + name);
             return null;
         }
     }
 
-    @Transactional
     public Client getByEmail(String email) {
         try {
             return iClient.getByEmail(email);
         }
 
         catch (Exception e) {
-            System.out.println("Cannot get client: " + e.getMessage());
+            System.out.println("Cannot find client by email: " + email);
             return null;
         }
     }

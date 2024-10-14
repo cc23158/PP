@@ -2,7 +2,6 @@ package com.example.SF.DAL;
 
 import com.example.SF.BLL.ClientService;
 import com.example.SF.DTO.Client;
-import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,12 +45,18 @@ public class ClientController {
     @CrossOrigin
     @GetMapping("/getByEmail")
     public Client getByEmail(@RequestParam("email") String email) {
-        Client client = clientService.getByEmail(email);
-        if (client != null) {
-            return client;
+        try {
+            Client client = clientService.getByEmail(email);
+            if (client != null) {
+                return client;
+            }
+
+            else {
+                return null;
+            }
         }
 
-        else {
+        catch (Exception e) {
             return null;
         }
     }

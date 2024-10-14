@@ -25,7 +25,6 @@ public class ExerciseService {
         this.imageService = imageService;
     }
 
-    @Transactional
     public List<Exercise> getAll() {
         try {
             return iExercise.getAllOrder();
@@ -38,29 +37,20 @@ public class ExerciseService {
     }
 
     public Exercise getById(Integer id) {
-        try {
-            return iExercise.findById(id).orElse(null);
-        }
-
-        catch (Exception e) {
-            System.out.println("Cannot get exercise: " + e.getMessage());
-            return null;
-        }
+        return iExercise.findById(id).orElse(null);
     }
 
-    @Transactional
     public List<Exercise> getByMuscle(Integer muscleId) {
         try {
             return iExercise.getByMuscle(muscleId);
         }
 
         catch (Exception e) {
-            System.out.println("Cannot find exercise by muscle ID: " + muscleId);
+            System.out.println("Cannot find exercise by muscle: " + e.getMessage());
             return List.of();
         }
     }
 
-    @Transactional
     public List<Exercise> findByImage(String image) {
         try{
             return iExercise.findByImage(image);
@@ -72,6 +62,7 @@ public class ExerciseService {
         }
     }
 
+    @Transactional
     public Exercise insert(String name, String image, String path, Integer muscleId) {
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(path) || muscleId == null) {
             System.out.println("Name, path or muscleId must not be empty");
@@ -89,7 +80,7 @@ public class ExerciseService {
 
             Muscle muscle = muscleService.getById(muscleId);
             if (muscle == null) {
-                System.out.println("Muscle not found for ID: " + muscleId);
+                System.out.println("Cannot find muscle by ID: " + muscleId);
                 return null;
             }
             exercise.setExercise_muscle(muscle);
@@ -123,7 +114,7 @@ public class ExerciseService {
             }
 
             else {
-                System.out.println("Exercise not found for ID: " + id);
+                System.out.println("Cannot find exercise by ID: " + id);
             }
         }
 
@@ -149,7 +140,7 @@ public class ExerciseService {
             }
 
             else {
-                System.out.println("Exercise not found for ID: " + id);
+                System.out.println("Cannot find exercise by ID: " + id);
             }
         }
 

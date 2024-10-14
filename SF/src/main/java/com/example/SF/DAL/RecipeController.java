@@ -2,8 +2,6 @@ package com.example.SF.DAL;
 
 import com.example.SF.BLL.RecipeService;
 import com.example.SF.DTO.Recipe;
-import org.apache.coyote.Response;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,10 +17,10 @@ public class RecipeController {
     }
 
     @CrossOrigin
-    @GetMapping("/getAll")
-    public List<Recipe> getAll() {
+    @GetMapping("/getByTraining")
+    public List<Recipe> getByTraining(@RequestParam("trainingId") Integer training) {
         try {
-            return recipeService.getAll();
+            return recipeService.getByTraining(training);
         }
 
         catch (Exception e) {
@@ -32,14 +30,8 @@ public class RecipeController {
 
     @CrossOrigin
     @PostMapping("/insert")
-    public Recipe insert(@RequestParam("clientId") Integer clientId, @RequestParam("exerciseId") Integer exerciseId, @RequestParam("weight") Double weight) {
-        try {
-            return recipeService.insert(clientId, exerciseId, weight);
-        }
-
-        catch (Exception e) {
-            return null;
-        }
+    public Recipe insert(@RequestParam("trainingId") Integer training, @RequestParam("exerciseId") Integer exercise, @RequestParam("weight") Double weight) {
+        return recipeService.insert(training, exercise, weight);
     }
 
     @CrossOrigin
@@ -47,7 +39,7 @@ public class RecipeController {
     public ResponseEntity<String> update(@RequestParam("id") Integer id, @RequestParam("weight") Double weight) {
         try {
             recipeService.update(id, weight);
-            return ResponseEntity.ok("Recipe updated");
+            return ResponseEntity.ok("Recipe's weight changed");
         }
 
         catch (Exception e) {

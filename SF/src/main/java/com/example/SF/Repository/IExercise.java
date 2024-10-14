@@ -1,6 +1,5 @@
 package com.example.SF.Repository;
 
-import com.example.SF.DTO.Client;
 import com.example.SF.DTO.Exercise;
 import com.example.SF.DTO.Muscle;
 import org.springframework.data.jpa.repository.JpaRepository;

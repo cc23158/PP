@@ -15,16 +15,17 @@ import lombok.Setter;
 public class Recipe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "recipe_id", nullable = false)
     private Integer recipe_id;
 
     @ManyToOne
-    @JoinColumn(name = "recipe_client", referencedColumnName = "client_id", nullable = false)
-    private Client recipe_client;
+    @JoinColumn(name = "recipe_training", referencedColumnName = "training_id", nullable = false)
+    private Training recipe_training;
 
     @ManyToOne
     @JoinColumn(name = "recipe_exercise", referencedColumnName = "exercise_id", nullable = false)
     private Exercise recipe_exercise;
 
-    @Column(name = "recipe_weight", nullable = true)
+    @Column(name = "recipe_weight", nullable = false)
     private Double recipe_weight;
 }

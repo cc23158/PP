@@ -1,10 +1,8 @@
 package com.example.SF.BLL;
 
-import com.example.SF.DTO.Client;
 import com.example.SF.DTO.Exercise;
 import com.example.SF.DTO.Recipe;
-import com.example.SF.BLL.ClientService;
-import com.example.SF.BLL.ExerciseService;
+import com.example.SF.DTO.Training;
 import com.example.SF.Repository.IRecipe;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,63 +13,52 @@ import java.util.List;
 @Service
 public class RecipeService {
     private final IRecipe iRecipe;
-    private final ClientService clientService;
+    private final TrainingService trainingService;
     private final ExerciseService exerciseService;
 
     @Autowired
-    public RecipeService(IRecipe iRecipe, ClientService clientService, ExerciseService exerciseService) {
+    public RecipeService(IRecipe iRecipe, TrainingService trainingService, ExerciseService exerciseService) {
         this.iRecipe = iRecipe;
-        this.clientService = clientService;
+        this.trainingService = trainingService;
         this.exerciseService = exerciseService;
     }
 
-    public List<Recipe> getAll() {
+    public List<Recipe> getByTraining(Integer trainingId) {
         try {
-            return iRecipe.findAll();
+            return iRecipe.getByTraining(trainingId);
         }
 
         catch (Exception e) {
-            System.out.println("Cannot find recipes: " + e.getMessage());
+            System.out.println("Cannot find exercises by training ID: " + e.getMessage());
             return List.of();
         }
     }
 
-    public Recipe getById(Integer id) {
-        try {
-            return iRecipe.findById(id).orElse(null);
-        }
-
-        catch (Exception e) {
-            System.out.println("Cannot find recipe for ID: " + id);
-            return null;
-        }
-    }
-    
-    public Recipe insert(Integer clientId, Integer exerciseId, Double weight) {
-        if (clientId == null || exerciseId == null) {
-            System.out.println("ClientId or exerciseId must not be empty");
+    @Transactional
+    public Recipe insert(Integer trainingId, Integer exerciseId, Double weight) {
+        if (trainingId == null || exerciseId == null || weight == null) {
+            System.out.println("TrainingId, exerciseId and weight must be not null");
             return null;
         }
 
         try {
             Recipe recipe = new Recipe();
-            recipe.setRecipe_weight(weight);
-            
-            Client client = clientService.getById(clientId);
-            if (client == null) {
-                System.out.println("Client not found for ID: " + clientId);
+
+            Training training = trainingService.getById(trainingId);
+            if (training == null) {
+                System.out.println("Cannot find training by ID: " + trainingId);
                 return null;
             }
 
             Exercise exercise = exerciseService.getById(exerciseId);
             if (exercise == null) {
-                System.out.println("Exercise not found for ID: " + exerciseId);
+                System.out.println("Cannot find exercise by ID: " + exerciseId);
                 return null;
             }
 
-            recipe.setRecipe_client(client);
+            recipe.setRecipe_training(training);
             recipe.setRecipe_exercise(exercise);
-            
+            recipe.setRecipe_weight(weight);
             return iRecipe.save(recipe);
         }
 
@@ -84,7 +71,7 @@ public class RecipeService {
     @Transactional
     public void update(Integer id, Double weight) {
         try {
-            iRecipe.updateRecipe(id, weight);
+            iRecipe.update(id, weight);
         }
 
         catch (Exception e) {
@@ -92,6 +79,7 @@ public class RecipeService {
         }
     }
 
+    @Transactional
     public void delete(Integer id) {
         try {
             iRecipe.deleteById(id);

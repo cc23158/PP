@@ -20,7 +20,7 @@ public class MuscleService {
 
     public List<Muscle> getAll() {
         try {
-            return iMuscle.findAll();
+            return iMuscle.getAllOrder();
         }
 
         catch (Exception e) {
@@ -43,6 +43,7 @@ public class MuscleService {
         }
 
         catch (Exception e) {
+            System.out.println("Cannot insert muscle: " + e.getMessage());
             return null;
         }
     }

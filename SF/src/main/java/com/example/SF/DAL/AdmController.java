@@ -44,7 +44,7 @@ public class AdmController {
         }
 
         catch (Exception e) {
-            return ResponseEntity.badRequest().body("An error occured");
+            return ResponseEntity.badRequest().body("Cannot verify adm");
         }
     }
 

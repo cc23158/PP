@@ -2,8 +2,6 @@ package com.example.SF.DAL;
 
 import com.example.SF.BLL.MuscleService;
 import com.example.SF.DTO.Muscle;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +18,7 @@ public class MuscleController {
 
     @CrossOrigin
     @GetMapping("/getAll")
-    public List<Muscle> getAll(){
+    public List<Muscle> getAll() {
         try {
             return muscleService.getAll();
         }

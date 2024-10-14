@@ -16,7 +16,7 @@ public class ExerciseController {
     private final ExerciseService exerciseService;
     private final ImageService imageService;
 
-    public ExerciseController(ExerciseService exerciseService, ImageService imageService){
+    public ExerciseController(ExerciseService exerciseService, ImageService imageService) {
         this.exerciseService = exerciseService;
         this.imageService = imageService;
     }
@@ -35,7 +35,7 @@ public class ExerciseController {
 
     @CrossOrigin
     @GetMapping("/getByMuscle")
-    public List<Exercise> getByMuscle(@RequestParam("muscleId") Integer muscleId){
+    public List<Exercise> getByMuscle(@RequestParam("muscleId") Integer muscleId) {
         try {
             return exerciseService.getByMuscle(muscleId);
         }

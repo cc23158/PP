@@ -18,19 +18,17 @@ public class AdmService {
         this.iAdm = iAdm;
     }
 
-    @Transactional
     public List<Adm> getAll() {
         try {
             return iAdm.getAllOrder();
         }
 
         catch (Exception e) {
-            System.out.println("Cannot select adms: " + e.getMessage());
+            System.out.println("Cannot get adms: " + e.getMessage());
             return List.of();
         }
     }
 
-    @Transactional
     public boolean verify(String email, String password) {
         try {
             return iAdm.verify(email, password);
@@ -60,7 +58,7 @@ public class AdmService {
         }
 
         catch (Exception e) {
-            System.out.println("Cannot insert adm " + e.getMessage());
+            System.out.println("Cannot insert adm: " + e.getMessage());
             return null;
         }
     }
