@@ -54,9 +54,14 @@ public class ExerciseController {
 
     @CrossOrigin
     @PutMapping("/update")
-    public ResponseEntity<String> update(@RequestParam("id") Integer id, @RequestParam("muscleId") Integer muscleId, @RequestParam("name") String name, @RequestParam("image") MultipartFile image, @RequestParam("path") String path) {
+    public ResponseEntity<String> update(@RequestParam("id") Integer id, @RequestParam("muscleId") Integer muscleId, @RequestParam("name") String name, @RequestParam(value = "image", required = false) MultipartFile image, @RequestParam("path") String path) {
         try {
-            String imageUrl = imageService.uploadImage(image);
+            String imageUrl = null;
+
+            if (image != null && !image.isEmpty()) {
+                imageUrl = imageService.uploadImage(image);
+            }
+
             exerciseService.update(id, name, imageUrl, path, muscleId);
             return ResponseEntity.ok("Exercises synchronized successfully");
         }

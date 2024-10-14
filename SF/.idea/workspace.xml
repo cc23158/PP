@@ -39,21 +39,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.SfApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Maven.SF [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.SF [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.SF [install].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.SF [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.SF [test].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.SF [validate].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.SF [verify].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.SfApplication.executor": "Run",
+    "Maven.SF [clean].executor": "Run",
+    "Maven.SF [compile].executor": "Run",
+    "Maven.SF [install].executor": "Run",
+    "Maven.SF [package].executor": "Run",
+    "Maven.SF [test].executor": "Run",
+    "Maven.SF [validate].executor": "Run",
+    "Maven.SF [verify].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Postgres",
+    "kotlin-language-version-configured": "true"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

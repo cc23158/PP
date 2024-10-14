@@ -102,9 +102,15 @@ public class ExerciseService {
                 Exercise exercise = optionalExercise.get();
                 String oldImageUrl = exercise.getExercise_image();
 
-                List<Exercise> exercisesWithOldImage = iExercise.findByImage(oldImageUrl);
-                if (exercisesWithOldImage.size() == 1) {
-                    imageService.deleteImageFromBucket(oldImageUrl);
+                if (StringUtils.isEmpty(image)) {
+                    image = oldImageUrl;
+                }
+
+                else {
+                    List<Exercise> exercisesWithOldImage = iExercise.findByImage(oldImageUrl);
+                    if (exercisesWithOldImage.size() == 1) {
+                        imageService.deleteImageFromBucket(oldImageUrl);
+                    }
                 }
 
                 Muscle muscle = muscleService.getById(muscleId);
