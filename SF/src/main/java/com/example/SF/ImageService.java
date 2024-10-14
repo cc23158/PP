@@ -18,7 +18,7 @@ public class ImageService {
     @Value("${supabase.bucket.name}")
     private String bucketName;
 
-    public String uploadImage(MultipartFile imageFile){
+    public String uploadImage(MultipartFile imageFile) {
         String fileName = imageFile.getOriginalFilename();
         String imageUrl = supabaseUrl + "/storage/v1/object/" + bucketName + "/" + fileName;
 
@@ -63,14 +63,16 @@ public class ImageService {
                 return imageUrl; // Retorna a URL após o upload
             }
 
-        } catch (Exception e) {
+        }
+
+        catch (Exception e) {
             System.out.println("Cannot insert image: " + e.getMessage());
             return "";
         }
     }
 
-    public void deleteImageFromBucket(String imageUrl){
-        try{
+    public void deleteImageFromBucket(String imageUrl) {
+        try {
             String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
             OkHttpClient client = new OkHttpClient();
 
@@ -87,7 +89,7 @@ public class ImageService {
             }
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot delete image from bucket");
         }
     }

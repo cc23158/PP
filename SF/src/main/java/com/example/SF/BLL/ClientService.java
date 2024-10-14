@@ -15,58 +15,50 @@ public class ClientService {
     private final IClient iClient;
 
     @Autowired
-    public ClientService(IClient iClient){
+    public ClientService(IClient iClient) {
         this.iClient = iClient;
     }
 
-    public List<Client> getAll(){
-        try{
-            return  iClient.findAll();
+    public List<Client> getAll() {
+        try {
+            return  iClient.getAllOrder();
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot get clients: " + e.getMessage());
             return List.of();
         }
     }
 
-    public Client getById(Integer id){
-        try{
-            return iClient.findById(id).orElse(null);
-        }
-
-        catch (Exception e){
-            System.out.println("Cannot get client: " + e.getMessage());
-            return null;
-        }
+    public Client getById(Integer id) {
+        return iClient.findById(id).orElse(null);
     }
 
-    @Transactional
-    public Client getByName(String name){
-        try{
+    public Client getByName(String name) {
+        try {
             return iClient.getByName(name);
         }
 
-        catch (Exception e){
-            System.out.println("Cannot get client: " + e.getMessage());
+        catch (Exception e) {
+            System.out.println("Cannot find client by name: " + name);
+            return null;
+        }
+    }
+
+    public Client getByEmail(String email) {
+        try {
+            return iClient.getByEmail(email);
+        }
+
+        catch (Exception e) {
+            System.out.println("Cannot find client by email: " + email);
             return null;
         }
     }
 
     @Transactional
-    public Client getByEmail(String email){
-        try{
-            return iClient.getByEmail(email);
-        }
-
-        catch (Exception e){
-            System.out.println("Cannot get client: " + e.getMessage());
-            return null;
-        }
-    }
-
-    public Client save(String name, String email, LocalDate birthday, Character gender, Double weight, String password){
-        try{
+    public Client insert(String name, String email, LocalDate birthday, Character gender, Double weight, String password) {
+        try {
             Client client = new Client();
             client.setClient_name(name);
             client.setClient_email(email);
@@ -79,46 +71,46 @@ public class ClientService {
             return iClient.save(client);
         }
 
-        catch (DataIntegrityViolationException e){
+        catch (DataIntegrityViolationException e) {
             System.out.println("Email already exists");
             return null;
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot insert client: " + e.getMessage());
             return null;
         }
     }
 
     @Transactional
-    public void updateData(Integer id, Double weight){
-        try{
+    public void updateData(Integer id, Double weight) {
+        try {
             iClient.updateData(id, weight);
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot change client's data: " + e.getMessage());
         }
     }
 
     @Transactional
-    public void updatePassword(Integer id, String password){
-        try{
+    public void updatePassword(Integer id, String password) {
+        try {
             iClient.updatePassword(id, password);
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot change client's password: " + e.getMessage());
         }
     }
 
     @Transactional
-    public void delete(Integer id){
-        try{
+    public void delete(Integer id) {
+        try {
             iClient.delete(id);
         }
 
-        catch (Exception e){
+        catch (Exception e) {
             System.out.println("Cannot delete client: " + e.getMessage());
         }
     }
