@@ -247,7 +247,7 @@ class SelectExerciseState extends State<SelectExercise> {
   Future getExercises() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:8080/exercise/getAll'),
+        Uri.parse('https://shape-factory-5.onrender.com/exercise/getAll'),
       );
       if (response.statusCode == 200) {
         var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes));

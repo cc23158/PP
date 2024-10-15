@@ -107,7 +107,7 @@ class AddExerciceState extends State<AddExercise> {
     }
 
     var response = await dio.put(
-      'http://localhost:8080/exercise/update',
+      'https://shape-factory-5.onrender.com/exercise/update',
       data: formData,
       options: Options(contentType: 'multipart/form-data'),
     );
@@ -191,286 +191,218 @@ class AddExerciceState extends State<AddExercise> {
     }
   }
 
-  Widget getWidget(dynamic musculos, int controllerIndex) {
-    return Card(
-      color: const Color(0xffe0e0e0),
-      shadowColor: const Color(0xff000000),
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-        side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
-      ),
-      child: RawScrollbar(
-        padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
-        thumbColor: Colors.black,
-        radius: Radius.circular(12),
-        controller: controllerRow[controllerIndex],
-        scrollbarOrientation: ScrollbarOrientation.bottom,
-        interactive: true,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+ Widget getWidget(dynamic musculos, int controllerIndex) {
+  List<DropdownMenuItem<int>> dropdownItems = (musculos as List<dynamic>)
+      .map<DropdownMenuItem<int>>((musculo) {
+    final Map<String, dynamic> item = musculo as Map<String, dynamic>;
+    return DropdownMenuItem<int>(
+      value: (item['id'] as int) - 1,
+      child: Text(item['nome'] as String),
+    );
+  }).toList();
+
+  return Card(
+    color: const Color(0xffe0e0e0),
+    shadowColor: const Color(0xff000000),
+    elevation: 1,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
+    ),
+    child: LayoutBuilder(
+      builder: (context, constraints) {
+        return RawScrollbar(
+          padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+          thumbColor: Colors.black,
+          radius: const Radius.circular(12),
+          controller: controllerRow[controllerIndex],
+          scrollbarOrientation: ScrollbarOrientation.bottom,
+          interactive: true,
           child: SingleChildScrollView(
             controller: controllerRow[controllerIndex],
             scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 5, 5, 5),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    constraints: BoxConstraints(maxWidth: 500, minWidth: 300),
-                    child: TextField(
-                      onChanged: (value) => {
-                        if (controllerUpdate
-                                .contains(controllerId[controllerIndex]) ==
-                            false)
-                          {
-                            setState(() {
-                              controllerUpdate
-                                  .add(controllerId[controllerIndex]);
-                            })
-                          }
-                      },
-                      cursorColor: Colors.orange,
-                      controller: controllerNome[controllerIndex],
-                      obscureText: false,
-                      textAlign: TextAlign.start,
-                      maxLines: 1,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 16,
-                        color: Color.fromARGB(255, 0, 0, 0),
-                      ),
-                      decoration: InputDecoration(
-                        disabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 0, 0, 0), width: 1),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.maxWidth),
+              child: IntrinsicWidth(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Campo de Nome - Flex menor para reduzir mais rapidamente
+                    Flexible(
+                      flex: 3, // Flex menor
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 10, 5, 10),
+                        child: TextField(
+                          onChanged: (value) {
+                            if (!controllerUpdate.contains(
+                                controllerId[controllerIndex])) {
+                              setState(() {
+                                controllerUpdate
+                                    .add(controllerId[controllerIndex]);
+                              });
+                            }
+                          },
+                          cursorColor: Colors.orange,
+                          controller: controllerNome[controllerIndex],
+                          decoration: _inputDecoration("Nome"),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 0, 0, 0), width: 1),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 0, 0, 0), width: 1),
-                        ),
-                        labelText: "Nome",
-                        labelStyle: const TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 16,
-                          color: Color.fromARGB(255, 0, 0, 0),
-                        ),
-                        filled: true,
-                        fillColor: const Color(0x00ffffff),
-                        isDense: false,
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 12),
                       ),
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    constraints: BoxConstraints(maxWidth: 680, minWidth: 300),
-                    child: TextField(
-                      onChanged: (value) => {
-                        if (controllerUpdate
-                                .contains(controllerId[controllerIndex]) ==
-                            false)
-                          {
-                            setState(() {
-                              controllerUpdate
-                                  .add(controllerId[controllerIndex]);
-                            })
-                          }
-                      },
-                      cursorColor: Colors.orange,
-                      controller: controllerUrl[controllerIndex],
-                      obscureText: false,
-                      textAlign: TextAlign.start,
-                      maxLines: 1,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 16,
-                        color: Color.fromARGB(255, 0, 0, 0),
-                      ),
-                      decoration: InputDecoration(
-                        disabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 0, 0, 0), width: 1),
+
+                    // Campo de URL - Flex maior para manter tamanho mais estável
+                    Flexible(
+                      flex: 5, // Flex maior
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+                        child: TextField(
+                          onChanged: (value) {
+                            if (!controllerUpdate.contains(
+                                controllerId[controllerIndex])) {
+                              setState(() {
+                                controllerUpdate
+                                    .add(controllerId[controllerIndex]);
+                              });
+                            }
+                          },
+                          cursorColor: Colors.orange,
+                          controller: controllerUrl[controllerIndex],
+                          decoration: _inputDecoration("URL do vídeo"),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 0, 0, 0), width: 1),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                          borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 0, 0, 0), width: 1),
-                        ),
-                        labelText: "URL do vídeo",
-                        labelStyle: const TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 16,
-                          color: Color.fromARGB(255, 0, 0, 0),
-                        ),
-                        filled: true,
-                        fillColor: const Color(0x00ffffff),
-                        isDense: false,
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 12),
                       ),
                     ),
-                  ),
-                ),
-                Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: SizedBox(
+
+                    // Dropdown de Músculo
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+                      child: SizedBox(
                         width: 200,
                         child: DropdownButtonFormField<int>(
-                          decoration: InputDecoration(
-                            disabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                              borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                                width: 1,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                              borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                                width: 1,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                                width: 1,
-                              ),
-                            ),
-                            labelText: "Músculo", // Define o rótulo
-                            labelStyle: const TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.normal,
-                              fontSize: 16,
-                              color: Color.fromARGB(255, 0, 0, 0),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                          ),
+                          decoration: _inputDecoration("Músculo"),
                           value: controllerMusculo[controllerIndex] == -1
                               ? null
                               : controllerMusculo[controllerIndex] - 1,
                           onChanged: (int? newValue) {
                             setState(() {
-                              dropdownvalue = newValue!;
-                              controllerMusculo[controllerIndex] = newValue + 1;
-                              if (controllerUpdate.contains(
-                                      controllerId[controllerIndex]) ==
-                                  false) {
+                              controllerMusculo[controllerIndex] =
+                                  newValue! + 1;
+                              if (!controllerUpdate.contains(
+                                  controllerId[controllerIndex])) {
                                 controllerUpdate
                                     .add(controllerId[controllerIndex]);
                               }
                             });
                           },
-                          items: musculos.map<DropdownMenuItem<int>>(
-                              (Map<String, dynamic> musculo) {
-                            return DropdownMenuItem<int>(
-                              value: (musculo['id'] as int) - 1,
-                              child: Text(musculo['nome'] as String),
-                            );
-                          }).toList(),
-                        ))),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
-                  child: MaterialButton(
-                      minWidth: 56,
-                      height: 56,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(color: Colors.black)),
-                      padding: EdgeInsets.all(9),
-                      child: listCamera[controllerIndex],
-                      onPressed: () async {
-                        var picked = await FilePicker.platform
-                            .pickFiles(type: FileType.image);
+                          items: dropdownItems,
+                        ),
+                      ),
+                    ),
 
-                        if (picked != null) {
-                          setState(() {
-                            if (controllerUpdate
-                                    .contains(controllerId[controllerIndex]) ==
-                                false) {
-                              controllerUpdate
-                                  .add(controllerId[controllerIndex]);
-                            }
-                            print(picked.files.first.name);
-                            controllerCamera[controllerIndex] =
-                                picked.files.first;
-                            listCamera[controllerIndex] = ClipRRect(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(12)),
+                    // Botão de Upload de Imagem
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+                      child: MaterialButton(
+                        minWidth: 56,
+                        height: 56,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: const BorderSide(color: Colors.black),
+                        ),
+                        padding: const EdgeInsets.all(9),
+                        child: listCamera[controllerIndex],
+                        onPressed: () async {
+                          var picked = await FilePicker.platform
+                              .pickFiles(type: FileType.image);
+                          if (picked != null) {
+                            setState(() {
+                              if (!controllerUpdate.contains(
+                                  controllerId[controllerIndex])) {
+                                controllerUpdate
+                                    .add(controllerId[controllerIndex]);
+                              }
+                              controllerCamera[controllerIndex] =
+                                  picked.files.first;
+                              listCamera[controllerIndex] = ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
                                 child: Image.memory(
                                   picked.files.first.bytes!,
                                   height: 46,
                                   width: 46,
                                   fit: BoxFit.cover,
-                                ));
+                                ),
+                              );
+                            });
+                          }
+                        },
+                      ),
+                    ),
+
+                    // Botão de Remover Item
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 10, 10, 10),
+                      child: MaterialButton(
+                        minWidth: 56,
+                        height: 56,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: const BorderSide(color: Colors.red),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          setState(() {
+                            podeMudar = false;
+                            listElement.removeAt(controllerIndex);
+                            controllerRow.removeAt(controllerIndex);
+                            controllerNome.removeAt(controllerIndex);
+                            controllerUrl.removeAt(controllerIndex);
+                            controllerMusculo.removeAt(controllerIndex);
+                            listCamera.removeAt(controllerIndex);
+                            controllerCamera.removeAt(controllerIndex);
+                            controllerExcluir
+                                .add(controllerId[controllerIndex]);
+                            controllerId.removeAt(controllerIndex);
                           });
-                        }
-                      }),
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 5, 10, 5),
-                  child: MaterialButton(
-                    minWidth: 56,
-                    height: 56,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(color: Colors.red)),
-                    padding: EdgeInsets.all(10),
-                    child: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      setState(() {
-                        // Remove the widget first
-                        podeMudar = false;
-                        listElement.removeAt(controllerIndex);
-                        controllerRow.removeAt(controllerIndex);
-                        controllerNome.remove(controllerNome[controllerIndex]);
-                        controllerUrl.remove(controllerUrl[controllerIndex]);
-                        controllerMusculo.removeAt(controllerIndex);
-                        listCamera.remove(listCamera[controllerIndex]);
-                        controllerCamera
-                            .remove(controllerCamera[controllerIndex]);
-                        controllerExcluir.add(controllerId[controllerIndex]);
-                        controllerId.removeAt(controllerIndex);
-                        podeMudar = false;
-                      });
-                    },
-                  ),
-                )
-              ],
+              ),
             ),
           ),
-        ),
+        );
+      },
+    ),
+  );
+}
+
+InputDecoration _inputDecoration(String label) {
+  return InputDecoration(
+    labelText: label,
+    labelStyle: const TextStyle(
+      fontWeight: FontWeight.w400,
+      fontStyle: FontStyle.normal,
+      fontSize: 16,
+      color: Color.fromARGB(255, 0, 0, 0),
+    ),
+    contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      borderSide: const BorderSide(
+        color: Color.fromARGB(255, 0, 0, 0),
+        width: 1,
       ),
-    );
-  }
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(4.0),
+      borderSide: const BorderSide(
+        color: Color.fromARGB(255, 0, 0, 0),
+        width: 1,
+      ),
+    ),
+  );
+}
+
 
  @override
 Widget build(BuildContext context) {
