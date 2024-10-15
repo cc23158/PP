@@ -10,26 +10,28 @@ class SelectExercise extends StatefulWidget {
 }
 
 class SelectExerciseState extends State<SelectExercise> {
+  List<int> selectedExercises = [];
   var lista = List.empty(growable: true);
   var listElemento = List<Widget>.empty(growable: true);
   bool isLoading = true; // Adiciona um indicador de carregamento
   var selectedMuscles = List.empty(growable: true);
   var listMuscles = List<String>.empty(growable: true);
   String currentSearchText = '';
+  ValueNotifier<List<int>> selectedExercisesNotifier = ValueNotifier([]);
 
   void _applyFilters(String value) {
     setState(() {
       listElemento = lista.where((exercise) {
         // Filtro por texto
-         bool matchesText = exercise['exercise_name']
-          .toLowerCase()
-          .contains(value.toLowerCase());
+        bool matchesText = exercise['exercise_name']
+            .toLowerCase()
+            .contains(value.toLowerCase());
 
-      // Filtro por músculos selecionados
-      bool matchesMuscles = selectedMuscles.isEmpty ||
-          selectedMuscles.any((selectedMuscle) =>
-              selectedMuscle.toLowerCase() ==
-              exercise['exercise_muscle']['muscle_name'].toLowerCase());
+        // Filtro por músculos selecionados
+        bool matchesMuscles = selectedMuscles.isEmpty ||
+            selectedMuscles.any((selectedMuscle) =>
+                selectedMuscle.toLowerCase() ==
+                exercise['exercise_muscle']['muscle_name'].toLowerCase());
 
         // Retorna verdadeiro se ambos os filtros forem satisfeitos
         return matchesText && matchesMuscles;
@@ -116,12 +118,10 @@ class SelectExerciseState extends State<SelectExercise> {
                                         setState(() {
                                           selectedMuscles.remove(muscle);
                                         });
-                                        
                                       } else {
                                         setState(() {
                                           selectedMuscles.add(muscle);
                                         });
-                                        
                                       }
                                       _applyFilters(currentSearchText);
                                     });
@@ -166,81 +166,123 @@ class SelectExerciseState extends State<SelectExercise> {
   }
 
   Widget getWidget(String nome, String musculo, String imagem, int id) {
-    return Card(
-      margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-      color: const Color(0xffffffff),
-      shadowColor: const Color(0x4d939393),
-      elevation: 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(5),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Container(
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                  color: Color(0xfff2f2f2),
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.all(Radius.circular(12))),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image(
-                  image: NetworkImage(imagem),
-                  height: 50,
-                  width: 50,
-                  fit: BoxFit.cover,
-                ),
-              ),
+    return ValueListenableBuilder<List<int>>(
+      valueListenable: selectedExercisesNotifier,
+      builder: (context, selectedExercises, child) {
+        bool isSelected = selectedExercises.contains(id);
+        return GestureDetector(
+          onTap: () {
+            if (isSelected) {
+              selectedExercisesNotifier.value.remove(id);
+            } else {
+              selectedExercisesNotifier.value.add(id);
+            }
+            selectedExercisesNotifier.notifyListeners();
+          },
+          child: Card(
+            margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+            color: isSelected ? Colors.orange : const Color(0xffffffff),
+            shadowColor: const Color(0x4d939393),
+            elevation: 1,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
             ),
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Text(
-                      nome,
-                      textAlign: TextAlign.left,
-                      maxLines: 10,
-                      overflow: TextOverflow.clip,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 14,
-                        color: Color(0xff000000),
+            child: Padding(
+              padding: const EdgeInsets.all(5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  // Imagem do exercício
+                  Container(
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
+                      color: Color(0xfff2f2f2),
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image(
+                        image: NetworkImage(imagem),
+                        height: 50,
+                        width: 50,
+                        fit: BoxFit.cover,
                       ),
                     ),
- 
-                      Text(
-                        musculo,
-                        textAlign: TextAlign.left,
-                        maxLines: 10,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 14,
-                          color: Color(0xff6c6c6c),
+                  ),
+
+                  // Informações do exercício
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text(
+                            nome,
+                            textAlign: TextAlign.left,
+                            maxLines: 1,
+                            overflow: TextOverflow.clip,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                              color:
+                                  isSelected ? Colors.white : Color(0xff000000),
+                            ),
+                          ),
+                          Text(
+                            musculo,
+                            textAlign: TextAlign.left,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14,
+                              color: isSelected
+                                  ? Colors.white70
+                                  : Color(0xff6c6c6c),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Campo de Ordem de Seleção - Exibe apenas se selecionado
+                  if (isSelected) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      
+                        child: Text(
+                          (selectedExercises.indexOf(id) + 1)
+                              .toString(), // Ordem de seleção
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                      ),
                     ),
                   ],
-                ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -287,6 +329,14 @@ class SelectExerciseState extends State<SelectExercise> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            // Navegar de volta para a página anterior com a lista de exercícios selecionados
+            Navigator.of(context).pop(selectedExercises);
+          },
+          backgroundColor: Colors.orange,
+          child: Icon(Icons.check, color: Colors.white),
+        ),
         backgroundColor: const Color(0xff000000),
         body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
@@ -299,17 +349,20 @@ class SelectExerciseState extends State<SelectExercise> {
                   children: [
                     Padding(
                       padding: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width * 0.02, 0, MediaQuery.of(context).size.width * 0.02, 10
-                        
-                      ),
+                          MediaQuery.of(context).size.width * 0.02,
+                          0,
+                          MediaQuery.of(context).size.width * 0.02,
+                          10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          GestureDetector(child: Icon(
-                            Icons.keyboard_return_rounded,
-                            color: Colors.white,),
-                            onTap:() {
+                          GestureDetector(
+                            child: Icon(
+                              Icons.keyboard_return_rounded,
+                              color: Colors.white,
+                            ),
+                            onTap: () {
                               Navigator.pop(context);
                             },
                           ),
@@ -375,36 +428,36 @@ class SelectExerciseState extends State<SelectExercise> {
                       ),
                     ),
                     if (selectedMuscles.isNotEmpty)
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 0,
-                      horizontal: MediaQuery.of(context).size.width * 0.02,
-                    ),
-                    child: Wrap(
-                      spacing: 8.0, // Espaço entre as tags
-                      runSpacing: 8,
-                      children: selectedMuscles.map((muscle) {
-                        return Chip(
-                          side: BorderSide(style: BorderStyle.none),
-                          label: Text(
-                            muscle,
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          backgroundColor: Colors.orange,
-                          deleteIcon: Icon(
-                            Icons.close,
-                            color: Colors.white,
-                          ),
-                          onDeleted: () {
-                            setState(() {
-                              selectedMuscles.remove(muscle);
-                              _applyFilters(currentSearchText);
-                            });
-                          },
-                        );
-                      }).toList(),
-                    ),
-                  ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 0,
+                          horizontal: MediaQuery.of(context).size.width * 0.02,
+                        ),
+                        child: Wrap(
+                          spacing: 8.0, // Espaço entre as tags
+                          runSpacing: 8,
+                          children: selectedMuscles.map((muscle) {
+                            return Chip(
+                              side: BorderSide(style: BorderStyle.none),
+                              label: Text(
+                                muscle,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              backgroundColor: Colors.orange,
+                              deleteIcon: Icon(
+                                Icons.close,
+                                color: Colors.white,
+                              ),
+                              onDeleted: () {
+                                setState(() {
+                                  selectedMuscles.remove(muscle);
+                                  _applyFilters(currentSearchText);
+                                });
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     Flexible(
                       child: RawScrollbar(
                         thumbColor: Colors.orange,
