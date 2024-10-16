@@ -4,20 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:shapefactoryforadms/AddExercise.dart';
 
 class SelectExercise extends StatefulWidget {
-  const SelectExercise({super.key});
+  final selectedExercises;
+  const SelectExercise({this.selectedExercises ,super.key});
   @override
   SelectExerciseState createState() => SelectExerciseState();
 }
 
 class SelectExerciseState extends State<SelectExercise> {
-  List<int> selectedExercises = [];
   var lista = List.empty(growable: true);
   var listElemento = List<Widget>.empty(growable: true);
   bool isLoading = true; // Adiciona um indicador de carregamento
   var selectedMuscles = List.empty(growable: true);
   var listMuscles = List<String>.empty(growable: true);
   String currentSearchText = '';
-  ValueNotifier<List<int>> selectedExercisesNotifier = ValueNotifier([]);
+  ValueNotifier<List<dynamic>> selectedExercisesNotifier = ValueNotifier([]);
 
   void _applyFilters(String value) {
     setState(() {
@@ -166,12 +166,12 @@ class SelectExerciseState extends State<SelectExercise> {
   }
 
   Widget getWidget(String nome, String musculo, String imagem, int id) {
-    return ValueListenableBuilder<List<int>>(
+    return ValueListenableBuilder<List<dynamic>>(
       valueListenable: selectedExercisesNotifier,
       builder: (context, selectedExercises, child) {
         bool isSelected = selectedExercises.contains(id);
         return GestureDetector(
-          onTap: () {
+           onTap: () {
             if (isSelected) {
               selectedExercisesNotifier.value.remove(id);
             } else {
@@ -286,44 +286,67 @@ class SelectExerciseState extends State<SelectExercise> {
     );
   }
 
-  Future getExercises() async {
-    try {
-      final response = await http.get(
-        Uri.parse('https://shape-factory-5.onrender.com/exercise/getAll'),
-      );
-      if (response.statusCode == 200) {
-        var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes));
-        if (decodedResponse != null && decodedResponse is List) {
-          setState(() {
-            lista = decodedResponse;
-            listElemento = decodedResponse.map<Widget>((exercise) {
-              if (listMuscles
-                      .contains(exercise['exercise_muscle']['muscle_name']) ==
-                  false) {
-                listMuscles.add(exercise['exercise_muscle']['muscle_name']);
+  Future<void> getExercises() async {
+  try {
+    final response = await http.get(
+      Uri.parse('https://shape-factory-5.onrender.com/exercise/getAll'),
+    );
+
+    if (response.statusCode == 200) {
+      // Decodificando a resposta como List<dynamic>
+      List<dynamic> decodedResponse = jsonDecode(utf8.decode(response.bodyBytes));
+
+      // Verificando se a resposta é uma lista
+      if (decodedResponse is List) {
+        setState(() {
+          // Mapeando a resposta para o formato desejado
+          lista = decodedResponse.map((exercise) {
+            return {
+              'exercise_id': exercise['exercise_id'],
+              'exercise_name': exercise['exercise_name'],
+              'exercise_image': exercise['exercise_image'],
+              'exercise_muscle': {
+                'muscle_name': exercise['exercise_muscle']['muscle_name']
               }
-              return getWidget(
-                exercise['exercise_name'],
-                exercise['exercise_muscle']['muscle_name'],
-                exercise['exercise_image'],
-                exercise['exercise_id'],
-              );
-            }).toList();
-            isLoading = false; // Remover o indicador de carregamento
-          });
-        }
+            };
+          }).toList();
+
+          // Adicionando os widgets correspondentes
+          listElemento = lista.map<Widget>((exercise) {
+            return getWidget(
+              exercise['exercise_name'],
+              exercise['exercise_muscle']['muscle_name'],
+              exercise['exercise_image'],
+              exercise['exercise_id'],
+            );
+          }).toList();
+
+          isLoading = false; // Remover o indicador de carregamento
+        });
       } else {
-        print("Erro na resposta: ${response.statusCode}");
+        print("Resposta não é uma lista");
       }
-    } catch (erro) {
-      print("Erro ao buscar exercícios: ${erro.toString()}");
+    } else {
+      print("Erro na resposta: ${response.statusCode}");
     }
+  } catch (erro) {
+    print("Erro ao buscar exercícios: ${erro.toString()}");
   }
+}
 
   @override
   void initState() {
     super.initState();
     getExercises(); // Chama o método de busca uma única vez
+        selectedExercisesNotifier = ValueNotifier<List<dynamic>>(
+      widget.selectedExercises.map((e) => e["id"]).toList(),
+    );
+  }
+
+    @override
+  void dispose() {
+    selectedExercisesNotifier.dispose();
+    super.dispose();
   }
 
   @override
@@ -331,8 +354,19 @@ class SelectExerciseState extends State<SelectExercise> {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // Navegar de volta para a página anterior com a lista de exercícios selecionados
-            Navigator.of(context).pop(selectedExercises);
+            
+                 final selectedExercises = lista.where((exercise) =>
+            selectedExercisesNotifier.value.contains(exercise['exercise_id'])).map((exercise) {
+          return {
+            'id': exercise['exercise_id'],
+            'name': exercise['exercise_name'],
+            'musculo': exercise['exercise_muscle']['muscle_name'],
+            'image': exercise['exercise_image'],
+            'sets': exercise['sets'] ?? [{"carga": "0", "reps": "0"}],  // Adicionando sets
+          };
+        }).toList();
+              print(selectedExercises.toString());
+          Navigator.of(context).pop(selectedExercises);
           },
           backgroundColor: Colors.orange,
           child: Icon(Icons.check, color: Colors.white),
@@ -458,7 +492,7 @@ class SelectExerciseState extends State<SelectExercise> {
                           }).toList(),
                         ),
                       ),
-                    Flexible(
+                    Expanded(
                       child: RawScrollbar(
                         thumbColor: Colors.orange,
                         thumbVisibility:
