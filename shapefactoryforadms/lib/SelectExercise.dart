@@ -353,21 +353,36 @@ class SelectExerciseState extends State<SelectExercise> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            
-                 final selectedExercises = lista.where((exercise) =>
-            selectedExercisesNotifier.value.contains(exercise['exercise_id'])).map((exercise) {
-          return {
-            'id': exercise['exercise_id'],
-            'name': exercise['exercise_name'],
-            'musculo': exercise['exercise_muscle']['muscle_name'],
-            'image': exercise['exercise_image'],
-            'sets': exercise['sets'] ?? [{"carga": "0", "reps": "0"}],  // Adicionando sets
-          };
-        }).toList();
-              print(selectedExercises.toString());
-          Navigator.of(context).pop(selectedExercises);
-          },
+   onPressed: () {
+  final selectedIds = selectedExercisesNotifier.value;
+
+  // Função para buscar os sets correspondentes a um exercício selecionado
+  List<Map<String, String>> getSets(String exerciseId) {
+    // Usa 'orElse' para retornar um mapa vazio diretamente
+    final exerciseWithSets = widget.selectedExercises.firstWhere(
+      (e) => e['id'].toString() == exerciseId,
+      orElse: () => <String, dynamic>{},
+    );
+    return exerciseWithSets['sets'] ?? [{"carga": "0", "reps": "0"}];
+  }
+
+  // Monta a lista de exercícios selecionados com seus sets
+  final selectedExercises = selectedIds.map((id) {
+    final exercise = lista.firstWhere((e) => e['exercise_id'] == id);
+
+    return {
+      'id': exercise['exercise_id'],
+      'name': exercise['exercise_name'],
+      'musculo': exercise['exercise_muscle']['muscle_name'],
+      'image': exercise['exercise_image'],
+      'sets': getSets(exercise['exercise_id'].toString()),
+    };
+  }).toList();
+
+  print(selectedExercises.toString());
+  Navigator.of(context).pop(selectedExercises);
+}
+,
           backgroundColor: Colors.orange,
           child: Icon(Icons.check, color: Colors.white),
         ),

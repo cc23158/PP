@@ -159,7 +159,7 @@ class SelectTrainingState extends State<SelectTraining>
                                                         EditTraining(
                                                           category:
                                                               tabController
-                                                                  .index,
+                                                                  .index + 1,
                                                         )));
                                           },
                                           color: Colors.orange,

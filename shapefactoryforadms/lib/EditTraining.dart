@@ -8,6 +8,7 @@ class EditTraining extends StatefulWidget {
   const EditTraining({required this.category, super.key});
   @override
   EditTrainingState createState() => EditTrainingState();
+
 }
 
 class EditTrainingState extends State<EditTraining> {
@@ -15,21 +16,9 @@ class EditTrainingState extends State<EditTraining> {
   var listElemento = List<Widget>.empty(growable: true);
   bool isLoading = false;
   String currentSearchText = '';
+  var corBorda;
   List<Map<String, dynamic>> exercises = [
-    {
-      "id": 29,
-      "name": "Supino Reto",
-      "musculo": "Peito",
-      "image": "https://via.placeholder.com/50",
-      "sets": [{"carga": "40kg", "reps": "10"}, {"carga": "45kg", "reps": "8"}]
-    },
-    {
-      "id": 30,
-      "name": "Agachamento",
-      "musculo": "Pernas",
-      "image": "https://via.placeholder.com/50",
-      "sets": [{"carga": "80kg", "reps": "12"}]
-    },
+
   ];
   
   Future<void> _navigateToSelectExercise() async {
@@ -53,7 +42,7 @@ class EditTrainingState extends State<EditTraining> {
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 500),
-        margin: const EdgeInsets.symmetric(vertical: 10),
+        margin: const EdgeInsets.fromLTRB(10, 0, 10, 5),
         child: Card(
           color: const Color(0xffe0e0e0),
           shape: RoundedRectangleBorder(
@@ -61,7 +50,7 @@ class EditTrainingState extends State<EditTraining> {
             side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -78,9 +67,9 @@ class EditTrainingState extends State<EditTraining> {
                   itemCount: exercise["sets"].length * 3 + 3,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
-                    childAspectRatio: 2,
-                    crossAxisSpacing: 15,
-                    mainAxisSpacing: 2,
+                    childAspectRatio: 3,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 4,
                   ),
                   itemBuilder: (context, setIndex) {
                     if (setIndex < 3) {
@@ -107,7 +96,7 @@ class EditTrainingState extends State<EditTraining> {
                   },
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
+                  padding: const EdgeInsets.only(top: 5),
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
@@ -137,12 +126,31 @@ class EditTrainingState extends State<EditTraining> {
   }
 @override
   Widget build(BuildContext context) {
+        if (MediaQuery.of(context).size.width >
+        MediaQuery.of(context).size.height) {
+      setState(() {
+        corBorda = const BorderSide(color: Colors.grey);
+      });
+    } else {
+      setState(() {
+        corBorda = const BorderSide(color: Colors.black);
+      });
+    }
     return Scaffold(
       backgroundColor: const Color(0xff000000),
-      body: Column(
+      body: 
+      Center(child: 
+      Container(
+        alignment: Alignment.topCenter,
+        color: Colors.black,
+        constraints: BoxConstraints(maxWidth: 550),
+        child:
+        Card(color: Colors.black,
+          shape: RoundedRectangleBorder(side: corBorda, borderRadius: BorderRadius.circular(12)), child:
+      Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.fromLTRB(0, 20, 0, 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -153,7 +161,8 @@ class EditTrainingState extends State<EditTraining> {
                   },
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  constraints: BoxConstraints(maxWidth: 400),
                   child: TextFormField(
                     cursorColor: Colors.orange,
                     decoration: InputDecoration(
@@ -169,6 +178,7 @@ class EditTrainingState extends State<EditTraining> {
                 IconButton(
                   icon: const Icon(Icons.check, color: Colors.orange),
                   onPressed: () {
+                    
                     Navigator.pop(context);
                   },
                 ),
@@ -194,25 +204,23 @@ class EditTrainingState extends State<EditTraining> {
             ),
           ),
         ],
-      ),
+      ),)))
     );
   }
 
       Widget _novoExercicioButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(4),
-      child: SizedBox(
-        width: 490,
-        child: ElevatedButton(
+    return Center(child:Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      height: 50,
+        constraints: BoxConstraints(maxWidth: 515),
+        child: MaterialButton(
+          color: Colors.orange,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
           onPressed: () async{
             await  _navigateToSelectExercise();
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-          ),
+          
           child: const Text(
             "Novo Exercício",
             style: TextStyle(
@@ -300,7 +308,7 @@ class EditTrainingState extends State<EditTraining> {
         side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
