@@ -300,8 +300,8 @@ class AddExerciceState extends State<AddExercise> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
                         child: MaterialButton(
-                          minWidth: 56,
-                          height: 56,
+                          minWidth: 46,
+                          height: 46,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                             side: const BorderSide(color: Colors.black),
@@ -436,7 +436,7 @@ class AddExerciceState extends State<AddExercise> {
               alignment: Alignment.center,
               child: Container(
                 width: 1600,
-                height: MediaQuery.of(context).size.height * 0.5,
+                height: MediaQuery.of(context).size.height * 0.8,
                 constraints:
                     const BoxConstraints(minHeight: 700, minWidth: 400),
                 child: Column(
