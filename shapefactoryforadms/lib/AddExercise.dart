@@ -458,7 +458,7 @@ class AddExerciceState extends State<AddExercise> {
                           minThumbLength:
                               50, // Tamanho mínimo do thumb da scrollbar
                           radius: const Radius.circular(12),
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
                           child: ListView.builder(
                             controller: controllerList,
                             itemCount: listElement.length + 1,
@@ -467,13 +467,13 @@ class AddExerciceState extends State<AddExercise> {
                                 // Renderiza os elementos dinâmicos
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      vertical: 0, horizontal: 23),
+                                      vertical: 0, horizontal: 10),
                                   child: listElement[index],
                                 );
                               } else {
                                 return Padding(
                                     padding: const EdgeInsets.fromLTRB(
-                                        27, 6, 27, 20),
+                                        10, 6, 10, 20),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
