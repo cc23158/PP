@@ -5,7 +5,8 @@ import 'package:shapefactoryforadms/SelectExercise.dart';
 
 class EditTraining extends StatefulWidget {
   final category;
-  const EditTraining({required this.category, super.key});
+  final id;
+  const EditTraining({required this.category, super.key, required this.id});
   @override
   EditTrainingState createState() => EditTrainingState();
 }
@@ -206,6 +207,65 @@ class EditTrainingState extends State<EditTraining> {
         ),
       ),
     ));
+  }
+
+  Future<void> fetchRecipe() async {
+  try {
+    // Faz a chamada para a API para obter as receitas.
+    final response = await http.get(Uri.parse(
+        'https://shape-factory-5.onrender.com/recipe/getByTraining?trainingId=${widget.id}'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> recipesData = json.decode(response.body);
+
+      // Converte os dados da API para o formato desejado.
+      exercises = recipesData.map<Map<String, dynamic>>((recipe) {
+        final recipeExercise = recipe['recipe_exercise'];
+        final weight = recipe['recipe_weight'];
+        final reps = recipe['recipe_reps'];
+
+        // Separa as cargas e reps usando a '/' como delimitador.
+        final weights = weight.split('/');
+        final repsList = reps.split('/');
+
+        // Cria a lista de sets, unindo carga e reps na ordem correta.
+        List<Map<String, String>> sets = [];
+        for (int i = 0; i < weights.length; i++) {
+          sets.add({
+            'carga': weights[i].trim(), // Remove espaços em branco
+            'reps': repsList.length > i ? repsList[i].trim() : '', // Garante que não ultrapasse a lista
+          });
+        }
+
+        return {
+          'id': recipeExercise['exercise_id'],
+          'name': recipeExercise['exercise_name'],
+          'musculo': recipeExercise['exercise_muscle']['muscle_name'],
+          'image': recipeExercise['exercise_image'],
+          'sets': sets,
+        };
+      }).toList();
+
+      // Atualiza o estado para refletir as mudanças.
+      setState(() {});
+    } else {
+      // Trate o erro de acordo com sua lógica.
+      throw Exception('Falha ao carregar as receitas');
+    }
+  } catch (e) {
+    // Trate a exceção de acordo com sua lógica.
+    print('Erro: $e');
+  }
+}
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.id != 0){
+      fetchRecipe();
+    }
   }
 
   @override
