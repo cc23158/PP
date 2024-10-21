@@ -301,7 +301,11 @@ class SelectExerciseState extends State<SelectExercise> {
         setState(() {
           // Mapeando a resposta para o formato desejado
           lista = decodedResponse.map((exercise) {
+            if (listMuscles.contains(exercise['exercise_muscle']['muscle_name'] == false)){
+              listMuscles.add(exercise['exercise_muscle']['muscle_name']);
+            }
             return {
+
               'exercise_id': exercise['exercise_id'],
               'exercise_name': exercise['exercise_name'],
               'exercise_image': exercise['exercise_image'],
