@@ -37,6 +37,40 @@ class EditTrainingState extends State<EditTraining> {
     }
   }
 
+Future<int> postClient(String nome, String email, String data, String sexo,
+    String peso, String senha) async {
+  try {
+    var dataReal = data.replaceAll(RegExp(r'/'),'-');
+    var queryParameters = {
+      'name': nome,
+      'email': email,
+      'birthday': dataReal,
+      'gender': sexo,
+      'weight': peso,
+      'password': senha
+    };
+    print(Uri.http('localhost:8080','/client/insert', queryParameters));
+    final info = await http.post(
+      
+      Uri.http('localhost:8080','/client/insert', queryParameters),
+     
+    );
+
+    if (info.statusCode == 200) {
+      // Successful POST request, handle the response here
+      print(info.toString());
+      print("Usuário registrado");
+      return 1;
+    } else {
+      // If the server returns an error response, throw an exception
+      throw Exception('Failed to post data');
+    }
+  } catch (e) {
+    print(e.toString());
+    return 0;
+  }
+}
+
 
   Widget _exerciseCard(Map<String, dynamic> exercise) {
     return Center(
@@ -141,6 +175,7 @@ class EditTrainingState extends State<EditTraining> {
       body: 
       Center(child: 
       Container(
+        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
         alignment: Alignment.topCenter,
         color: Colors.black,
         constraints: BoxConstraints(maxWidth: 550),

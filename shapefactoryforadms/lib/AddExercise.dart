@@ -228,10 +228,10 @@ class AddExerciceState extends State<AddExercise> {
                     children: [
                       // Campo de Nome - Flex menor para reduzir mais rapidamente
                       Flexible(
-                        flex: 3, // Flex menor
+                        flex: 4, // Flex menor
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(10, 10, 5, 10),
-                          child: TextField(
+                          child: Container(constraints: BoxConstraints(minWidth: 200), child:  TextField(
                             onChanged: (value) {
                               if (!controllerUpdate
                                   .contains(controllerId[controllerIndex])) {
@@ -246,7 +246,7 @@ class AddExerciceState extends State<AddExercise> {
                             decoration: _inputDecoration("Nome"),
                           ),
                         ),
-                      ),
+                      ),),
 
                       // Campo de URL - Flex maior para manter tamanho mais estável
                       Flexible(
@@ -300,13 +300,13 @@ class AddExerciceState extends State<AddExercise> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
                         child: MaterialButton(
-                          minWidth: 46,
-                          height: 46,
+                          minWidth: 52,
+                          height: 52,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                             side: const BorderSide(color: Colors.black),
                           ),
-                          padding: const EdgeInsets.all(9),
+                          padding: const EdgeInsets.all(0),
                           child: listCamera[controllerIndex],
                           onPressed: () async {
                             var picked = await FilePicker.platform
@@ -339,8 +339,8 @@ class AddExerciceState extends State<AddExercise> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(5, 10, 10, 10),
                         child: MaterialButton(
-                          minWidth: 56,
-                          height: 56,
+                          minWidth: 52,
+                          height: 52,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                             side: const BorderSide(color: Colors.red),

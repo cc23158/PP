@@ -11,6 +11,7 @@ class SelectExercise extends StatefulWidget {
 }
 
 class SelectExerciseState extends State<SelectExercise> {
+  final scrollController = ScrollController();
   var lista = List.empty(growable: true);
   var listElemento = List<Widget>.empty(growable: true);
   bool isLoading = true; // Adiciona um indicador de carregamento
@@ -301,7 +302,7 @@ class SelectExerciseState extends State<SelectExercise> {
         setState(() {
           // Mapeando a resposta para o formato desejado
           lista = decodedResponse.map((exercise) {
-            if (listMuscles.contains(exercise['exercise_muscle']['muscle_name'] == false)){
+            if (listMuscles.contains(exercise['exercise_muscle']['muscle_name']) == false){
               listMuscles.add(exercise['exercise_muscle']['muscle_name']);
             }
             return {
@@ -367,7 +368,7 @@ class SelectExerciseState extends State<SelectExercise> {
       (e) => e['id'].toString() == exerciseId,
       orElse: () => <String, dynamic>{},
     );
-    return exerciseWithSets['sets'] ?? [{"carga": "0", "reps": "0"}];
+    return exerciseWithSets['sets'] ?? [{"carga": "", "reps": ""}];
   }
 
   // Monta a lista de exercícios selecionados com seus sets
@@ -514,12 +515,14 @@ class SelectExerciseState extends State<SelectExercise> {
                     Expanded(
                       child: RawScrollbar(
                         thumbColor: Colors.orange,
+                        controller: scrollController,
                         thumbVisibility:
                             true, // Exibe a barra mesmo quando não está rolando
                         thickness: 6, // Define a espessura do Scrollbar
                         radius: const Radius.circular(
                             10), // Define o raio para cantos arredondados
                         child: ListView(
+                          controller: scrollController,
                           scrollDirection: Axis.vertical,
                           padding: EdgeInsets.fromLTRB(
                               MediaQuery.of(context).size.width * 0.02,
