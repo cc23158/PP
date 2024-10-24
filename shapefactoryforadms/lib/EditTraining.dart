@@ -1,13 +1,20 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shapefactoryforadms/SelectExercise.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:shapefactoryforadms/SelectTraining.dart';
 
 class EditTraining extends StatefulWidget {
   final category;
   final id;
   final nome;
-  const EditTraining({required this.category, super.key, required this.id, required this.nome});
+  const EditTraining(
+      {required this.category,
+      super.key,
+      required this.id,
+      required this.nome});
   @override
   EditTrainingState createState() => EditTrainingState();
 }
@@ -68,33 +75,34 @@ class EditTrainingState extends State<EditTraining> {
     }
   }
 
-  Future<void> deleteAll(int trainingId) async {
-  final String url = 'https://shape-factory-5.onrender.com/recipe/delete';
-
-  try {
-    final response = await http.delete(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({'trainingId': trainingId}),
-    );
-
-    if (response.statusCode == 200) {
-      print('Deleção bem-sucedida: ${response.body}');
-    } else {
-      throw Exception('Erro ao deletar: ${response.statusCode} ${response.reasonPhrase}');
+  Future<int> deleteAll(int id) async {
+    try {
+      final queryParameters = {
+        'trainingId': id.toString(),
+      };
+      print(Uri.https(
+          'shape-factory-5.onrender.com', '/recipe/delete', queryParameters));
+      final response = await http.delete(
+        Uri.https(
+            'shape-factory-5.onrender.com', '/recipe/delete', queryParameters),
+      );
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        return 1;
+      } else {
+        throw Exception('Falha ao deletar');
+      }
+    } catch (erro) {
+      print(erro.toString());
+      return 0;
     }
-  } catch (error) {
-    print('Erro na requisição: $error');
-    throw error; // Lança o erro para tratamento posterior
   }
-}
 
   // Método para inserir os exercícios com os sets concatenados
-  Future<void> insertExercises(int trainingId, List<Map<String, dynamic>> selectedExercises) async {
+  Future<void> insertExercises(
+      int trainingId, List<Map<String, dynamic>> selectedExercises) async {
     final url = Uri.parse('https://shape-factory-5.onrender.com/recipe/insert');
-    
+
     for (var exercise in selectedExercises) {
       String exerciseId = exercise['id'].toString();
       List<Map<String, String>> sets = exercise['sets'];
@@ -121,11 +129,12 @@ class EditTrainingState extends State<EditTraining> {
 
       try {
         final response = await http.post(url, body: body);
-        
+
         if (response.statusCode == 200) {
           print('Exercise $exerciseId inserted successfully');
         } else {
-          print('Failed to insert exercise $exerciseId: ${response.statusCode}');
+          print(
+              'Failed to insert exercise $exerciseId: ${response.statusCode}');
           print('Response: ${response.body}');
         }
       } catch (error) {
@@ -133,8 +142,6 @@ class EditTrainingState extends State<EditTraining> {
       }
     }
   }
-
-  
 
   // Método principal que insere o treino e os exercícios
   Future<void> addTrainingWithExercises(String name, int clientId, int category,
@@ -149,10 +156,6 @@ class EditTrainingState extends State<EditTraining> {
       print('Failed to insert training.');
     }
   }
-
- 
-
-
 
   Widget _exerciseCard(Map<String, dynamic> exercise) {
     return Center(
@@ -241,64 +244,103 @@ class EditTrainingState extends State<EditTraining> {
   }
 
   Future<void> fetchRecipe() async {
-  try {
-    // Faz a chamada para a API para obter as receitas.
-    final response = await http.get(Uri.parse(
-        'https://shape-factory-5.onrender.com/recipe/getByTraining?trainingId=${widget.id}'));
+    try {
+      setState(() {
+        isApiLoading = true;
+      });
+      // Faz a chamada para a API para obter as receitas.
+      final response = await http.get(Uri.parse(
+          'https://shape-factory-5.onrender.com/recipe/getByTraining?trainingId=${widget.id}'));
 
-    if (response.statusCode == 200) {
-      final List<dynamic> recipesData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        final responseBody = utf8.decode(response.bodyBytes);
 
-      // Converte os dados da API para o formato desejado.
-      exercises = recipesData.map<Map<String, dynamic>>((recipe) {
-        final recipeExercise = recipe['recipe_exercise'];
-        final weight = recipe['recipe_weight'];
-        final reps = recipe['recipe_reps'];
+        final List<dynamic> recipesData = json.decode(responseBody);
 
-        // Separa as cargas e reps usando a '/' como delimitador.
-        final weights = weight.split('/');
-        final repsList = reps.split('/');
+        // Converte os dados da API para o formato desejado.
+        exercises = recipesData.map<Map<String, dynamic>>((recipe) {
+          final recipeExercise = recipe['recipe_exercise'];
+          final weight = recipe['recipe_weight'];
+          final reps = recipe['recipe_reps'];
 
-        // Cria a lista de sets, unindo carga e reps na ordem correta.
-        List<Map<String, String>> sets = [];
-        for (int i = 0; i < weights.length; i++) {
-          sets.add({
-            'carga': weights[i].trim(), // Remove espaços em branco
-            'reps': repsList.length > i ? repsList[i].trim() : '', // Garante que não ultrapasse a lista
-          });
-        }
+          // Separa as cargas e reps usando a '/' como delimitador.
+          final weights = weight.split('/');
+          final repsList = reps.split('/');
 
-        return {
-          'id': recipeExercise['exercise_id'],
-          'name': recipeExercise['exercise_name'],
-          'musculo': recipeExercise['exercise_muscle']['muscle_name'],
-          'image': recipeExercise['exercise_image'],
-          'sets': sets,
-        };
-      }).toList();
+          // Cria a lista de sets, unindo carga e reps na ordem correta.
+          List<Map<String, String>> sets = [];
+          for (int i = 0; i < weights.length; i++) {
+            sets.add({
+              'carga': weights[i].trim(), // Remove espaços em branco
+              'reps': repsList.length > i
+                  ? repsList[i].trim()
+                  : '', // Garante que não ultrapasse a lista
+            });
+          }
 
-      // Atualiza o estado para refletir as mudanças.
-      setState(() {});
-    } else {
-      // Trate o erro de acordo com sua lógica.
-      throw Exception('Falha ao carregar as receitas');
+          return {
+            'id': recipeExercise['exercise_id'],
+            'name': recipeExercise['exercise_name'],
+            'musculo': recipeExercise['exercise_muscle']['muscle_name'],
+            'image': recipeExercise['exercise_image'],
+            'sets': sets,
+          };
+        }).toList();
+
+        // Atualiza o estado para refletir as mudanças.
+        setState(() {
+          isApiLoading = false;
+        });
+      } else {
+        // Trate o erro de acordo com sua lógica.
+        throw Exception('Falha ao carregar as receitas');
+      }
+    } catch (e) {
+      // Trate a exceção de acordo com sua lógica.
+      print('Erro: $e');
     }
-  } catch (e) {
-    // Trate a exceção de acordo com sua lógica.
-    print('Erro: $e');
   }
-}
 
+  Future<int?> updateTraining(int trainingId, String name) async {
+    final url =
+        Uri.parse('https://shape-factory-5.onrender.com/training/update');
+
+    final body = {
+      'id': trainingId.toString(),
+      'name': name,
+    };
+
+    // Print da URL e do corpo da requisição
+    print("PUT $url");
+    print("Body: $body");
+
+    try {
+      final response = await http.put(url, body: body);
+
+      if (response.statusCode == 200) {
+        print('Training updated successfully');
+        return trainingId; // Retorna o ID do treino atualizado
+      } else {
+        print('Failed to update training: ${response.statusCode}');
+        return null;
+      }
+    } catch (error) {
+      print('Error updating training: $error');
+      return null;
+    }
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.id != 0){
+    if (widget.id != 0) {
       fetchRecipe();
     }
     controllerNome.text = widget.nome;
   }
+
+  bool isApiLoading = true; // Variável de controle para carregamento da API
 
   @override
   Widget build(BuildContext context) {
@@ -312,116 +354,182 @@ class EditTrainingState extends State<EditTraining> {
         corBorda = const BorderSide(color: Colors.black);
       });
     }
+
     return Scaffold(
-        backgroundColor: const Color(0xff000000),
-        body: Center(
-            child: Container(
-                padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-                alignment: Alignment.topCenter,
-                color: Colors.black,
-                constraints: BoxConstraints(maxWidth: 550),
-                child: Card(
-                  color: Colors.black,
-                  shape: RoundedRectangleBorder(
-                      side: corBorda, borderRadius: BorderRadius.circular(12)),
-                  child: Column(
+      backgroundColor: const Color(0xff000000),
+      body: Center(
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+          alignment: Alignment.topCenter,
+          color: Colors.black,
+          constraints: const BoxConstraints(maxWidth: 550),
+          child: Card(
+            color: Colors.black,
+            shape: RoundedRectangleBorder(
+                side: corBorda, borderRadius: BorderRadius.circular(12)),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 20, 0, 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.arrow_back,
-                                  color: Colors.white),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        constraints: const BoxConstraints(maxWidth: 400),
+                        child: TextFormField(
+                          controller: controllerNome,
+                          cursorColor: Colors.orange,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontStyle: FontStyle.normal,
+                            fontSize: 16,
+                            color: Color(0xffffffff),
+                          ),
+                          decoration: InputDecoration(
+                            disabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                  color: Color(0xff9e9e9e), width: 1),
                             ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.7,
-                              constraints: BoxConstraints(maxWidth: 400),
-                              child: TextFormField(
-                                controller: controllerNome,
-                                cursorColor: Colors.orange,
-                                style: const TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                                fontSize: 16,
-                                color: Color(0xffffffff),
-                              ),
-                              decoration: InputDecoration(
-                                disabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                      color: Color(0xff9e9e9e), width: 1),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                      color: Color(0xff9e9e9e), width: 1),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                      color: Color(0xff9e9e9e), width: 1),
-                                ),
-                                labelText: "Nome do treino",
-                                labelStyle: const TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.normal,
-                                  fontSize: 16,
-                                  color: Color(0xff9e9e9e),
-                                ),
-                                filled: true,
-                                fillColor: const Color(0x00ffffff),
-                                isDense: false,
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 12),
-                              ),
-                              ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                  color: Color(0xff9e9e9e), width: 1),
                             ),
-                            IconButton(
-                              icon:
-                                  const Icon(Icons.check, color: Colors.orange),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                  color: Color(0xff9e9e9e), width: 1),
+                            ),
+                            labelText: "Nome do treino",
+                            labelStyle: const TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontStyle: FontStyle.normal,
+                              fontSize: 16,
+                              color: Color(0xff9e9e9e),
+                            ),
+                            filled: true,
+                            fillColor: const Color(0x00ffffff),
+                            isDense: false,
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 12),
+                          ),
+                        ),
+                      ),
+                      isLoading
+                          ? IconButton(
+                              icon: LoadingAnimationWidget.inkDrop(
+                                  size: 30, color: Colors.orange),
+                              onPressed: () => {},
+                            )
+                          : IconButton(
+                              icon: const Icon(
+                                Icons.check,
+                                color: Colors.orange,
+                                size: 30,
+                              ),
                               onPressed: () async {
-                                if(widget.id == 0){
-                                await addTrainingWithExercises(
-                                    controllerNome.text,
-                                    1,
-                                    widget.category,
-                                    exercises);
-                                Navigator.pop(context);}
-                                else {
-                                  await deleteAll(widget.id);
-                                  await insertExercises(widget.id, exercises);
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: CustomScrollView(
-                          slivers: [
-                            SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) {
-                                  if (index < exercises.length) {
-                                    return _exerciseCard(exercises[index]);
+                                if (controllerNome.text.isNotEmpty) {
+                                  setState(() {
+                                    isLoading = true; // Inicia o carregamento
+                                  });
+
+                                  // Verifica se estamos criando um novo treino ou atualizando um existente
+                                  if (widget.id == 0) {
+                                    await addTrainingWithExercises(
+                                        controllerNome.text,
+                                        1,
+                                        widget.category,
+                                        exercises);
+                                    Navigator.pop(context);
                                   } else {
-                                    return _novoExercicioButton(context);
+                                    await deleteAll(widget.id);
+                                    await insertExercises(widget.id, exercises);
+                                    if (controllerNome.text != widget.nome) {
+                                      await updateTraining(
+                                          widget.id, controllerNome.text);
+                                    }
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => SelectTraining(
+                                        ),
+                                      ));
+                                  
                                   }
-                                },
-                                childCount: exercises.length + 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                                } else {
+                                  // Exibe um popup se o nome estiver vazio
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        backgroundColor: Colors.white10,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        title: const Text('Aviso',
+                                            style: TextStyle(
+                                              color: Colors.white70,
+                                            )),
+                                        content: const Text(
+                                            'Por favor, insira o nome do treino.',
+                                            style: TextStyle(
+                                              color: Colors.white70,
+                                            )),
+                                        actions: <Widget>[
+                                          MaterialButton(
+                                              color: Colors.orange,
+                                              child: const Text("OK",
+                                                  style: TextStyle(
+                                                    color: Colors.white70,
+                                                  )),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              })
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                              }),
                     ],
                   ),
-                ))));
+                ),
+                Expanded(
+                  child:
+                      isApiLoading // Verifica se os dados da API estão sendo carregados
+                          ? Center(
+                              child: LoadingAnimationWidget.staggeredDotsWave(
+                                  color: Colors.orange, size: 30))
+                          : CustomScrollView(
+                              slivers: [
+                                SliverList(
+                                  delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
+                                      if (index < exercises.length) {
+                                        return _exerciseCard(exercises[index]);
+                                      } else {
+                                        return _novoExercicioButton(context);
+                                      }
+                                    },
+                                    childCount: exercises.length + 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _novoExercicioButton(BuildContext context) {
@@ -498,6 +606,9 @@ class EditTrainingState extends State<EditTraining> {
         controller: TextEditingController(
           text: initialValue,
         ),
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+        ],
         keyboardType: TextInputType.number,
         onChanged: onChanged,
         textAlign: TextAlign.center,

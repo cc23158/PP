@@ -28,16 +28,22 @@ class SelectTrainingState extends State<SelectTraining>
   late TabController tabController;
   bool isLoading = false;
 
-  Future<int> deleteExercise(int id) async {
+
+
+  Future<int> deleteTraining(int id) async {
     try {
       final queryParameters = {
         'id': id.toString(),
       };
       final response = await http.delete(
-        Uri.http('localhost:8080', '/exercise/delete', queryParameters),
+        Uri.https('shape-factory-5.onrender.com', '/training/delete',
+            queryParameters),
       );
       print(response.statusCode);
       if (response.statusCode == 200) {
+        setState(() {
+          fetchTrainings();
+        });
         return 1;
       } else {
         throw Exception('Falha ao deletar');
@@ -141,7 +147,9 @@ class SelectTrainingState extends State<SelectTraining>
                     ),
                     padding: const EdgeInsets.all(10),
                     child: const Icon(Icons.delete, color: Colors.white),
-                    onPressed: () {},
+                    onPressed: () async{
+                      await deleteTraining(treino['training_id']);
+                    },
                   ),
                 ],
               ),
@@ -153,13 +161,18 @@ class SelectTrainingState extends State<SelectTraining>
   }
 
   Future<void> fetchTrainings() async {
+    setState(() {
+      isLoading = true;
+    });
     treinos = await getTraining(); // Obtém os treinos
     // Filtra e cria widgets apenas para treinos com training_category == 1
     listElement = treinos
         .where((treino) => treino['training_category'] == 1)
         .map((treino) => getWidget(treino)) // Chama sua função getWidget
         .toList();
-    setState(() {}); // Atualiza a interface
+    setState(() {
+      isLoading = false;
+    }); // Atualiza a interface
   }
 
   @override
@@ -172,7 +185,6 @@ class SelectTrainingState extends State<SelectTraining>
   @override
   Widget build(BuildContext context) {
     print("build");
-
     // Atualiza a cor da borda com base na orientação da tela
     if (MediaQuery.of(context).size.width >
         MediaQuery.of(context).size.height) {
@@ -185,134 +197,133 @@ class SelectTrainingState extends State<SelectTraining>
       });
     }
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.black,
-        body: isLoading
-            ? Center(child: CircularProgressIndicator())
-            : Align(
-                alignment: Alignment.center,
-                child: Container(
-                  width: 700,
-                  height: MediaQuery.of(context).size.height * 1,
-                  constraints:
-                      const BoxConstraints(minHeight: 300, minWidth: 400),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                        child: Card(
-                          color: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            side: corBorda,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(12),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              // TabBar para seleção do tipo de treino
-                              Container(
-                                color: Colors.black,
-                                child: TabBar(
-                                  controller: tabController,
-                                  onTap: (value) {
-                                    listElement = treinos
-                                        .where((treino) =>
-                                            treino['training_category'] ==
-                                            value + 1)
-                                        .map((treino) => getWidget(
-                                            treino)) // Chama sua função getWidget
-                                        .toList();
-                                    setState(() {}); // Atualiza a interface
-                                  },
-                                  labelColor: Colors.white,
-                                  indicatorColor: Colors.orange,
-                                  unselectedLabelColor: Colors.white60,
-                                  tabs: const [
-                                    Tab(text: 'Superiores'),
-                                    Tab(text: 'Inferiores'),
-                                    Tab(text: 'Full-body'),
-                                  ],
-                                ),
-                              ),
-                              // ListView.builder para exibir os elementos
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    0.83, // Define a altura do ListView
-                                child: RawScrollbar(
-                                  thumbColor: Colors.orange,
-                                  controller: controllerList,
-                                  interactive: true,
-                                  radius: const Radius.circular(12),
-                                  padding: const EdgeInsets.all(10),
-                                  child: ListView.builder(
-                                    controller: controllerList,
-                                    itemCount: listElement.length +
-                                        1, // +1 para o botão de adicionar
-                                    itemBuilder: (context, index) {
-                                      if (index < listElement.length) {
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5, horizontal: 14),
-                                          child: listElement[index],
-                                        );
-                                      } else {
-                                        // Botão Adicionar
-                                        return Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              26, 5, 26, 20),
-                                          child: MaterialButton(
-                                            height: 50,
-                                            onPressed: () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      EditTraining(
-                                                          category:
-                                                              tabController
-                                                                      .index +
-                                                                  1,
-                                                          id: 0, nome: "",),
-                                                ),
-                                              );
-                                            },
-                                            color: Colors.orange,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12)),
-                                            child: const Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                Icon(Icons.add),
-                                                Text(
-                                                  "Adicionar",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 15),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+   return MaterialApp(
+  debugShowCheckedModeBanner: false,
+  home: Scaffold(
+    backgroundColor: Colors.black,
+    body: Align(
+      alignment: Alignment.center,
+      child: Container(
+        width: 700,
+        height: MediaQuery.of(context).size.height * 1,
+        constraints: const BoxConstraints(minHeight: 300, minWidth: 400),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Expanded(
+              child: Card(
+                color: Colors.black,
+                shape: RoundedRectangleBorder(
+                  side: corBorda,
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(12),
                   ),
                 ),
+                child: Column(
+                  children: [
+                    // TabBar para seleção do tipo de treino
+                    Container(
+                      color: Colors.black,
+                      child: Column(
+                        children: [
+                          TabBar(
+                            controller: tabController,
+                            onTap: (value) {
+                              listElement = treinos
+                                  .where((treino) =>
+                                      treino['training_category'] == value + 1)
+                                  .map((treino) =>
+                                      getWidget(treino)) // Chama sua função getWidget
+                                  .toList();
+                              setState(() {}); // Atualiza a interface
+                            },
+                            labelColor: Colors.white,
+                            indicatorColor: Colors.orange,
+                            unselectedLabelColor: Colors.white60,
+                            tabs: const [
+                              Tab(text: 'Superiores'),
+                              Tab(text: 'Inferiores'),
+                              Tab(text: 'Full-body'),
+                            ],
+                          ),
+                          // Animação de barra de progresso abaixo das tabs
+                          isLoading
+                              ? const LinearProgressIndicator(
+                                  color: Colors.orange,
+                                  backgroundColor: Colors.black54,
+                                )
+                              : const SizedBox.shrink(), // Oculta a barra se não estiver carregando
+                        ],
+                      ),
+                    ),
+                    // Usar Expanded para o ListView ocupar o espaço disponível
+                    Expanded(
+                      child: RawScrollbar(
+                        thumbColor: Colors.orange,
+                        controller: controllerList,
+                        interactive: true,
+                        radius: const Radius.circular(12),
+                        padding: const EdgeInsets.all(10),
+                        child: ListView.builder(
+                          controller: controllerList,
+                          itemCount: listElement.length + 1, // +1 para o botão de adicionar
+                          itemBuilder: (context, index) {
+                            if (index < listElement.length) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                                child: listElement[index],
+                              );
+                            } else {
+                              // Botão Adicionar
+                              return Padding(
+                                padding: const EdgeInsets.fromLTRB(15, 5, 15, 20),
+                                child: MaterialButton(
+                                  height: 50,
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => EditTraining(
+                                          category: tabController.index + 1,
+                                          id: 0, 
+                                          nome: "",
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  color: Colors.orange,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Icon(Icons.add),
+                                      Text(
+                                        "Adicionar",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 15),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
+            ),
+          ],
+        ),
       ),
-    );
+    ),
+  ),
+);
+
+
   }
 }

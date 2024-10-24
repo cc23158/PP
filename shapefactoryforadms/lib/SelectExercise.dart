@@ -350,6 +350,7 @@ class SelectExerciseState extends State<SelectExercise> {
         selectedExercisesNotifier = ValueNotifier<List<dynamic>>(
       widget.selectedExercises.map((e) => e["id"]).toList(),
     );
+    print("teste");
   }
 
     @override
@@ -401,7 +402,7 @@ class SelectExerciseState extends State<SelectExercise> {
           child: isLoading
               ? const Center(
                   child:
-                      CircularProgressIndicator()) // Mostra um indicador de carregamento
+                      CircularProgressIndicator(color: Colors.orange,)) // Mostra um indicador de carregamento
 
               : Column(
                   children: [
