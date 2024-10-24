@@ -6,13 +6,15 @@ import 'package:shapefactoryforadms/SelectExercise.dart';
 class EditTraining extends StatefulWidget {
   final category;
   final id;
-  const EditTraining({required this.category, super.key, required this.id});
+  final nome;
+  const EditTraining({required this.category, super.key, required this.id, required this.nome});
   @override
   EditTrainingState createState() => EditTrainingState();
 }
 
 class EditTrainingState extends State<EditTraining> {
   var lista = List.empty(growable: true);
+  var excluded = List.empty(growable: true);
   var listElemento = List<Widget>.empty(growable: true);
   final controllerNome = TextEditingController();
   bool isLoading = false;
@@ -65,6 +67,29 @@ class EditTrainingState extends State<EditTraining> {
       return null;
     }
   }
+
+  Future<void> deleteAll(int trainingId) async {
+  final String url = 'https://shape-factory-5.onrender.com/recipe/delete';
+
+  try {
+    final response = await http.delete(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'trainingId': trainingId}),
+    );
+
+    if (response.statusCode == 200) {
+      print('Deleção bem-sucedida: ${response.body}');
+    } else {
+      throw Exception('Erro ao deletar: ${response.statusCode} ${response.reasonPhrase}');
+    }
+  } catch (error) {
+    print('Erro na requisição: $error');
+    throw error; // Lança o erro para tratamento posterior
+  }
+}
 
   // Método para inserir os exercícios com os sets concatenados
   Future<void> insertExercises(int trainingId, List<Map<String, dynamic>> selectedExercises) async {
@@ -125,84 +150,8 @@ class EditTrainingState extends State<EditTraining> {
     }
   }
 
-  Future<int?> updateTraining(int trainingId, String name, int clientId, int category) async {
-  final url = Uri.parse('https://shape-factory-5.onrender.com/training/update');
+ 
 
-  final body = {
-    'id' : trainingId.toString(),
-    'name': name,
-  };
-
-  // Print da URL e do corpo da requisição
-  print("PUT $url");
-  print("Body: $body");
-
-  try {
-    final response = await http.put(url, body: body);
-
-    if (response.statusCode == 200) {
-      print('Training updated successfully');
-      return trainingId; // Retorna o ID do treino atualizado
-    } else {
-      print('Failed to update training: ${response.statusCode}');
-      return null;
-    }
-  } catch (error) {
-    print('Error updating training: $error');
-    return null;
-  }
-}
-
-Future<void> updateExercises(int trainingId, List<Map<String, dynamic>> selectedExercises) async {
-  final url = Uri.parse('https://shape-factory-5.onrender.com/recipe/update');
-
-  for (var exercise in selectedExercises) {
-    String exerciseId = exercise['id'].toString();
-    List<Map<String, String>> sets = exercise['sets'];
-
-    // Concatenar as cargas e reps com "/"
-    String weight = sets.map((set) => set['carga'] ?? "").join('/');
-    String reps = sets.map((set) => set['reps'] ?? "").join('/');
-    int setsCount = sets.length;
-
-    // Parâmetros do corpo da requisição
-    final body = {
-      'id': exerciseId,
-      'weight': weight,
-      'reps': reps,
-      'sets': setsCount.toString(),
-    };
-
-    // Print da URL e do corpo da requisição
-    print("PUT $url");
-    print("Body: $body");
-
-    try {
-      final response = await http.put(url, body: body);
-
-      if (response.statusCode == 200) {
-        print('Exercise $exerciseId updated successfully');
-      } else {
-        print('Failed to update exercise $exerciseId: ${response.statusCode}');
-        print('Response: ${response.body}');
-      }
-    } catch (error) {
-      print('Error updating exercise $exerciseId: $error');
-    }
-  }
-}
-
-Future<void> updateTrainingWithExercises(int trainingId, String name, int clientId, int category, List<Map<String, dynamic>> selectedExercises) async {
-  // Primeiro, atualiza o treino
-  int? updatedTrainingId = await updateTraining(trainingId, name, clientId, category);
-
-  if (updatedTrainingId != null) {
-    // Se o treino foi atualizado com sucesso, atualiza os exercícios associados
-    await updateExercises(widget.id, selectedExercises);
-  } else {
-    print('Failed to update training.');
-  }
-}
 
 
   Widget _exerciseCard(Map<String, dynamic> exercise) {
@@ -348,6 +297,7 @@ Future<void> updateTrainingWithExercises(int trainingId, String name, int client
     if (widget.id != 0){
       fetchRecipe();
     }
+    controllerNome.text = widget.nome;
   }
 
   @override
@@ -394,16 +344,41 @@ Future<void> updateTrainingWithExercises(int trainingId, String name, int client
                               child: TextFormField(
                                 controller: controllerNome,
                                 cursorColor: Colors.orange,
-                                decoration: InputDecoration(
-                                  labelText: "Nome do Treino",
-                                  labelStyle:
-                                      const TextStyle(color: Color(0xff9e9e9e)),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        color: Color(0xff9e9e9e)),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
+                                style: const TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontStyle: FontStyle.normal,
+                                fontSize: 16,
+                                color: Color(0xffffffff),
+                              ),
+                              decoration: InputDecoration(
+                                disabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xff9e9e9e), width: 1),
                                 ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xff9e9e9e), width: 1),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xff9e9e9e), width: 1),
+                                ),
+                                labelText: "Nome do treino",
+                                labelStyle: const TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                  fontSize: 16,
+                                  color: Color(0xff9e9e9e),
+                                ),
+                                filled: true,
+                                fillColor: const Color(0x00ffffff),
+                                isDense: false,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 12),
+                              ),
                               ),
                             ),
                             IconButton(
@@ -418,7 +393,8 @@ Future<void> updateTrainingWithExercises(int trainingId, String name, int client
                                     exercises);
                                 Navigator.pop(context);}
                                 else {
-                                  await updateTrainingWithExercises(widget.id, controllerNome.text, 1, widget.category, exercises);
+                                  await deleteAll(widget.id);
+                                  await insertExercises(widget.id, exercises);
                                 }
                               },
                             ),

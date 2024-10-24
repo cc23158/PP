@@ -121,7 +121,7 @@ class SelectTrainingState extends State<SelectTraining>
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => EditTraining(
-                              category: tabController.index + 1, id: treino['training_id']),
+                              category: tabController.index + 1, id: treino['training_id'], nome: treino["training_name"],),
                         ),
                       );
                     },
@@ -274,7 +274,7 @@ class SelectTrainingState extends State<SelectTraining>
                                                               tabController
                                                                       .index +
                                                                   1,
-                                                          id: 0),
+                                                          id: 0, nome: "",),
                                                 ),
                                               );
                                             },

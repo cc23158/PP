@@ -339,10 +339,14 @@ class SelectExerciseState extends State<SelectExercise> {
   }
 }
 
+ void fetchExercises() async {
+  await getExercises();
+}
+
   @override
   void initState() {
     super.initState();
-    getExercises(); // Chama o método de busca uma única vez
+    fetchExercises(); // Chama o método de busca uma única vez
         selectedExercisesNotifier = ValueNotifier<List<dynamic>>(
       widget.selectedExercises.map((e) => e["id"]).toList(),
     );
