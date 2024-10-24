@@ -109,6 +109,8 @@ class EditTrainingState extends State<EditTraining> {
     }
   }
 
+  
+
   // Método principal que insere o treino e os exercícios
   Future<void> addTrainingWithExercises(String name, int clientId, int category,
       List<Map<String, dynamic>> selectedExercises) async {
@@ -122,6 +124,86 @@ class EditTrainingState extends State<EditTraining> {
       print('Failed to insert training.');
     }
   }
+
+  Future<int?> updateTraining(int trainingId, String name, int clientId, int category) async {
+  final url = Uri.parse('https://shape-factory-5.onrender.com/training/update');
+
+  final body = {
+    'id' : trainingId.toString(),
+    'name': name,
+  };
+
+  // Print da URL e do corpo da requisição
+  print("PUT $url");
+  print("Body: $body");
+
+  try {
+    final response = await http.put(url, body: body);
+
+    if (response.statusCode == 200) {
+      print('Training updated successfully');
+      return trainingId; // Retorna o ID do treino atualizado
+    } else {
+      print('Failed to update training: ${response.statusCode}');
+      return null;
+    }
+  } catch (error) {
+    print('Error updating training: $error');
+    return null;
+  }
+}
+
+Future<void> updateExercises(int trainingId, List<Map<String, dynamic>> selectedExercises) async {
+  final url = Uri.parse('https://shape-factory-5.onrender.com/recipe/update');
+
+  for (var exercise in selectedExercises) {
+    String exerciseId = exercise['id'].toString();
+    List<Map<String, String>> sets = exercise['sets'];
+
+    // Concatenar as cargas e reps com "/"
+    String weight = sets.map((set) => set['carga'] ?? "").join('/');
+    String reps = sets.map((set) => set['reps'] ?? "").join('/');
+    int setsCount = sets.length;
+
+    // Parâmetros do corpo da requisição
+    final body = {
+      'id': exerciseId,
+      'weight': weight,
+      'reps': reps,
+      'sets': setsCount.toString(),
+    };
+
+    // Print da URL e do corpo da requisição
+    print("PUT $url");
+    print("Body: $body");
+
+    try {
+      final response = await http.put(url, body: body);
+
+      if (response.statusCode == 200) {
+        print('Exercise $exerciseId updated successfully');
+      } else {
+        print('Failed to update exercise $exerciseId: ${response.statusCode}');
+        print('Response: ${response.body}');
+      }
+    } catch (error) {
+      print('Error updating exercise $exerciseId: $error');
+    }
+  }
+}
+
+Future<void> updateTrainingWithExercises(int trainingId, String name, int clientId, int category, List<Map<String, dynamic>> selectedExercises) async {
+  // Primeiro, atualiza o treino
+  int? updatedTrainingId = await updateTraining(trainingId, name, clientId, category);
+
+  if (updatedTrainingId != null) {
+    // Se o treino foi atualizado com sucesso, atualiza os exercícios associados
+    await updateExercises(widget.id, selectedExercises);
+  } else {
+    print('Failed to update training.');
+  }
+}
+
 
   Widget _exerciseCard(Map<String, dynamic> exercise) {
     return Center(
@@ -328,12 +410,16 @@ class EditTrainingState extends State<EditTraining> {
                               icon:
                                   const Icon(Icons.check, color: Colors.orange),
                               onPressed: () async {
+                                if(widget.id == 0){
                                 await addTrainingWithExercises(
                                     controllerNome.text,
                                     1,
                                     widget.category,
                                     exercises);
-                                Navigator.pop(context);
+                                Navigator.pop(context);}
+                                else {
+                                  await updateTrainingWithExercises(widget.id, controllerNome.text, 1, widget.category, exercises);
+                                }
                               },
                             ),
                           ],
