@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io' as io;
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:dio/dio.dart';
 
 class AddExercise extends StatefulWidget {
@@ -33,36 +35,46 @@ class AddExerciceState extends State<AddExercise> {
   bool isLoading = true;
   var controllerUpdate = List<int>.empty(growable: true);
 
-  Future<int> postExercise(
-      String nome, String path, int muscle, PlatformFile imagem) async {
-    print(imagem.name);
-    try {
-      var dio = Dio();
+ Future<int> postExercise(
+    String nome, String path, int muscle, PlatformFile imagem) async {
+  print(imagem.path);
+  try {
+    var dio = Dio();
 
-      var formData = FormData.fromMap({
+    // Construa o FormData dependendo da plataforma
+    FormData formData;
+    if (kIsWeb) {
+      // Para a Web, use fromBytes
+      formData = FormData.fromMap({
         'muscleId': muscle.toString(),
         'name': nome,
         'path': path,
         'image': MultipartFile.fromBytes(imagem.bytes!, filename: imagem.name),
       });
-
-      var response = await dio.post(
-        'https://shape-factory-5.onrender.com/exercise/insert',
-        data: formData,
-        options: Options(contentType: 'multipart/form-data'),
-      );
-
-      if (response.statusCode == 200) {
-        print("Exercício registrado com sucesso");
-        return 1;
-      } else {
-        throw Exception('Falha ao enviar dados');
-      }
-    } catch (e) {
-      print(e.toString());
-      return 0;
+    } else if (io.Platform.isAndroid || io.Platform.isIOS) {
+      // Para Android/iOS, use fromFile para acessar pelo caminho do arquivo
+      formData = FormData.fromMap({
+        'muscleId': muscle.toString(),
+        'name': nome,
+        'path': path,
+        'image': await MultipartFile.fromFile(imagem.path!, filename: imagem.name),
+      });
+    } else {
+      throw UnsupportedError('Plataforma não suportada');
     }
+
+    // Enviar a solicitação POST
+    var response = await dio.post(
+      'https://shape-factory-5.onrender.com/exercise/insert',
+      data: formData,
+    );
+
+    return response.statusCode ?? 500;
+  } catch (e) {
+    print('Erro ao enviar exercício: $e');
+    return 500; // Retorna um código de erro em caso de falha
   }
+}
 
   Future<int> deleteExercise(int id) async {
     try {
@@ -85,43 +97,54 @@ class AddExerciceState extends State<AddExercise> {
     }
   }
 
-  Future<int> uptadeExercise(int id, String nome, String path, int muscle,
-      PlatformFile? imagem) async {
-    try {
-      var dio = Dio();
+ Future<int> updateExercise(
+    int id, String nome, String path, int muscle, PlatformFile? imagem) async {
+  try {
+    var dio = Dio();
 
-      var formData = FormData.fromMap({
-        'id': id.toString(),
-        'muscleId': muscle.toString(),
-        'name': nome,
-        'path': path,
-      });
+    var formData = FormData.fromMap({
+      'id': id.toString(),
+      'muscleId': muscle.toString(),
+      'name': nome,
+      'path': path,
+    });
 
-      // Adiciona a imagem apenas se uma nova imagem foi selecionada
-      if (imagem != null && imagem.name != 'null') {
+    // Adiciona a imagem apenas se uma nova imagem foi selecionada
+    if (imagem != null && imagem.name != 'null') {
+      if (kIsWeb) {
+        // Para a Web, use fromBytes
         formData.files.add(MapEntry(
           'image',
           MultipartFile.fromBytes(imagem.bytes!, filename: imagem.name),
         ));
-      }
-
-      var response = await dio.put(
-        'https://shape-factory-5.onrender.com/exercise/update',
-        data: formData,
-        options: Options(contentType: 'multipart/form-data'),
-      );
-
-      if (response.statusCode == 200) {
-        print("Exercício atualizado com sucesso");
-        return 1;
+      } else if (io.Platform.isAndroid || io.Platform.isIOS) {
+        // Para Android/iOS, use fromFile para acessar pelo caminho do arquivo
+        formData.files.add(MapEntry(
+          'image',
+          await MultipartFile.fromFile(imagem.path!, filename: imagem.name),
+        ));
       } else {
-        throw Exception('Falha ao enviar dados');
+        throw UnsupportedError('Plataforma não suportada');
       }
-    } catch (e) {
-      print(e.toString());
-      return 0;
     }
+
+    var response = await dio.put(
+      'https://shape-factory-5.onrender.com/exercise/update',
+      data: formData,
+      options: Options(contentType: 'multipart/form-data'),
+    );
+
+    if (response.statusCode == 200) {
+      print("Exercício atualizado com sucesso");
+      return 1;
+    } else {
+      throw Exception('Falha ao enviar dados');
+    }
+  } catch (e) {
+    print("Erro ao atualizar exercício: $e");
+    return 0;
   }
+}
 
   void getExercises() async {
     setState(() {
@@ -308,31 +331,43 @@ class AddExerciceState extends State<AddExercise> {
                           ),
                           padding: const EdgeInsets.all(0),
                           child: listCamera[controllerIndex],
-                          onPressed: () async {
-                            var picked = await FilePicker.platform
-                                .pickFiles(type: FileType.image);
-                            if (picked != null) {
-                              setState(() {
-                                if (!controllerUpdate
-                                    .contains(controllerId[controllerIndex])) {
-                                  controllerUpdate
-                                      .add(controllerId[controllerIndex]);
-                                }
-                                controllerCamera[controllerIndex] =
-                                    picked.files.first;
-                                listCamera[controllerIndex] = ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Image.memory(
-                                    picked.files.first.bytes!,
-                                    height: 46,
-                                    width: 46,
-                                    fit: BoxFit.cover,
-                                  ),
-                                );
-                              });
-                            }
-                          },
-                        ),
+                         onPressed: () async {
+  var picked = await FilePicker.platform.pickFiles(type: FileType.image);
+  if (picked != null) {
+    setState(() {
+      if (!controllerUpdate.contains(controllerId[controllerIndex])) {
+        controllerUpdate.add(controllerId[controllerIndex]);
+      }
+
+      // Verifica a plataforma
+      if (kIsWeb || io.Platform.isIOS) {
+        // Usar Image.memory para web e iOS
+        controllerCamera[controllerIndex] = picked.files.first;
+        listCamera[controllerIndex] = ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.memory(
+            picked.files.first.bytes!,
+            height: 46,
+            width: 46,
+            fit: BoxFit.cover,
+          ),
+        );
+      } else {
+        // Usar Image.file para Android
+        controllerCamera[controllerIndex] = picked.files.first;
+        listCamera[controllerIndex] = ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.file(
+            io.File(picked.files.first.path!),
+            height: 46,
+            width: 46,
+            fit: BoxFit.cover,
+          ),
+        );
+      }
+    });
+  }
+        }),
                       ),
 
                       // Botão de Remover Item
@@ -554,7 +589,7 @@ class AddExerciceState extends State<AddExercise> {
                                                 } else if (controllerUpdate
                                                     .contains(
                                                         controllerId[i])) {
-                                                  await uptadeExercise(
+                                                  await updateExercise(
                                                     controllerId[i],
                                                     controllerNome[i].text,
                                                     controllerUrl[i].text,
