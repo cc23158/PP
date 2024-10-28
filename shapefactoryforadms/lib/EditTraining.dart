@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shapefactoryforadms/SelectExercise.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shapefactoryforadms/SelectTraining.dart';
+import 'package:shapefactoryforadms/centralpage.dart';
 
 class EditTraining extends StatefulWidget {
   final category;
@@ -340,7 +341,7 @@ class EditTrainingState extends State<EditTraining> {
     controllerNome.text = widget.nome;
   }
 
-  bool isApiLoading = true; // Variável de controle para carregamento da API
+  bool isApiLoading = false; // Variável de controle para carregamento da API
 
   @override
   Widget build(BuildContext context) {
@@ -456,11 +457,7 @@ class EditTrainingState extends State<EditTraining> {
                                       await updateTraining(
                                           widget.id, controllerNome.text);
                                     }
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => SelectTraining(
-                                        ),
-                                      ));
+                                    Navigator.pop(context);
                                   
                                   }
                                 } else {

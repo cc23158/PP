@@ -409,7 +409,7 @@ class SelectExerciseState extends State<SelectExercise> {
                     Padding(
                       padding: EdgeInsets.fromLTRB(
                           MediaQuery.of(context).size.width * 0.02,
-                          0,
+                          20,
                           MediaQuery.of(context).size.width * 0.02,
                           10),
                       child: Row(
@@ -521,6 +521,7 @@ class SelectExerciseState extends State<SelectExercise> {
                       child: RawScrollbar(
                         thumbColor: Colors.orange,
                         controller: scrollController,
+                        padding: EdgeInsets.only(bottom: 15),
                         thumbVisibility:
                             true, // Exibe a barra mesmo quando não está rolando
                         thickness: 6, // Define a espessura do Scrollbar
@@ -531,7 +532,7 @@ class SelectExerciseState extends State<SelectExercise> {
                           scrollDirection: Axis.vertical,
                           padding: EdgeInsets.fromLTRB(
                               MediaQuery.of(context).size.width * 0.02,
-                              10,
+                              0,
                               MediaQuery.of(context).size.width * 0.02,
                               0),
                           shrinkWrap: true,

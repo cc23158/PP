@@ -204,6 +204,7 @@ class SelectTrainingState extends State<SelectTraining>
     body: Align(
       alignment: Alignment.center,
       child: Container(
+        padding: EdgeInsets.only(top: 25),
         width: 700,
         height: MediaQuery.of(context).size.height * 1,
         constraints: const BoxConstraints(minHeight: 300, minWidth: 400),
