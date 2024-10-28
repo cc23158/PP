@@ -42,7 +42,7 @@ class SelectTrainingState extends State<SelectTraining>
       print(response.statusCode);
       if (response.statusCode == 200) {
         setState(() {
-          fetchTrainings();
+          fetchTrainings(tabController.index + 1);
         });
         return 1;
       } else {
@@ -160,16 +160,17 @@ class SelectTrainingState extends State<SelectTraining>
     );
   }
 
-  Future<void> fetchTrainings() async {
+  Future<void> fetchTrainings(int initialSeletion) async {
     setState(() {
       isLoading = true;
     });
     treinos = await getTraining(); // Obtém os treinos
     // Filtra e cria widgets apenas para treinos com training_category == 1
     listElement = treinos
-        .where((treino) => treino['training_category'] == 1)
+        .where((treino) => treino['training_category'] == initialSeletion)
         .map((treino) => getWidget(treino)) // Chama sua função getWidget
         .toList();
+        print(treinos);
     setState(() {
       isLoading = false;
     }); // Atualiza a interface
@@ -179,7 +180,7 @@ class SelectTrainingState extends State<SelectTraining>
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this); // 3 tipos de treino
-    fetchTrainings();
+    fetchTrainings(1);
   }
 
   @override
@@ -258,7 +259,8 @@ class SelectTrainingState extends State<SelectTraining>
                       ),
                     ),
                     // Usar Expanded para o ListView ocupar o espaço disponível
-                    Expanded(
+                    Flexible(
+                      flex: 5,
                       child: RawScrollbar(
                         thumbColor: Colors.orange,
                         controller: controllerList,
@@ -280,8 +282,8 @@ class SelectTrainingState extends State<SelectTraining>
                                 padding: const EdgeInsets.fromLTRB(15, 5, 15, 20),
                                 child: MaterialButton(
                                   height: 50,
-                                  onPressed: () {
-                                    Navigator.of(context).push(
+                                  onPressed: () async{
+                                    await Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder: (context) => EditTraining(
                                           category: tabController.index + 1,
@@ -290,6 +292,7 @@ class SelectTrainingState extends State<SelectTraining>
                                         ),
                                       ),
                                     );
+                                    await fetchTrainings(tabController.index + 1);
                                   },
                                   color: Colors.orange,
                                   shape: RoundedRectangleBorder(

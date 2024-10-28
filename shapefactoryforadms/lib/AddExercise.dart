@@ -436,7 +436,7 @@ class AddExerciceState extends State<AddExercise> {
               alignment: Alignment.center,
               child: Container(
                 width: 1600,
-                height: MediaQuery.of(context).size.height * 0.8,
+                height: MediaQuery.of(context).size.height,
                 constraints:
                     const BoxConstraints(minHeight: 700, minWidth: 400),
                 child: Column(
@@ -458,7 +458,7 @@ class AddExerciceState extends State<AddExercise> {
                           minThumbLength:
                               50, // Tamanho mínimo do thumb da scrollbar
                           radius: const Radius.circular(12),
-                          padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                          padding: const EdgeInsets.fromLTRB(10, 40, 0, 10),
                           child: ListView.builder(
                             controller: controllerList,
                             itemCount: listElement.length + 1,
