@@ -76,73 +76,66 @@ class EditTrainingState extends State<EditTraining> {
     }
   }
 
-  Future<int> deleteAll(int id) async {
-    try {
-      final queryParameters = {
-        'trainingId': id.toString(),
-      };
-      print(Uri.https(
-          'shape-factory-5.onrender.com', '/recipe/delete', queryParameters));
-      final response = await http.delete(
-        Uri.https(
-            'shape-factory-5.onrender.com', '/recipe/delete', queryParameters),
-      );
-      print(response.statusCode);
-      if (response.statusCode == 200) {
-        return 1;
-      } else {
-        throw Exception('Falha ao deletar');
-      }
-    } catch (erro) {
-      print(erro.toString());
+
+
+Future<int> deleteAndInsertAll(int trainingId, List<Map<String, dynamic>> selectedExercises) async {
+  // URL para deletar e inserir ao mesmo tempo
+  final url = Uri.parse('https://shape-factory-5.onrender.com/recipe/delete');
+
+  // Preparação dos dados dos exercícios para envio
+  List<Map<String, dynamic>> recipes = selectedExercises.map((exercise) {
+    String exerciseId = exercise['id'].toString();
+    List<Map<String, String>> sets = exercise['sets'];
+
+    // Concatenar cargas e reps com "/", substituindo valores vazios por "0" para evitar "//"
+    String weight = sets.map((set) => set['carga'] ?? "0").join('/');
+    String reps = sets.map((set) => set['reps'] ?? "0").join('/');
+
+    // Número de sets é o tamanho da lista 'sets'
+    int setsCount = sets.length;
+
+    // Dados de cada exercício com os nomes adequados
+    return {
+      'recipe_training': trainingId.toString(),
+      'recipe_exercise': exerciseId,
+      'recipe_weight': weight,
+      'recipe_reps': reps,
+      'recipe_sets': setsCount.toString(),
+    };
+  }).toList();
+
+  // Corpo da requisição contendo o ID do treino e os novos exercícios
+  final body = jsonEncode({
+    'training': trainingId.toString(),
+    'recipes': recipes,
+  });
+
+  try {
+    print("DELETE and INSERT on $url");
+    print("Body: $body");
+
+    // Requisição DELETE com dados de inserção
+    final response = await http.delete(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      print('Exercícios atualizados com sucesso');
+      return 1;
+    } else {
+      print('Falha ao atualizar exercícios: ${response.statusCode}');
+      print('Response: ${response.body}');
       return 0;
     }
+  } catch (error) {
+    print('Erro ao atualizar exercícios: $error');
+    return 0;
   }
+}
 
-  // Método para inserir os exercícios com os sets concatenados
-  Future<void> insertExercises(
-      int trainingId, List<Map<String, dynamic>> selectedExercises) async {
-    final url = Uri.parse('https://shape-factory-5.onrender.com/recipe/insert');
 
-    for (var exercise in selectedExercises) {
-      String exerciseId = exercise['id'].toString();
-      List<Map<String, String>> sets = exercise['sets'];
-
-      // Concatenar as cargas e reps com "/"
-      String weight = sets.map((set) => set['carga'] ?? "").join('/');
-      String reps = sets.map((set) => set['reps'] ?? "").join('/');
-
-      // Número de sets é o tamanho da lista 'sets'
-      int setsCount = sets.length;
-
-      // Parâmetros do corpo da requisição
-      final body = {
-        'trainingId': trainingId.toString(),
-        'exerciseId': exerciseId,
-        'weight': weight,
-        'reps': reps,
-        'sets': setsCount.toString(),
-      };
-
-      // Print da URL e do corpo da requisição
-      print("POST $url");
-      print("Body: $body");
-
-      try {
-        final response = await http.post(url, body: body);
-
-        if (response.statusCode == 200) {
-          print('Exercise $exerciseId inserted successfully');
-        } else {
-          print(
-              'Failed to insert exercise $exerciseId: ${response.statusCode}');
-          print('Response: ${response.body}');
-        }
-      } catch (error) {
-        print('Error inserting exercise $exerciseId: $error');
-      }
-    }
-  }
 
   // Método principal que insere o treino e os exercícios
   Future<void> addTrainingWithExercises(String name, int clientId, int category,
@@ -152,7 +145,7 @@ class EditTrainingState extends State<EditTraining> {
 
     if (trainingId != null) {
       // Se o treino foi inserido com sucesso, insere os exercícios associados
-      await insertExercises(trainingId, selectedExercises);
+      await deleteAndInsertAll(trainingId, selectedExercises);
     } else {
       print('Failed to insert training.');
     }
@@ -451,15 +444,16 @@ class EditTrainingState extends State<EditTraining> {
                                         exercises);
                                     Navigator.pop(context);
                                   } else {
-                                    await deleteAll(widget.id);
-                                    await insertExercises(widget.id, exercises);
+                                    await deleteAndInsertAll(widget.id, exercises);
                                     if (controllerNome.text != widget.nome) {
                                       await updateTraining(
                                           widget.id, controllerNome.text);
                                     }
                                     Navigator.pop(context);
-                                  
                                   }
+
+                                  
+
                                 } else {
                                   // Exibe um popup se o nome estiver vazio
                                   showDialog(
