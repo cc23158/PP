@@ -436,15 +436,17 @@ class CadastroState extends State<Cadastro> {
                                 sexo,
                                 controllerPeso.text,
                                 controllerSenha.text);
-                            switch (result){
-                              case 0:
+                            if (result == 0){
                               setState(() {
                                 mensagemErro = "Falha ao cadastrar";
                               });
-                              break;
-                              case 1: 
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => Objetivo(controllerEmail.text)));
                             }
+                            else {
+Navigator.push(context, MaterialPageRoute(builder: (context) => Objetivo(result)));
+                            }
+
+                              
+                            
                           } else {
                             setState(() {
                               mensagemErro = "As senhas não são iguais!";
@@ -565,7 +567,7 @@ class CardMonthInputFormatter extends TextInputFormatter {
 Future<String> getClient(String email) async {
   try {
     final response = await http.get(
-      Uri.http('localhost:8080','/client/getByEmail', {'email' : email}),
+      Uri.https('shape-factory-5.onrender.com','/client/getByEmail', {'email' : email}),
     );
     print(response.body);
     return response.body;
@@ -577,29 +579,36 @@ Future<String> getClient(String email) async {
 Future<int> postClient(String nome, String email, String data, String sexo,
     String peso, String senha) async {
   try {
-    var dataReal = data.replaceAll(RegExp(r'/'),'-');
+    // Divide a data no formato dd/MM/yyyy e cria um DateTime
+    var dateParts = data.split('/');
+    var parsedDate = DateTime(
+      int.parse(dateParts[2]), // Ano
+      int.parse(dateParts[1]), // Mês
+      int.parse(dateParts[0]), // Dia
+    );
+
+    // Formata a data para yyyy-MM-dd
+    var dataFormatada = "${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}";
+
     var queryParameters = {
       'name': nome,
       'email': email,
-      'birthday': dataReal,
+      'birthday': dataFormatada,
       'gender': sexo,
       'weight': peso,
       'password': senha
     };
-    print(Uri.http('localhost:8080','/client/insert', queryParameters));
+    print(Uri.https('shape-factory-5.onrender.com','/client/insert', queryParameters));
+
     final info = await http.post(
-      
-      Uri.http('localhost:8080','/client/insert', queryParameters),
-     
+      Uri.https('shape-factory-5.onrender.com','/client/insert', queryParameters),
     );
 
     if (info.statusCode == 200) {
-      // Successful POST request, handle the response here
-      print(info.toString());
+      print(info.body.toString());
       print("Usuário registrado");
-      return 1;
+      return int.parse(info.body);
     } else {
-      // If the server returns an error response, throw an exception
       throw Exception('Failed to post data');
     }
   } catch (e) {

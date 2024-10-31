@@ -10,291 +10,163 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   final pageController = PageController();
-  final vetorImagem = {
+
+  final List<PageController> treinoPageControllers = [
+    PageController(),
+    PageController(),
+    PageController()
+  ];
+
+
+  final List<String> vetorImagens = [
     "assets/images/paint.png",
     "assets/images/intermediario.png",
     "assets/images/avancado.png"
-  };
+  ];
+  final PageController cardPageController = PageController(viewportFraction: 0.9);
+
+
+
+  double _currentPageValue = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    cardPageController.addListener(() {
+      setState(() {
+        _currentPageValue = cardPageController.page ?? 0;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color(0xff000000),
-        body: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                      child: Stack(
-                        alignment: Alignment.topLeft,
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.fromLTRB(16, 30, 16, 8),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Text(
-                                          "Shape",
-                                          textAlign: TextAlign.start,
-                                          overflow: TextOverflow.clip,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w700,
-                                            fontStyle: FontStyle.normal,
-                                            fontSize: 22,
-                                            color: Color(0xffffffff),
-                                          ),
-                                        ),
-                                        Text(
-                                          "Factory",
-                                          textAlign: TextAlign.start,
-                                          overflow: TextOverflow.clip,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w700,
-                                            fontStyle: FontStyle.normal,
-                                            fontSize: 22,
-                                            color: Color(0xfffba808),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.fromLTRB(4, 0, 0, 0),
-                                      child: Text(
-                                        "Fabrique o seu corpo",
-                                        textAlign: TextAlign.start,
-                                        overflow: TextOverflow.clip,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontStyle: FontStyle.normal,
-                                          fontSize: 14,
-                                          color: Color(0xffffffff),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.3,
-                                child: Stack(
-                                  children: [
-                                    PageView.builder(
-                                      controller: pageController,
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: 3,
-                                      itemBuilder: (context, position) {
-                                        return Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              16, 8, 16, 24),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                            child: Image.asset(
-                                              vetorImagem.elementAt(position),
-                                              height: 300,
-                                              width: 200,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: SmoothPageIndicator(
-                                        controller: pageController,
-                                        count: 3,
-                                        onDotClicked: (index) {
-                                          setState(() {
-                                            pageController.jumpToPage(index);
-                                          });
-                                        },
-                                        axisDirection: Axis.horizontal,
-                                        effect: const WormEffect(
-                                          dotColor: Color(0xff9e9e9e),
-                                          activeDotColor: Color(0xff3f51b5),
-                                          dotHeight: 12,
-                                          dotWidth: 12,
-                                          radius: 16,
-                                          spacing: 8,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+      backgroundColor: const Color(0xff000000),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 30, 16, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Shape",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 22,
+                    color: Color(0xffffffff),
+                  ),
                 ),
+                Text(
+                  "Factory",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 22,
+                    color: Color(0xfffba808),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Text(
+              "Fabrique o seu corpo",
+              style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+                color: Color(0xffffffff),
               ),
-              Expanded(
-                  flex: 1,
-                  child: Card(
-                      margin: const EdgeInsets.fromLTRB(15, 10, 15, 0),
-                      color: Colors.grey,
-                      child: ListView(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: false,
-                          physics: const ScrollPhysics(),
-                          padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                              child: Card(
-                                color: const Color(0xffe0e0e0),
-                                shadowColor: const Color(0xff000000),
-                                elevation: 1,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  side: const BorderSide(
-                                      color: Color(0x4d9e9e9e), width: 1),
-                                ),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(15, 10, 10, 10),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      const Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          "Treino A",
-                                          textAlign: TextAlign.start,
-                                          overflow: TextOverflow.clip,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w700,
-                                            fontStyle: FontStyle.normal,
-                                            fontSize: 14,
-                                            color: Color(0xff000000),
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 20, 0, 0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      0, 0, 5, 0),
-                                              child: AnimatedButton(
-                                                width: 100,
-                                                height: 40,
-                                                text: 'Editar',
-                                                textStyle: const TextStyle(
-                                                  fontWeight: FontWeight.w700,
-                                                  fontStyle: FontStyle.normal,
-                                                  fontSize: 13,
-                                                  color: Color(0xffffffff),
-                                                ),
-                                                isReverse: true,
-                                                selectedTextColor: Colors.black,
-                                                transitionType: TransitionType
-                                                    .LEFT_TO_RIGHT,
-                                                backgroundColor: Colors.black,
-                                                borderColor: Colors.orange,
-                                                borderRadius: 12,
-                                                borderWidth: 2,
-                                                onPress: () {},
-                                              ),
-                                            ),
-                                            AnimatedButton(
-                                              width: 100,
-                                              height: 40,
-                                              text: 'Começar',
-                                              isReverse: true,
-                                              selectedTextColor: Colors.black,
-                                              transitionType:
-                                                  TransitionType.LEFT_TO_RIGHT,
-                                              textStyle: const TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                fontStyle: FontStyle.normal,
-                                                fontSize: 13,
-                                                color: Color(0xffffffff),
-                                              ),
-                                              backgroundColor: Colors.black,
-                                              borderColor: Colors.orange,
-                                              borderRadius: 12,
-                                              borderWidth: 2,
-                                              onPress: () {},
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+            ),
+          ),
+          Expanded(
+            child: PageView.builder(
+              controller: cardPageController,
+              itemCount: vetorImagens.length,
+              itemBuilder: (context, index) {
+                double scale = (index == _currentPageValue.round()) ? 1.0 : 0.9;
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  child: Transform.scale(
+                    scale: scale,
+                    child: Card(
+                      color: Colors.grey[300],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12.0),
+                            child: Image.asset(
+                              vetorImagens[index],
+                              fit: BoxFit.cover,
+                              height: 200,
+                              width: double.infinity,
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Treino A",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                  color: Color(0xff000000),
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 15),
-                              child: AnimatedButton(
-                                text: 'Criar treino',
-                                isReverse: true,
-                                selectedTextColor: Colors.black,
-                                transitionType: TransitionType.LEFT_TO_RIGHT,
-                                textStyle: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontStyle: FontStyle.normal,
-                                  fontSize: 13,
-                                  color: Color(0xffffffff),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+
+                                  ),
+                                  child: const Text('Editar'),
                                 ),
-                                backgroundColor: Colors.black,
-                                borderColor: Colors.orange,
-                                borderRadius: 12,
-                                borderWidth: 2,
-                                onPress: () {},
-                              ),
-                            )
-                          ]))),
-            ]));
+                                const SizedBox(width: 10),
+                                ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                  ),
+                                  child: const Text('Começar'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    cardPageController.dispose();
+    super.dispose();
   }
 }
+
+
+

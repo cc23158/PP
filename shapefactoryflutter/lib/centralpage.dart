@@ -17,6 +17,7 @@ class CentralPageState extends State<CentralPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.clientId);
     return Scaffold(
       body: Center(
         child: _pages.elementAt(_selectedIndex), // New

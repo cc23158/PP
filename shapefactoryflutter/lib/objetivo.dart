@@ -2,7 +2,83 @@ import 'package:flutter/material.dart';
 import 'package:shapefactory/centralpage.dart';
 
 class Objetivo extends StatelessWidget {
-  const Objetivo(String email, {super.key});
+  final clientId;
+  const Objetivo(int this.clientId, {super.key});
+
+
+    mostrarPopUp(BuildContext context, String objetivo, AssetImage imagem) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text(
+                'Confimar escolha',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 5.0),
+              Row(children: [
+                Expanded(
+                  flex: 1,
+                  child: Image(
+                    image: imagem,
+                    fit: BoxFit.fill,
+                    width: 0.5,
+                  ),
+                ),
+                Expanded(
+                    flex: 1,
+                    child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Você está pronto para fabricar $objetivo?',
+                              style: const TextStyle(fontSize: 13.0),
+                              overflow: TextOverflow.clip,
+                            ),
+                          ],
+                        )))
+              ]),
+              const SizedBox(height: 5.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  TextButton(
+                    child: const Icon(
+                      Icons.cancel,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                  TextButton(
+                    child: const Icon(Icons.verified, color: Colors.green),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => CentralPage(clientId: clientId)));
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -302,79 +378,11 @@ class Objetivo extends StatelessWidget {
         ),
       ),
     ));
+
+    
   }
+
+
+
 }
 
-mostrarPopUp(BuildContext context, String objetivo, AssetImage imagem) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const Text(
-                'Confimar escolha',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 5.0),
-              Row(children: [
-                Expanded(
-                  flex: 1,
-                  child: Image(
-                    image: imagem,
-                    fit: BoxFit.fill,
-                    width: 0.5,
-                  ),
-                ),
-                Expanded(
-                    flex: 1,
-                    child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Você está pronto para fabricar $objetivo?',
-                              style: const TextStyle(fontSize: 13.0),
-                              overflow: TextOverflow.clip,
-                            ),
-                          ],
-                        )))
-              ]),
-              const SizedBox(height: 5.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  TextButton(
-                    child: const Icon(
-                      Icons.cancel,
-                      color: Colors.red,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    },
-                  ),
-                  TextButton(
-                    child: const Icon(Icons.verified, color: Colors.green),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => const CentralPage(clientId: 0,)));
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}

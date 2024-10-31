@@ -182,7 +182,8 @@ class LoginState extends State<Login>{
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          CentralPage(clientId: int.parse(cliente[1]),)));
+                                          CentralPage(clientId: (cliente[1])
+                              )));
                             }
                             else {
                               setState(() {
@@ -252,26 +253,36 @@ class LoginState extends State<Login>{
  
 
 
+
+
 Future<List?> getClientPassword(String email) async {
   try {
-  var listReturn = List.empty(growable: true);
-  final queryParameters = {
-  'email': email
-};
-    final response = await http.get(
-      Uri.http('localhost:8080','/client/getByEmail', queryParameters),
-    );
-    print(Uri.http('localhost:8080','/client/getByEmail', queryParameters));
+    var listReturn = List.empty(growable: true);
+    final queryParameters = {'email': email};
 
-    var decodedResponse = jsonDecode(response.body);
-    if (decodedResponse != null && decodedResponse['client_password'] != null) {
-      listReturn.add(decodedResponse['client_password']);
-      listReturn.add(decodedResponse['client_id']);
-      return listReturn;
-    } else {
-      return List.empty();
+    // URL corrigida para usar apenas o caminho no segundo parâmetro do Uri.https
+    final url = Uri.https('shape-factory-5.onrender.com', '/client/getByEmail', queryParameters);
+    print("URL: $url");
+
+    final response = await http.get(url);
+
+    // Verificar o status da resposta antes de tentar decodificar
+    if (response.statusCode == 200) {
+      var decodedResponse = jsonDecode(response.body);
+
+      // Verifica se a resposta tem os campos esperados
+      if (decodedResponse != null && decodedResponse['client_password'] != null) {
+        listReturn.add(decodedResponse['client_password']);
+        listReturn.add(decodedResponse['client_id']);
+        return listReturn;
+      }
     }
+
+    // Retornar uma lista vazia se não encontrar a senha
+    return List.empty();
   } catch (erro) {
+    print("Erro ao obter senha do cliente: $erro");
     return List.empty();
   }
 }
+
