@@ -78,37 +78,63 @@ class EditTrainingState extends State<EditTraining> {
 
 
 
-Future<int> deleteAndInsertAll(int trainingId, List<Map<String, dynamic>> selectedExercises) async {
+Future<int> deleteAndInsertAll(
+    int trainingId, List<Map<String, dynamic>> selectedExercises) async {
   // URL para deletar e inserir ao mesmo tempo
-  final url = Uri.parse('https://shape-factory-5.onrender.com/recipe/delete');
+  final queryParameters = {
+    'trainingId': trainingId.toString(),
+  };
+  final url = Uri.https(
+      'shape-factory-5.onrender.com', '/recipe/delete', queryParameters);
 
   // Preparação dos dados dos exercícios para envio
   List<Map<String, dynamic>> recipes = selectedExercises.map((exercise) {
     String exerciseId = exercise['id'].toString();
     List<Map<String, String>> sets = exercise['sets'];
 
-    // Concatenar cargas e reps com "/", substituindo valores vazios por "0" para evitar "//"
-    String weight = sets.map((set) => set['carga'] ?? "0").join('/');
-    String reps = sets.map((set) => set['reps'] ?? "0").join('/');
+    // Concatenar cargas e reps com "/"
+    String weight = sets.map((set) => set['carga'] ?? "").join('/');
+    String reps = sets.map((set) => set['reps'] ?? "").join('/');
 
     // Número de sets é o tamanho da lista 'sets'
     int setsCount = sets.length;
 
     // Dados de cada exercício com os nomes adequados
     return {
-      'recipe_training': trainingId.toString(),
-      'recipe_exercise': exerciseId,
-      'recipe_weight': weight,
-      'recipe_reps': reps,
-      'recipe_sets': setsCount.toString(),
+      "recipe_id": exercise['recipe_id'] ?? 0,
+      "recipe_training": {
+        "training_id": trainingId,
+        "training_name": exercise['training_name'] ?? "Sem nome",
+        "training_category": exercise['training_category'] ?? 1,
+        "training_client": {
+          "client_id": exercise['client_id'] ?? 0,
+          "client_name": exercise['client_name'] ?? "Kaua",
+          "client_email": exercise['client_email'] ?? "a",
+          "client_birthday": exercise['client_birthday'] ?? "2007-09-14",
+          "client_gender": exercise['client_gender'] ?? "M",
+          "client_weight": exercise['client_weight'] ?? 90.0,
+          "client_password": exercise['client_password'] ?? "password",
+          "client_active": exercise['client_active'] ?? true
+        }
+      },
+      "recipe_exercise": {
+        "exercise_id": int.parse(exerciseId),
+        "exercise_name": exercise['exercise_name'] ?? "",
+        "exercise_image": exercise['exercise_image'] ?? "",
+        "exercise_path": exercise['exercise_path'] ?? "",
+        "exercise_muscle": {
+          "muscle_id": exercise['muscle_id'] ?? 0,
+          "muscle_name": exercise['muscle_name'] ?? ""
+        }
+      },
+      "recipe_weight": weight,
+      "recipe_reps": reps,
+      "recipe_sets": setsCount
     };
   }).toList();
 
   // Corpo da requisição contendo o ID do treino e os novos exercícios
-  final body = jsonEncode({
-    'training': trainingId.toString(),
-    'recipes': recipes,
-  });
+  final body = jsonEncode(recipes);
 
   try {
     print("DELETE and INSERT on $url");
@@ -134,6 +160,7 @@ Future<int> deleteAndInsertAll(int trainingId, List<Map<String, dynamic>> select
     return 0;
   }
 }
+
 
 
 
