@@ -12,8 +12,15 @@ class CentralPage extends StatefulWidget {
 }
 
 class CentralPageState extends State<CentralPage> {
-  static List<Widget> _pages = <Widget>[Home(), Relatorio(), Conta()]; // Remover 'const'
+  late List<Widget> _pages;
   var _selectedIndex = 0;
+
+
+@override
+  void initState() {
+    _pages = <Widget>[Home(clientId: widget.clientId), const Relatorio(), Conta()]; 
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

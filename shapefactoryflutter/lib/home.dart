@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:shapefactory/EditTraining.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final clientId;
+  const Home({required this.clientId, super.key});
   @override
   HomeState createState() => HomeState();
 }
@@ -19,188 +21,473 @@ class HomeState extends State<Home> {
     PageController()
   ];
 
+  double _currentPageValue = 0.0;
 
+  var listaMestra = List.empty(growable: true);
   final List<String> vetorImagens = [
     "assets/images/paint.png",
     "assets/images/intermediario.png",
-    "assets/images/avancado.png"
+    "assets/images/avancado.png",
+    "assets/images/musculos.png"
   ];
-  late PageController cardPageController;
+    var cardPageController = PageController(
+      viewportFraction: 0.85,
+      initialPage: 1000,
+    );
+
+  List<Map<String, dynamic>> clientTrainings = [];
+  List<Map<String, dynamic>> defaultTrainings = [];
+
+  List<Widget> clientTrainingsWidgets = List<Widget>.empty();
+
+  List<Widget> defaultTrainingsCategory1 = List<Widget>.empty();
+
+  List<Widget> defaultTrainingsCategory3 = List<Widget>.empty();
+
+  List<Widget> defaultTrainingsCategory2 = List<Widget>.empty();
+  
+  bool isLoading = false;
+
+  var controllerList = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize PageController
+
+
+    cardPageController.addListener(() {
+      setState(() {
+        _currentPageValue = cardPageController.page ?? 0;
+      });
+    });
+
+    // Fetch trainings when the page initializes
+    fetchTrainings();
+  }
 
 
 
-double _currentPageValue = 0.0;
+  Widget getWidgetClient(Map<String, dynamic> treino) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+      child: Card(
+        margin: const EdgeInsets.all(0),
+        color: const Color(0xffe0e0e0),
+        shadowColor: const Color(0xff000000),
+        elevation: 1,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  treino['training_name'] ?? "Treino",
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.clip,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: Color(0xff000000),
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  MaterialButton(
+                    height: 52,
+                    color: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => EditTraining(
+                            category: 1,
+                            trainingId: treino['training_id'],
+                            clientId: widget.clientId,
+                            nome: treino["training_name"],
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'Editar',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  MaterialButton(
+                    color: Colors.red,
+                    minWidth: 52,
+                    height: 52,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: const BorderSide(color: Colors.red),
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    child: const Icon(Icons.delete, color: Colors.white),
+                    onPressed: () async {
+                      await deleteTraining(treino['training_id']);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+    Widget getWidgetDefault(Map<String, dynamic> treino) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+      child: Card(
+        margin: const EdgeInsets.all(0),
+        color: const Color(0xffe0e0e0),
+        shadowColor: const Color(0xff000000),
+        elevation: 1,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  treino['training_name'] ?? "Treino",
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.clip,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: Color(0xff000000),
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  MaterialButton(
+                    height: 52,
+                    color: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    onPressed: () async{
+                      
+                    },
+                    child: const Text(
+                      'Adicionar a meus treinos',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> fetchTrainings() async {
+        setState(() {
+      isLoading = true;
+    });
+    try {
+      // Fetch client-specific trainings
+      final clientTrainingsList = await getTraining(widget.clientId);
+
+      // Fetch default trainings
+      final defaultTrainingsList =
+          await getTraining(1); // Assuming 1 is for default trainings
+
+      setState(() {
+        // Agrupa os treinos do usuário pelo ID do cliente
+        clientTrainingsWidgets =
+            clientTrainingsList.map((treino) => getWidgetClient(treino)).toList();
+
+        // Filtra e agrupa treinos padrão por categoria
+        defaultTrainingsCategory1 = defaultTrainingsList
+            .where((training) => training['training_category'] == 1)
+            .map((treino) => getWidgetDefault(treino))
+            .toList();
+
+        defaultTrainingsCategory2 = defaultTrainingsList
+            .where((training) => training['training_category'] == 2)
+            .map((treino) => getWidgetDefault(treino))
+            .toList();
+
+        defaultTrainingsCategory3 = defaultTrainingsList
+            .where((training) => training['training_category'] == 3)
+            .map((treino) => getWidgetDefault(treino))
+            .toList();
+        listaMestra.clear();
+        listaMestra.add(clientTrainingsWidgets);
+        listaMestra.add(defaultTrainingsCategory1);
+        listaMestra.add(defaultTrainingsCategory2);
+        listaMestra.add(defaultTrainingsCategory3);
+
+      isLoading = false;});
+
+    } catch (error) {
+      print('Error fetching trainings: $error');
+    }
+  }
+
+  Future<int> deleteTraining(int id) async {
+    try {
+      final queryParameters = {
+        'id': id.toString(),
+      };
+      final response = await http.delete(
+        Uri.https('shape-factory-5.onrender.com', '/training/delete',
+            queryParameters),
+      );
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        setState(() {
+          fetchTrainings();
+        });
+        return 1;
+      } else {
+        throw Exception('Falha ao deletar');
+      }
+    } catch (erro) {
+      print(erro.toString());
+      return 0;
+    }
+  }
 
   Future<List<Map<String, dynamic>>> getTraining(int id) async {
     final url = Uri.parse(
         'https://shape-factory-5.onrender.com/training/getByClient?clientId=$id');
 
-    // Print da URL da requisição
     print("GET $url");
 
     try {
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        print('Treinos obtidos com sucesso: ${response.body}');
+        print('Trainings obtained successfully: ${response.body}');
 
-        // Decodifica o JSON e retorna a lista de treinos
         final List<dynamic> jsonResponse = jsonDecode(response.body);
         return jsonResponse
             .map((item) => item as Map<String, dynamic>)
             .toList();
       } else {
-        print('Falha ao obter treinos: ${response.statusCode}');
+        print('Failed to obtain trainings: ${response.statusCode}');
         print('Response: ${response.body}');
         return [];
       }
     } catch (error) {
-      print('Erro ao obter treinos: $error');
+      print('Error obtaining trainings: $error');
       return [];
     }
   }
 
-@override
-void initState() {
-  super.initState();
-  cardPageController = PageController(
-    viewportFraction: 0.85, // Ajusta o quanto do próximo card será visível
-    initialPage: 0,
-  );
-  cardPageController.addListener(() {
-    setState(() {
-      _currentPageValue = cardPageController.page ?? 0;
-    });
-  });
-
-
-}
-
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: const Color(0xff000000),
-    body: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(16, 30, 16, 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "Shape",
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 22,
-                  color: Color(0xffffffff),
-                ),
-              ),
-              Text(
-                "Factory",
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 22,
-                  color: Color(0xfffba808),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
-          child: Text(
-            "Fabrique o seu corpo",
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 14,
-              color: Color(0xffffffff),
-            ),
-          ),
-        ),
-        Expanded(
-          child: PageView.builder(
-            controller: cardPageController,
-            itemCount: null, // Permite scroll infinito
-            itemBuilder: (context, index) {
-              // Calcula o índice real para o loop infinito
-              final realIndex = index % vetorImagens.length;
-              
-              // Calcula a diferença entre o índice atual e a página atual
-              final difference = (index - _currentPageValue).abs();
-              // Aplica uma escala suave baseada na diferença
-              final scale = 1 - (difference * 0.1).clamp(0.0, 0.1);
-              
-              return TweenAnimationBuilder(
-                duration: const Duration(milliseconds: 100),
-                tween: Tween(begin: scale, end: scale),
-                builder: (context, double value, child) {
-                  return Transform.scale(
-                    scale: value,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
-                      child: Card(
-                        color: Colors.grey[300],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
+  Widget ClientListCard(List<Widget> lista) {
+    return Flexible(
+        flex: 5,
+        child: RawScrollbar(
+          thumbColor: Colors.orange,
+          controller: controllerList,
+          interactive: true,
+          radius: const Radius.circular(12),
+          padding: const EdgeInsets.all(10),
+          child: ListView.builder(
+            controller: controllerList,
+            itemCount: lista.length + 1, // +1 para o botão de adicionar
+            itemBuilder: (context, int i) {
+              if (i < lista.length) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                  child: lista[i],
+                );
+              } else {
+                // Botão Adicionar
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(15, 5, 15, 20),
+                  child: MaterialButton(
+                    height: 50,
+                    onPressed: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => EditTraining(
+                            category: 1,
+                            trainingId: 0,
+                            clientId: widget.clientId,
+                            nome: "",
+                          ),
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12.0),
-                              child: Image.asset(
-                                vetorImagens[realIndex],
-                                fit: BoxFit.cover,
-                                height: 200,
-                                width: double.infinity,
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "Treino A",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                    color: Color(0xff000000),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {},
-                                    child: const Text('Editar'),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  ElevatedButton(
-                                    onPressed: () {},
-                                    child: const Text('Começar'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                      );
+                      await fetchTrainings();
+                    },
+                    color: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Icon(Icons.add),
+                        Text(
+                          "Adicionar",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 15),
                         ),
-                      ),
+                      ],
                     ),
-                  );
-                },
-              );
+                  ),
+                );
+              }
             },
           ),
-        ),
-      ],
-    ),
-  );
-}}
+        ));
+  }
+
+  Widget DefaultListCard(List<Widget> lista) {
+    return Flexible(
+        flex: 5,
+        child: RawScrollbar(
+          thumbColor: Colors.orange,
+          controller: controllerList,
+          interactive: true,
+          radius: const Radius.circular(12),
+          padding: const EdgeInsets.all(10),
+          child: ListView.builder(
+            controller: controllerList,
+            itemCount: lista.length , // +1 para o botão de adicionar
+            itemBuilder: (context, int i) {
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                  child: lista[i],
+                );
+            })
+          ));}
+              
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      backgroundColor: const Color(0xff000000),
+      body: isLoading ? Center(child: LoadingAnimationWidget.staggeredDotsWave(color: Colors.orange, size: 50),) : Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 30, 16, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Shape",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 22,
+                    color: Color(0xffffffff),
+                  ),
+                ),
+                Text(
+                  "Factory",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 22,
+                    color: Color(0xfffba808),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Text(
+              "Fabrique o seu corpo",
+              style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+                color: Color(0xffffffff),
+              ),
+            ),
+          ),
+          Expanded(
+            child: PageView.builder(
+              controller: cardPageController,
+
+              itemBuilder: (context, index) {
+                // Calcula o índice real para o loop infinito
+                                   final realIndex =
+                        (index % vetorImagens.length + vetorImagens.length) %
+                            vetorImagens.length;
+
+                // Calcula a diferença entre o índice atual e a página atual
+                final difference = (index - _currentPageValue).abs();
+                // Aplica uma escala suave baseada na diferença
+                final scale = 1 - (difference * 0.1).clamp(0.0, 0.1);
+
+                return TweenAnimationBuilder(
+                  duration: const Duration(milliseconds: 100),
+                  tween: Tween(begin: scale, end: scale),
+                  builder: (context, double value, child) {
+                    return Transform.scale(
+                      scale: value,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 16),
+                        child: Card(
+                          color: Colors.grey[300],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12.0),
+                                child: Image.asset(
+                                  vetorImagens[realIndex],
+                                  fit: BoxFit.cover,
+                                  height: 200,
+                                  width: double.infinity,
+                                ),
+                              ),
+                              (realIndex == 0)
+                                  ? ClientListCard(listaMestra[realIndex])
+                                  : DefaultListCard(listaMestra[realIndex])
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

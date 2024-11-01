@@ -18,6 +18,13 @@ class LoginState extends State<Login>{
   var mensagemErro = "";
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getClient("iniciando");
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
