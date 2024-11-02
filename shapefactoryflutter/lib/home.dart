@@ -109,14 +109,12 @@ return Card(
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-builder: (context) => EditTraining(
-                      category: 1,
-                      trainingId: treino['training_id'],
-                      clientId: widget.clientId,
-                      nome: treino['training_name'],
-                      listaEx: widget.lista,
-                      listaMuscle: widget.listaMuscle,
-                    ),
+                          builder: (context) => EditTraining(
+                            category: 1,
+                            trainingId: treino['training_id'],
+                            clientId: widget.clientId,
+                            nome: treino["training_name"],
+                          ),
                         ),
                       );
                     },
