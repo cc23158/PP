@@ -299,86 +299,76 @@ return Card(
     }
   }
 
-  Widget ClientListCard(List<Widget> lista) {
-    return Flexible(
-        flex: 5,
-        child: RawScrollbar(
-          thumbColor: Colors.orange,
-          controller: controllerList,
-          interactive: true,
-          radius: const Radius.circular(12),
-
-          child: ListView.builder(
-            controller: controllerList,
-            itemCount: lista.length + 1, // +1 para o botão de adicionar
-            itemBuilder: (context, int i) {
-              if (i < lista.length) {
-                return Container(
-                  child: lista[i],
-                );
-              } else {
-                // Botão Adicionar
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 5, 5, 20),
-                  child: MaterialButton(
-                    height: 50,
-                    onPressed: () async {
-                      await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => EditTraining(
-                            category: 1,
-                            trainingId: 0,
-                            clientId: widget.clientId,
-                            nome: "",
-                          ),
-                        ),
-                      );
-                      await fetchTrainings();
-                    },
-                    color: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Icon(Icons.add),
-                        Text(
-                          "Adicionar",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 15),
-                        ),
-                      ],
+Widget ClientListCard(List<Widget> lista) {
+  return 
+    ListView.builder(
+      padding: EdgeInsets.only(bottom: 50), // Remove padding padrão da ListView
+      controller: controllerList,
+      shrinkWrap: true,
+      itemCount: lista.length + 1,
+      itemBuilder: (context, int i) {
+        if (i < lista.length) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8 ),
+            child: lista[i],
+          );
+        } else {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(5, 5, 5, 20),
+            child: MaterialButton(
+              height: 50,
+              onPressed: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => EditTraining(
+                      category: 1,
+                      trainingId: 0,
+                      clientId: widget.clientId,
+                      nome: "",
                     ),
                   ),
                 );
-              }
-            },
-          ),
-        ));
-  }
+                await fetchTrainings();
+              },
+              color: Colors.orange,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Icon(Icons.add),
+                  Text(
+                    "Adicionar",
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+      },
+    );
+}
 
-  Widget DefaultListCard(List<Widget> lista) {
-    return Flexible(
-        flex: 5,
-        child: RawScrollbar(
-          thumbColor: Colors.orange,
-          controller: controllerList,
-          interactive: true,
-          radius: const Radius.circular(12),
-          padding: const EdgeInsets.all(10),
-          child: ListView.builder(
-            controller: controllerList,
-            itemCount: lista.length , // +1 para o botão de adicionar
-            itemBuilder: (context, int i) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-                  child: lista[i],
-                );
-            })
-          ));}
-              
+ Widget DefaultListCard(List<Widget> lista) {
+  return RawScrollbar(
+    thumbColor: Colors.orange,
+    controller: controllerList,
+    interactive: true,
+    radius: const Radius.circular(12),
+    child: ListView.builder(
+      padding: EdgeInsets.zero, // Remove padding padrão da ListView
+      controller: controllerList,
+      itemCount: lista.length,
+      itemBuilder: (context, int i) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: lista[i],
+        );
+      },
+    ),
+  );}
 
   @override
   Widget build(BuildContext context) {
@@ -429,6 +419,7 @@ return Card(
           Flexible(
             flex: 1,
             child: PageView.builder(
+              
               controller: cardPageController,
 
               itemBuilder: (context, index) {
@@ -452,28 +443,28 @@ return Card(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 0, vertical: 16),
                         child: Card(
-                          color: Colors.grey[300],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12.0),
-                                child: Image.asset(
-                                  vetorImagens[realIndex],
-                                  fit: BoxFit.cover,
-                                  height: 200,
-                                  width: double.infinity,
-                                ),
-                              ),
-                              (realIndex == 0)
-                                  ? ClientListCard(listaMestra[realIndex])
-                                  : DefaultListCard(listaMestra[realIndex])
-                            ],
-                          ),
-                        ),
+  color: Colors.grey[300],
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(12.0),
+  ),
+  clipBehavior: Clip.antiAlias, // Adiciona clipping no Card
+  child: Column(
+    mainAxisSize: MainAxisSize.max,
+    children: [
+      Image.asset(
+        vetorImagens[realIndex],
+        fit: BoxFit.cover,
+        height: 180,
+        width: double.infinity,
+      ),
+      Expanded(
+        child: (realIndex == 0)
+            ? ClientListCard(listaMestra[realIndex])
+            : DefaultListCard(listaMestra[realIndex]),
+      ),
+    ],
+  ),
+),
                       ),
                     );
                   },

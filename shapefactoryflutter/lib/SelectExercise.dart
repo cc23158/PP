@@ -287,68 +287,105 @@ class SelectExerciseState extends State<SelectExercise> {
     );
   }
 
-  Future<void> getExercises() async {
-  try {
-    final response = await http.get(
-      Uri.parse('https://shape-factory-5.onrender.com/exercise/getAll'),
-    );
+Future<void> getExercises({int maxRetries = 10, int currentRetry = 0}) async {
+    if (currentRetry == 0) {
 
-
-    if (response.statusCode == 200) {
-      // Decodificando a resposta como List<dynamic>
-      List<dynamic> decodedResponse = jsonDecode(utf8.decode(response.bodyBytes));
-
-
-      // Verificando se a resposta é uma lista
-      if (decodedResponse is List) {
-        setState(() {
-          // Mapeando a resposta para o formato desejado
-          lista = decodedResponse.map((exercise) {
-            if (listMuscles.contains(exercise['exercise_muscle']['muscle_name']) == false){
-              listMuscles.add(exercise['exercise_muscle']['muscle_name']);
-            }
-            return {
-
-              'exercise_id': exercise['exercise_id'],
-              'exercise_name': exercise['exercise_name'],
-              'exercise_image': exercise['exercise_image'],
-              'exercise_muscle': {
-                'muscle_name': exercise['exercise_muscle']['muscle_name']
-              }
-            };
-          }).toList();
-
-          // Adicionando os widgets correspondentes
-          listElemento = lista.map<Widget>((exercise) {
-            return getWidget(
-              exercise['exercise_name'],
-              exercise['exercise_muscle']['muscle_name'],
-              exercise['exercise_image'],
-              exercise['exercise_id'],
-            );
-          }).toList();
-
-          isLoading = false; // Remover o indicador de carregamento
-        });
-      } else {
-        print("Resposta não é uma lista");
-      }
-    } else {
-      print("Erro na resposta: ${response.statusCode}");
     }
-  } catch (erro) {
-    print("Erro ao buscar exercícios: ${erro.toString()}");
-  }
+
+    try {
+      final response = await http.get(
+        Uri.parse('https://shape-factory-5.onrender.com/exercise/getAll'),
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> decodedResponse = jsonDecode(utf8.decode(response.bodyBytes));
+
+        if (decodedResponse.isEmpty && currentRetry < maxRetries) {
+          // Se a lista está vazia e ainda não atingimos o número máximo de tentativas
+          print('Tentativa ${currentRetry + 1}: Lista vazia recebida, tentando novamente...');
+          
+          // Espera um tempo crescente entre as tentativas (0.5s, 1s, 1.5s, etc)
+          await Future.delayed(Duration(milliseconds: 500 * (currentRetry + 1)));
+          
+          // Faz uma nova tentativa
+          return getExercises(
+            maxRetries: maxRetries,
+            currentRetry: currentRetry + 1,
+          );
+        }
+
+        if (decodedResponse is List) {
+          setState(() {
+            lista = decodedResponse.map((exercise) {
+              if (listMuscles.contains(exercise['exercise_muscle']['muscle_name']) == false) {
+                listMuscles.add(exercise['exercise_muscle']['muscle_name']);
+              }
+              return {
+                'exercise_id': exercise['exercise_id'],
+                'exercise_name': exercise['exercise_name'],
+                'exercise_image': exercise['exercise_image'],
+                'exercise_muscle': {
+                  'muscle_name': exercise['exercise_muscle']['muscle_name']
+                }
+              };
+            }).toList();
+
+            listElemento = lista.map<Widget>((exercise) {
+              return getWidget(
+                exercise['exercise_name'],
+                exercise['exercise_muscle']['muscle_name'],
+                exercise['exercise_image'],
+                exercise['exercise_id'],
+              );
+            }).toList();
+
+            isLoading = false;
+          });
+        } else {
+          print("Resposta não é uma lista");
+          _handleError("Formato de resposta inválido");
+        }
+      } else {
+        print("Erro na resposta: ${response.statusCode}");
+        _handleError("Erro ao carregar exercícios");
+      }
+    } catch (erro) {
+      print("Erro ao buscar exercícios: ${erro.toString()}");
+      _handleError("Erro ao carregar exercícios");
+    }
 }
 
- void fetchExercises() async {
-  await getExercises();
+// Função auxiliar para tratamento de erros
+void _handleError(String message) {
+  setState(() {
+    isLoading = false;
+  });
+  
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+      duration: Duration(seconds: 3),
+      action: SnackBarAction(
+        label: 'Tentar Novamente',
+        textColor: Colors.white,
+        onPressed: () {
+          getExercises();
+        },
+      ),
+    ),
+  );
+}
+
+// Modifique a função fetchExercises para usar as novas opções
+void fetchExercises() async {
+  await getExercises(maxRetries: 3);
 }
 
   @override
   void initState() {
     super.initState();
-    fetchExercises(); // Chama o método de busca uma única vez
+    fetchExercises();
         selectedExercisesNotifier = ValueNotifier<List<dynamic>>(
       widget.selectedExercises.map((e) => e["id"]).toList(),
     );
@@ -364,9 +401,7 @@ class SelectExerciseState extends State<SelectExercise> {
 
   @override
   Widget build(BuildContext context) {
-    if (lista.isEmpty){
-      fetchExercises();
-    }
+
     return Scaffold(
         floatingActionButton: FloatingActionButton(
    onPressed: () {
