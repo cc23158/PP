@@ -7,9 +7,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class Home extends StatefulWidget {
   final clientId;
-  final lista;
-  final listaMuscle;
-  const Home({required this.clientId, super.key, this.lista, this.listaMuscle});
+  const Home({required this.clientId, super.key});
   @override
   HomeState createState() => HomeState();
 }
@@ -329,8 +327,6 @@ Widget ClientListCard(List<Widget> lista) {
                       trainingId: 0,
                       clientId: widget.clientId,
                       nome: "",
-                      listaEx: widget.lista,
-                      listaMuscle: widget.listaMuscle,
                     ),
                   ),
                 );
