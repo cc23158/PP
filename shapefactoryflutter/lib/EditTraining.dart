@@ -488,7 +488,7 @@ Future<int> deleteAndInsertAll(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        backgroundColor: Colors.white10,
+                                        backgroundColor: const Color.fromARGB(255, 32, 32, 32),
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(12)),
@@ -555,7 +555,7 @@ Future<int> deleteAndInsertAll(
     return Center(
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+        padding: EdgeInsets.fromLTRB(13, 0, 13, 10),
         height: 50,
         constraints: BoxConstraints(maxWidth: 515),
         child: MaterialButton(

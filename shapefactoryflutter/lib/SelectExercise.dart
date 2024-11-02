@@ -293,9 +293,11 @@ class SelectExerciseState extends State<SelectExercise> {
       Uri.parse('https://shape-factory-5.onrender.com/exercise/getAll'),
     );
 
+
     if (response.statusCode == 200) {
       // Decodificando a resposta como List<dynamic>
       List<dynamic> decodedResponse = jsonDecode(utf8.decode(response.bodyBytes));
+
 
       // Verificando se a resposta é uma lista
       if (decodedResponse is List) {
@@ -351,6 +353,7 @@ class SelectExerciseState extends State<SelectExercise> {
       widget.selectedExercises.map((e) => e["id"]).toList(),
     );
     print("teste");
+    print(lista);
   }
 
     @override
@@ -361,6 +364,9 @@ class SelectExerciseState extends State<SelectExercise> {
 
   @override
   Widget build(BuildContext context) {
+    if (lista.isEmpty){
+      fetchExercises();
+    }
     return Scaffold(
         floatingActionButton: FloatingActionButton(
    onPressed: () {
@@ -408,17 +414,17 @@ class SelectExerciseState extends State<SelectExercise> {
                   children: [
                     Padding(
                       padding: EdgeInsets.fromLTRB(
-                          MediaQuery.of(context).size.width * 0.02,
+                          MediaQuery.of(context).size.width * 0.05,
                           20,
-                          MediaQuery.of(context).size.width * 0.02,
+                          MediaQuery.of(context).size.width * 0.05,
                           10),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           GestureDetector(
                             child: Icon(
-                              Icons.keyboard_return_rounded,
+                              Icons.arrow_back,
                               color: Colors.white,
                             ),
                             onTap: () {
@@ -426,7 +432,7 @@ class SelectExerciseState extends State<SelectExercise> {
                             },
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.8,
+                            width: MediaQuery.of(context).size.width * 0.7,
                             child: TextFormField(
                               cursorColor: Colors.orange,
                               onChanged: (value) => {

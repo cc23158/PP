@@ -21,7 +21,7 @@ class HomeState extends State<Home> {
     PageController()
   ];
 
-  double _currentPageValue = 0.0;
+  double _currentPageValue = 1000.0;
 
   var listaMestra = List.empty(growable: true);
   final List<String> vetorImagens = [
@@ -59,7 +59,7 @@ class HomeState extends State<Home> {
 
     cardPageController.addListener(() {
       setState(() {
-        _currentPageValue = cardPageController.page ?? 0;
+        _currentPageValue = cardPageController.page ?? 1000;
       });
     });
 
@@ -70,10 +70,7 @@ class HomeState extends State<Home> {
 
 
   Widget getWidgetClient(Map<String, dynamic> treino) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-      child: Card(
-        margin: const EdgeInsets.all(0),
+return Card(
         color: const Color(0xffe0e0e0),
         shadowColor: const Color(0xff000000),
         elevation: 1,
@@ -146,15 +143,14 @@ class HomeState extends State<Home> {
             ],
           ),
         ),
-      ),
-    );
+      );
+    
   }
 
     Widget getWidgetDefault(Map<String, dynamic> treino) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
       child: Card(
-        margin: const EdgeInsets.all(0),
         color: const Color(0xffe0e0e0),
         shadowColor: const Color(0xff000000),
         elevation: 1,
@@ -311,21 +307,19 @@ class HomeState extends State<Home> {
           controller: controllerList,
           interactive: true,
           radius: const Radius.circular(12),
-          padding: const EdgeInsets.all(10),
+
           child: ListView.builder(
             controller: controllerList,
             itemCount: lista.length + 1, // +1 para o botão de adicionar
             itemBuilder: (context, int i) {
               if (i < lista.length) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                return Container(
                   child: lista[i],
                 );
               } else {
                 // Botão Adicionar
                 return Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 5, 15, 20),
+                  padding: const EdgeInsets.fromLTRB(5, 5, 5, 20),
                   child: MaterialButton(
                     height: 50,
                     onPressed: () async {
@@ -379,7 +373,7 @@ class HomeState extends State<Home> {
             itemBuilder: (context, int i) {
                 return Padding(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                   child: lista[i],
                 );
             })
@@ -432,7 +426,8 @@ class HomeState extends State<Home> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
+            flex: 1,
             child: PageView.builder(
               controller: cardPageController,
 
