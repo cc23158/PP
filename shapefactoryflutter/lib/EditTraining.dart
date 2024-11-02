@@ -11,12 +11,14 @@ class EditTraining extends StatefulWidget {
   final trainingId;
   final clientId;
   final nome;
+  final listaEx;
+  final listaMuscle;
   const EditTraining(
       {required this.category,
       super.key,
       required this.trainingId,
       required this.clientId,
-      required this.nome});
+      required this.nome, this.listaEx, this.listaMuscle});
   @override
   EditTrainingState createState() => EditTrainingState();
 }
@@ -35,7 +37,7 @@ class EditTrainingState extends State<EditTraining> {
     final selectedExercisesFrom = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SelectExercise(selectedExercises: exercises),
+        builder: (context) => SelectExercise(selectedExercises: exercises, lista: widget.listaEx, listaMuscle: widget.listaMuscle,),
       ),
     );
 
