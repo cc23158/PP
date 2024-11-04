@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shapefactory/EditTraining.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:shapefactory/StartTraining.dart';
 
 class Home extends StatefulWidget {
   final clientId;
@@ -69,44 +70,54 @@ class HomeState extends State<Home> {
 
 
 
-  Widget getWidgetClient(Map<String, dynamic> treino) {
-return Card(
-        color: const Color(0xffe0e0e0),
-        shadowColor: const Color(0xff000000),
-        elevation: 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-          side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
+Widget getWidgetClient(Map<String, dynamic> treino) {
+  return GestureDetector(
+    onTap: () async{
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => StartTraining(
+            category: 1,
+            nome: treino['training_name'],
+            trainingId: treino['training_id'],
+            clientId: widget.clientId,
+          ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  treino['training_name'] ?? "Treino",
-                  textAlign: TextAlign.start,
-                  overflow: TextOverflow.clip,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                    color: Color(0xff000000),
-                  ),
+      
+      );
+      await fetchTrainings();
+    },
+    child: Card(
+      color: const Color(0xffe0e0e0),
+      shadowColor: const Color(0xff000000),
+      elevation: 1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+        side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
+child:
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              
+              children: [
+                            Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                treino['training_name'] ?? "Treino",
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.clip,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: Color(0xff000000),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  MaterialButton(
-                    height: 52,
-                    color: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    onPressed: () {
+            ),
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert),
+                  onSelected: (String value) {
+                    if (value == 'Editar') {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => EditTraining(
@@ -117,35 +128,31 @@ return Card(
                           ),
                         ),
                       );
-                    },
-                    child: const Text(
-                      'Editar',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  MaterialButton(
-                    color: Colors.red,
-                    minWidth: 52,
-                    height: 52,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: const BorderSide(color: Colors.red),
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    child: const Icon(Icons.delete, color: Colors.white),
-                    onPressed: () async {
-                      await deleteTraining(treino['training_id']);
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
+                    } else if (value == 'Excluir') {
+                      deleteTraining(treino['training_id']);
+                    }
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      const PopupMenuItem<String>(
+                        value: 'Editar',
+                        child: Text('Editar'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'Excluir',
+                        child: Text('Excluir'),
+                      ),
+                    ];
+                  },
+                ),
+              ],
+            ),
+          
         ),
-      );
+      ),
     
-  }
+  );
+}
 
     Widget getWidgetDefault(Map<String, dynamic> treino) {
     return Padding(
@@ -309,7 +316,6 @@ Widget ClientListCard(List<Widget> lista) {
       itemBuilder: (context, int i) {
         if (i < lista.length) {
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8 ),
             child: lista[i],
           );
         } else {
@@ -443,7 +449,7 @@ Widget ClientListCard(List<Widget> lista) {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 0, vertical: 16),
                         child: Card(
-  color: Colors.grey[300],
+  color: Colors.white70,
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(12.0),
   ),
