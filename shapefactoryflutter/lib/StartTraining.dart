@@ -501,7 +501,15 @@ class StartTrainingState extends State<StartTraining> {
 
                         if (fieldIndex == 0) {
                           // Display set number
-                          return _setNumberWidget(setIndex, set["isCompleted"]);
+                                  return _setNumberWidget(
+          setIndex,
+          set["isCompleted"] ?? false, // Passa o estado de conclusão
+          () {
+            setState(() {
+              set["isCompleted"] = !(set["isCompleted"] ?? false); // Alterna o estado
+            });
+          },
+        );
                         } else if (fieldIndex == 1) {
                           // Editable carga field
                           return _editableField(
@@ -552,32 +560,33 @@ class StartTrainingState extends State<StartTraining> {
   }
 
   // Atualização do widget setNumber com animação de cor verde para set concluído
-  Widget _setNumberWidget(int setNumber, bool isCompleted) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          isCompleted = !isCompleted;
-        });
-        
-      },
-      child:AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
+  Widget _setNumberWidget(int setNumber, bool isCompleted, VoidCallback onTap) {
+   return GestureDetector(
+    onTap: onTap, // Chama a função passada para alterar o estado
+    child: Container(
       decoration: BoxDecoration(
-        color: isCompleted ? Colors.orange : Colors.black,
-        borderRadius: BorderRadius.circular(12),
+        color: isCompleted ? Colors.green : Colors.black, // Muda a cor dependendo do estado
+        borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
-      child: Center(
-        child: Text(
-          "${setNumber + 1}",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            color: isCompleted ? Colors.white : Colors.white,
+      child: TextField(
+        controller: TextEditingController(text: "${setNumber + 1}"),
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontSize: 16, color: Colors.white),
+        readOnly: true,
+        cursorColor: Colors.orange,
+        decoration: const InputDecoration(
+          filled: true,
+          fillColor: Colors.black,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide.none,
           ),
+          contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 10),
         ),
       ),
-    ));
-  }
+    ),
+  );
+}
 
   // Widget para campos editáveis sem alterações de cor
   Widget _editableField({
