@@ -226,69 +226,18 @@ class StartTrainingState extends State<StartTraining> {
     }
   }
 
+  
+
   @override
   void initState() {
     super.initState();
     fetchRecipe();
     controllerNome = widget.nome;
-    _initializeNotifications();
   }
 
   // Inicializa o plugin de notificação para iOS e Android
-  void _initializeNotifications() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    const DarwinInitializationSettings initializationSettingsIOS =
-        DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
 
-    const InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
-
-    await notificationsPlugin.initialize(initializationSettings);
-  }
-
-  // Exibe a notificação com o tempo atual do treino
-  Future<void> _showTrainingNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'training_channel',
-      'Treino',
-      importance: Importance.max,
-      priority: Priority.high,
-      ongoing: true,
-      actions: <AndroidNotificationAction>[
-        AndroidNotificationAction('STOP', 'Parar',
-            icon: DrawableResourceAndroidBitmap('@drawable/ic_stop'))
-      ],
-    );
-
-    const DarwinNotificationDetails iOSPlatformChannelSpecifics =
-        DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
-
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-      iOS: iOSPlatformChannelSpecifics,
-    );
-
-    await notificationsPlugin.show(
-      0,
-      'Treino em andamento',
-      'Tempo: ${elapsedTime.inMinutes}:${(elapsedTime.inSeconds % 60).toString().padLeft(2, '0')}',
-      platformChannelSpecifics,
-    );
-  }
 
   // Função para iniciar o temporizador
   void _startTraining() {
@@ -300,7 +249,6 @@ class StartTrainingState extends State<StartTraining> {
       setState(() {
         elapsedTime += Duration(seconds: 1);
       });
-      _showTrainingNotification();
     });
   }
 
@@ -311,7 +259,6 @@ class StartTrainingState extends State<StartTraining> {
       isLoading = false;
     });
     timer?.cancel();
-    await notificationsPlugin.cancel(0); // Remove a notificação
   }
 
   @override
