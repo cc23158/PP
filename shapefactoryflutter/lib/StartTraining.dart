@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shapefactory/SelectExercise.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:shapefactory/home.dart';
 
 class StartTraining extends StatefulWidget {
   final category;
@@ -267,7 +268,9 @@ class StartTrainingState extends State<StartTraining> {
 
   @override
   void dispose() {
+    if (StartTraining.trainingIdAtivo != -1){
     StartTraining.listaAtiva = exercises;
+    }
     super.dispose();
   }
 
@@ -282,6 +285,7 @@ class StartTrainingState extends State<StartTraining> {
     StartTraining.trainingNameAtivo = "";
     StartTraining.trainingTime.value = Duration.zero;
     StartTraining.listaAtiva = List.empty();
+
     Navigator.pop(context);
   }
 

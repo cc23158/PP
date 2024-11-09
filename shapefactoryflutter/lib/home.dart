@@ -9,13 +9,13 @@ import 'package:shapefactory/StartTraining.dart';
 class Home extends StatefulWidget {
   final clientId;
   const Home({required this.clientId, super.key});
+
   @override
   HomeState createState() => HomeState();
 }
 
 class HomeState extends State<Home> {
   final pageController = PageController();
-
 
   double _currentPageValue = 1000.0;
 
@@ -65,117 +65,116 @@ class HomeState extends State<Home> {
   Widget getWidgetClient(Map<String, dynamic> treino) {
     return GestureDetector(
       onTap: () async {
-        if (StartTraining.trainingIdAtivo == - 1 || StartTraining.trainingIdAtivo == treino['training_id']){
-  await Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => StartTraining(
-              category: 1,
-              nome: treino['training_name'],
-              trainingId: treino['training_id'],
-              clientId: widget.clientId,
+        if (StartTraining.trainingIdAtivo == -1 ||
+            StartTraining.trainingIdAtivo == treino['training_id']) {
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => StartTraining(
+                category: 1,
+                nome: treino['training_name'],
+                trainingId: treino['training_id'],
+                clientId: widget.clientId,
+              ),
             ),
-          ),
-        );
-        setState(() {
-          
-        });
+          );
+          setState(() {});
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                backgroundColor: const Color.fromARGB(255, 32, 32, 32),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                title: const Text('Treino em andamento',
+                    style: TextStyle(
+                      color: Colors.white70,
+                    )),
+                content: const Text(
+                    'Por favor, termine seu treino atual antes de começar outro',
+                    style: TextStyle(
+                      color: Colors.white70,
+                    )),
+                actions: <Widget>[
+                  MaterialButton(
+                      color: Colors.orange,
+                      child: const Text("OK",
+                          style: TextStyle(
+                            color: Colors.white70,
+                          )),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      })
+                ],
+              );
+            },
+          );
         }
-        else{
-           showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        backgroundColor: const Color.fromARGB(255, 32, 32, 32),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12)),
-                                        title: const Text('Treino em andamento',
-                                            style: TextStyle(
-                                              color: Colors.white70,
-                                            )),
-                                        content: const Text(
-                                            'Por favor, termine seu treino atual antes de começar outro',
-                                            style: TextStyle(
-                                              color: Colors.white70,
-                                            )),
-                                        actions: <Widget>[
-                                          MaterialButton(
-                                              color: Colors.orange,
-                                              child: const Text("OK",
-                                                  style: TextStyle(
-                                                    color: Colors.white70,
-                                                  )),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              })
-                                        ],
-                                      );
-                                    },
-                                  );
-        }
-      
       },
       child: Card(
-        color: const Color(0xffe0e0e0),
-        shadowColor: const Color(0xff000000),
-        elevation: 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-          side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  treino['training_name'] ?? "Treino",
-                  textAlign: TextAlign.start,
-                  overflow: TextOverflow.clip,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    color: Color(0xff000000),
-                  ),
-                ),
+    color: Colors.black45,
+    elevation: 1,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12.0),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              treino['training_name'] ?? "Treino",
+              textAlign: TextAlign.start,
+              overflow: TextOverflow.clip,
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+                color: Colors.white,
               ),
-              PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert),
-                onSelected: (String value) {
-                  if (value == 'Editar') {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => EditTraining(
-                          category: 1,
-                          trainingId: treino['training_id'],
-                          clientId: widget.clientId,
-                          nome: treino["training_name"],
-                        ),
-                      ),
-                    );
-                  } else if (value == 'Excluir') {
-                    deleteTraining(treino['training_id']);
-                  }
-                },
-                itemBuilder: (BuildContext context) {
-                  return [
-                    const PopupMenuItem<String>(
-                      value: 'Editar',
-                      child: Text('Editar'),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'Excluir',
-                      child: Text('Excluir'),
-                    ),
-                  ];
-                },
-              ),
-            ],
+            ),
           ),
-        ),
+          
+          if (StartTraining.trainingIdAtivo != treino['training_id']) // Condição para mostrar o ícone apenas se não for o treino ativo
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert, color: Colors.white,),
+              onSelected: (String value) {
+                if (value == 'Editar') {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => EditTraining(
+                        category: 1,
+                        trainingId: treino['training_id'],
+                        clientId: widget.clientId,
+                        nome: treino["training_name"],
+                      ),
+                    ),
+                  );
+                } else if (value == 'Excluir') {
+                  deleteTraining(treino['training_id']);
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return [
+                  const PopupMenuItem<String>(
+                    value: 'Editar',
+                    child: Text('Editar'),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'Excluir',
+                    child: Text('Excluir'),
+                  ),
+                ];
+              },
+            ) else // Placeholder para ocupar o espaço do PopupMenuButton
+            Padding(padding: EdgeInsets.fromLTRB(0, 0, 20, 0), child:SizedBox(height: 45, child: LoadingAnimationWidget.staggeredDotsWave(color: Colors.orange, size: 24), ) ,)
+          
+
+        ],
       ),
+    ),
+  )
     );
   }
 
@@ -329,39 +328,42 @@ class HomeState extends State<Home> {
       return [];
     }
   }
-void _showTrainingBottomSheet(BuildContext context, int trainingId, int clientId, String nome) async {
-  await showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setModalState) {
-          return _AnimatedSlideBottomSheetContent(
-            trainingId: trainingId,
-            clientId: clientId,
-            nome: nome,
-          );
-        },
-      );
-    },
-  );
 
-  // Atualiza o estado após retornar de StartTraining
-  if (StartTraining.trainingTime.value == Duration.zero) {
-    setState(() {
-      // Isso forçará uma atualização da interface, fazendo a barra desaparecer
-    });
+  void _showTrainingBottomSheet(
+      BuildContext context, int trainingId, int clientId, String nome) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return _AnimatedSlideBottomSheetContent(
+              trainingId: trainingId,
+              clientId: clientId,
+              nome: nome,
+            );
+          },
+        );
+      },
+    );
+
+    // Atualiza o estado após retornar de StartTraining
+    if (StartTraining.trainingTime.value == Duration.zero) {
+      setState(() {
+        // Isso forçará uma atualização da interface, fazendo a barra desaparecer
+      });
+    }
   }
-}
 
- Widget buildTrainingBottomBar(BuildContext context, String trainingName) {
+Widget buildTrainingBottomBar(BuildContext context, String trainingName) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5), // Reduzi o padding vertical para ajustar a posição
     child: ClipRRect(
       borderRadius: BorderRadius.circular(12), // Arredondamento das bordas
-      child: BottomAppBar(
+      child: Container(
         color: Colors.grey[900], // Cor de fundo similar ao Spotify
+        height: 70, // Altura ajustada para o container
         child: GestureDetector(
           onTap: () {
             _showTrainingBottomSheet(
@@ -371,9 +373,8 @@ void _showTrainingBottomSheet(BuildContext context, int trainingId, int clientId
               StartTraining.trainingNameAtivo,
             );
           },
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-            height: 60,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0), // Padding interno ajustado
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -389,6 +390,7 @@ void _showTrainingBottomSheet(BuildContext context, int trainingId, int clientId
                     overflow: TextOverflow.ellipsis, // Trunca se o nome for longo
                   ),
                 ),
+
                 // Temporizador de treino
                 ValueListenableBuilder<Duration>(
                   valueListenable: StartTraining.trainingTime,
@@ -566,7 +568,7 @@ void _showTrainingBottomSheet(BuildContext context, int trainingId, int clientId
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 0, vertical: 16),
                                     child: Card(
-                                      color: Colors.white70,
+                                      color: Colors.white24,
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(12.0),
@@ -632,7 +634,8 @@ class _AnimatedSlideBottomSheetContent extends StatefulWidget {
       _AnimatedSlideBottomSheetContentState();
 }
 
-class _AnimatedSlideBottomSheetContentState extends State<_AnimatedSlideBottomSheetContent>
+class _AnimatedSlideBottomSheetContentState
+    extends State<_AnimatedSlideBottomSheetContent>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _slideAnimation;
@@ -641,14 +644,15 @@ class _AnimatedSlideBottomSheetContentState extends State<_AnimatedSlideBottomSh
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(milliseconds: 500), // Duração da animação de surgimento
+      duration:
+          Duration(milliseconds: 500), // Duração da animação de surgimento
       vsync: this,
     );
 
     // Define a animação para deslizar de baixo para cima
     _slideAnimation = Tween<Offset>(
       begin: Offset(0, 1), // Começa abaixo da tela
-      end: Offset(0, 0),   // Termina na posição original
+      end: Offset(0, 0), // Termina na posição original
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOut,
