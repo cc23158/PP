@@ -281,6 +281,7 @@ class StartTrainingState extends State<StartTraining> {
     StartTraining.trainingIdAtivo = -1;
     StartTraining.trainingNameAtivo = "";
     StartTraining.trainingTime.value = Duration.zero;
+    StartTraining.listaAtiva = List.empty();
     Navigator.pop(context);
   }
 
