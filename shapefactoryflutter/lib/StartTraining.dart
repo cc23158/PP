@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:shapefactory/SelectExercise.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -19,21 +18,26 @@ class StartTraining extends StatefulWidget {
       required this.trainingId,
       required this.clientId,
       required this.nome});
+  static final ValueNotifier<Duration> trainingTime =
+      ValueNotifier<Duration>(Duration.zero);
+  static int trainingIdAtivo = -1;
+  static String trainingNameAtivo = "";
+  static Timer? timer;
+  static List<Map<String, dynamic>> listaAtiva = List.empty();
   @override
   StartTrainingState createState() => StartTrainingState();
 }
 
 class StartTrainingState extends State<StartTraining> {
-  var lista = List.empty(growable: true);
+
   var listElemento = List<Widget>.empty(growable: true);
   var controllerNome;
   bool isLoading = false;
   String currentSearchText = '';
   bool isTraining = false; // Para controlar o estado do treino
-  Timer? timer;
+
   Duration elapsedTime = Duration.zero;
-  final FlutterLocalNotificationsPlugin notificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+
   var corBorda;
   List<Map<String, dynamic>> exercises = [];
 
@@ -226,18 +230,26 @@ class StartTrainingState extends State<StartTraining> {
     }
   }
 
-  
-
   @override
   void initState() {
     super.initState();
-    fetchRecipe();
+    if (StartTraining.listaAtiva.isEmpty) {
+      fetchRecipe();
+    }
+    else {
+      exercises = StartTraining.listaAtiva;
+    }
+
     controllerNome = widget.nome;
+    if (StartTraining.trainingIdAtivo != -1) {
+      setState(() {
+        isTraining = true;
+        isLoading = true;
+      });
+    }
   }
 
   // Inicializa o plugin de notificação para iOS e Android
-
-
 
   // Função para iniciar o temporizador
   void _startTraining() {
@@ -245,11 +257,18 @@ class StartTrainingState extends State<StartTraining> {
       isTraining = true;
       isLoading = true;
     });
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        elapsedTime += Duration(seconds: 1);
-      });
+    StartTraining.timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      StartTraining.trainingTime.value += Duration(seconds: 1);
     });
+    StartTraining.trainingIdAtivo = widget.trainingId;
+    StartTraining.trainingNameAtivo = widget.nome;
+    
+  }
+
+  @override
+  void dispose() {
+    StartTraining.listaAtiva = exercises;
+    super.dispose();
   }
 
   // Função para parar o temporizador e limpar o estado
@@ -258,7 +277,11 @@ class StartTrainingState extends State<StartTraining> {
       isTraining = false;
       isLoading = false;
     });
-    timer?.cancel();
+    StartTraining.timer?.cancel();
+    StartTraining.trainingIdAtivo = -1;
+    StartTraining.trainingNameAtivo = "";
+    StartTraining.trainingTime.value = Duration.zero;
+    Navigator.pop(context);
   }
 
   @override
@@ -340,15 +363,27 @@ class StartTrainingState extends State<StartTraining> {
                 ),
                 if (isTraining)
                   Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Tempo de treino: ${elapsedTime.inMinutes.toString().padLeft(2, '0')}:${(elapsedTime.inSeconds % 60).toString().padLeft(2, '0')}',
-                        style: const TextStyle(
-                          color: Colors.orange,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ))
+                    padding: const EdgeInsets.all(16.0),
+                    child: ValueListenableBuilder<Duration>(
+                      valueListenable: StartTraining.trainingTime,
+                      builder: (context, duration, child) {
+                        final hours =
+                            duration.inHours.toString().padLeft(2, '0');
+                        final minutes = duration.inMinutes
+                            .remainder(60)
+                            .toString()
+                            .padLeft(2, '0');
+                        final seconds = duration.inSeconds
+                            .remainder(60)
+                            .toString()
+                            .padLeft(2, '0');
+                        return Text(
+                          'Tempo de treino: $hours:$minutes:$seconds',
+                          style: TextStyle(fontSize: 16, color: Colors.orange),
+                        );
+                      },
+                    ),
+                  )
               ],
             ),
           ),
@@ -423,7 +458,11 @@ class StartTrainingState extends State<StartTraining> {
                   exercise["id"],
                 ),
                 // Aqui pode incluir o widget personalizado para o cabeçalho
-                Text("Clique no set para concluí-lo", style: TextStyle(color: Colors.black54, fontSize: 14), textAlign: TextAlign.start,),
+                Text(
+                  "Clique no set para concluí-lo",
+                  style: TextStyle(color: Colors.black54, fontSize: 14),
+                  textAlign: TextAlign.start,
+                ),
                 GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -448,15 +487,17 @@ class StartTrainingState extends State<StartTraining> {
 
                         if (fieldIndex == 0) {
                           // Display set number
-                                  return _setNumberWidget(
-          setIndex,
-          set["isCompleted"] ?? false, // Passa o estado de conclusão
-          () {
-            setState(() {
-              set["isCompleted"] = !(set["isCompleted"] ?? false); // Alterna o estado
-            });
-          },
-        );
+                          return _setNumberWidget(
+                            setIndex,
+                            set["isCompleted"] ??
+                                false, // Passa o estado de conclusão
+                            () {
+                              setState(() {
+                                set["isCompleted"] = !(set["isCompleted"] ??
+                                    false); // Alterna o estado
+                              });
+                            },
+                          );
                         } else if (fieldIndex == 1) {
                           // Editable carga field
                           return _editableField(
@@ -508,32 +549,34 @@ class StartTrainingState extends State<StartTraining> {
 
   // Atualização do widget setNumber com animação de cor verde para set concluído
   Widget _setNumberWidget(int setNumber, bool isCompleted, VoidCallback onTap) {
-   return GestureDetector(
-    onTap: onTap, // Chama a função passada para alterar o estado
-    child: Container(
-      decoration: BoxDecoration(
-        color: isCompleted ? Colors.green : Colors.black, // Muda a cor dependendo do estado
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-      ),
-      child: TextField(
-        controller: TextEditingController(text: "${setNumber + 1}"),
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 16, color: Colors.white),
-        readOnly: true,
-        cursorColor: Colors.orange,
-        decoration: const InputDecoration(
-          filled: true,
-          fillColor: Colors.black,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-            borderSide: BorderSide.none,
+    return GestureDetector(
+      onTap: onTap, // Chama a função passada para alterar o estado
+      child: Container(
+        decoration: BoxDecoration(
+          color: isCompleted
+              ? Colors.green
+              : Colors.black, // Muda a cor dependendo do estado
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+        child: TextField(
+          controller: TextEditingController(text: "${setNumber + 1}"),
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 16, color: Colors.white),
+          readOnly: true,
+          cursorColor: Colors.orange,
+          decoration: const InputDecoration(
+            filled: true,
+            fillColor: Colors.black,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 10),
           ),
-          contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 10),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   // Widget para campos editáveis sem alterações de cor
   Widget _editableField({
