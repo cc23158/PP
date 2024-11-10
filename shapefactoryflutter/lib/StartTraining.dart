@@ -271,7 +271,9 @@ class StartTrainingState extends State<StartTraining> {
     if (StartTraining.trainingIdAtivo != -1){
     StartTraining.listaAtiva = exercises;
     }
+
     super.dispose();
+
   }
 
   // Função para parar o temporizador e limpar o estado

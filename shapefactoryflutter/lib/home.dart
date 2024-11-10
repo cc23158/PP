@@ -8,8 +8,10 @@ import 'package:shapefactory/StartTraining.dart';
 
 class Home extends StatefulWidget {
   final clientId;
-  const Home({required this.clientId, super.key});
-
+  Home({required this.clientId, super.key});
+  static List listaCompleta = List.empty(growable: true);
+  static List<Map<String, dynamic>> clientTrainingsList = [];
+  static List<Map<String, dynamic>> defaultTrainingsList = [];
   @override
   HomeState createState() => HomeState();
 }
@@ -57,125 +59,146 @@ class HomeState extends State<Home> {
         _currentPageValue = cardPageController.page ?? 1000;
       });
     });
-
-    // Fetch trainings when the page initializes
-    fetchTrainings();
+    if (Home.listaCompleta.isEmpty) {
+      fetchTrainings();
+    } else {
+      setState(() {
+        fetchTrainings();
+      });
+    }
   }
 
   Widget getWidgetClient(Map<String, dynamic> treino) {
     return GestureDetector(
-      onTap: () async {
-        if (StartTraining.trainingIdAtivo == -1 ||
-            StartTraining.trainingIdAtivo == treino['training_id']) {
-          await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => StartTraining(
-                category: 1,
-                nome: treino['training_name'],
-                trainingId: treino['training_id'],
-                clientId: widget.clientId,
+        onTap: () async {
+          if (StartTraining.trainingIdAtivo == -1 ||
+              StartTraining.trainingIdAtivo == treino['training_id']) {
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => StartTraining(
+                  category: 1,
+                  nome: treino['training_name'],
+                  trainingId: treino['training_id'],
+                  clientId: widget.clientId,
+                ),
               ),
-            ),
-          );
-          setState(() {});
-        } else {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                backgroundColor: const Color.fromARGB(255, 32, 32, 32),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                title: const Text('Treino em andamento',
-                    style: TextStyle(
-                      color: Colors.white70,
-                    )),
-                content: const Text(
-                    'Por favor, termine seu treino atual antes de começar outro',
-                    style: TextStyle(
-                      color: Colors.white70,
-                    )),
-                actions: <Widget>[
-                  MaterialButton(
-                      color: Colors.orange,
-                      child: const Text("OK",
-                          style: TextStyle(
-                            color: Colors.white70,
-                          )),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      })
-                ],
-              );
-            },
-          );
-        }
-      },
-      child: Card(
-    color: Colors.black45,
-    elevation: 1,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12.0),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Align(
-            alignment: Alignment.topLeft,
-            child: Text(
-              treino['training_name'] ?? "Treino",
-              textAlign: TextAlign.start,
-              overflow: TextOverflow.clip,
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: Colors.white,
-              ),
+            );
+            setState(() {});
+          } else {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  backgroundColor: const Color.fromARGB(255, 32, 32, 32),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  title: const Text('Treino em andamento',
+                      style: TextStyle(
+                        color: Colors.white70,
+                      )),
+                  content: const Text(
+                      'Por favor, termine seu treino atual antes de começar outro',
+                      style: TextStyle(
+                        color: Colors.white70,
+                      )),
+                  actions: <Widget>[
+                    MaterialButton(
+                        color: Colors.orange,
+                        child: const Text("OK",
+                            style: TextStyle(
+                              color: Colors.white70,
+                            )),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        })
+                  ],
+                );
+              },
+            );
+          }
+          setState(() {
+            fetchTrainings();
+          });
+        },
+        child: Card(
+          color: Colors.black45,
+          elevation: 1,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    treino['training_name'] ?? "Treino",
+                    textAlign: TextAlign.start,
+                    overflow: TextOverflow.clip,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                treinoAtivo(treino)
+              ],
             ),
           ),
-          
-          if (StartTraining.trainingIdAtivo != treino['training_id']) // Condição para mostrar o ícone apenas se não for o treino ativo
-            PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert, color: Colors.white,),
-              onSelected: (String value) {
-                if (value == 'Editar') {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => EditTraining(
-                        category: 1,
-                        trainingId: treino['training_id'],
-                        clientId: widget.clientId,
-                        nome: treino["training_name"],
-                      ),
-                    ),
-                  );
-                } else if (value == 'Excluir') {
-                  deleteTraining(treino['training_id']);
-                }
-              },
-              itemBuilder: (BuildContext context) {
-                return [
-                  const PopupMenuItem<String>(
-                    value: 'Editar',
-                    child: Text('Editar'),
-                  ),
-                  const PopupMenuItem<String>(
-                    value: 'Excluir',
-                    child: Text('Excluir'),
-                  ),
-                ];
-              },
-            ) else // Placeholder para ocupar o espaço do PopupMenuButton
-            Padding(padding: EdgeInsets.fromLTRB(0, 0, 20, 0), child:SizedBox(height: 45, child: LoadingAnimationWidget.staggeredDotsWave(color: Colors.orange, size: 24), ) ,)
-          
+        ));
+  }
 
-        ],
-      ),
-    ),
-  )
-    );
+  Widget treinoAtivo(treino) {
+    if (StartTraining.trainingIdAtivo != treino['training_id']) {
+      // Condição para mostrar o ícone apenas se não for o treino ativo
+      return PopupMenuButton<String>(
+        icon: const Icon(
+          Icons.more_vert,
+          color: Colors.white,
+        ),
+        onSelected: (String value) {
+          if (value == 'Editar') {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => EditTraining(
+                  category: 1,
+                  trainingId: treino['training_id'],
+                  clientId: widget.clientId,
+                  nome: treino["training_name"],
+                ),
+              ),
+            );
+          } else if (value == 'Excluir') {
+            deleteTraining(treino['training_id']);
+          }
+        },
+        itemBuilder: (BuildContext context) {
+          return [
+            const PopupMenuItem<String>(
+              value: 'Editar',
+              child: Text('Editar'),
+            ),
+            const PopupMenuItem<String>(
+              value: 'Excluir',
+              child: Text('Excluir'),
+            ),
+          ];
+        },
+      );
+    } else {
+      // Placeholder para ocupar o espaço do PopupMenuButton
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+        child: SizedBox(
+          height: 45,
+          child: LoadingAnimationWidget.staggeredDotsWave(
+              color: Colors.orange, size: 24),
+        ),
+      );
+    }
   }
 
   Widget getWidgetDefault(Map<String, dynamic> treino) {
@@ -233,43 +256,47 @@ class HomeState extends State<Home> {
   }
 
   Future<void> fetchTrainings() async {
-    setState(() {
-      isLoading = true;
-    });
     try {
+      if (Home.listaCompleta.isEmpty){
+   setState(() {
+        isLoading = true;
+      });
       // Fetch client-specific trainings
-      final clientTrainingsList = await getTraining(widget.clientId);
+      Home.clientTrainingsList = await getTraining(widget.clientId);
 
       // Fetch default trainings
-      final defaultTrainingsList =
+      Home.defaultTrainingsList =
           await getTraining(1); // Assuming 1 is for default trainings
+      }
+   
+      
 
       setState(() {
         // Agrupa os treinos do usuário pelo ID do cliente
-        clientTrainingsWidgets = clientTrainingsList
+        clientTrainingsWidgets = Home.clientTrainingsList
             .map((treino) => getWidgetClient(treino))
             .toList();
 
         // Filtra e agrupa treinos padrão por categoria
-        defaultTrainingsCategory1 = defaultTrainingsList
+        defaultTrainingsCategory1 = Home.defaultTrainingsList
             .where((training) => training['training_category'] == 1)
             .map((treino) => getWidgetDefault(treino))
             .toList();
 
-        defaultTrainingsCategory2 = defaultTrainingsList
+        defaultTrainingsCategory2 = Home.defaultTrainingsList
             .where((training) => training['training_category'] == 2)
             .map((treino) => getWidgetDefault(treino))
             .toList();
 
-        defaultTrainingsCategory3 = defaultTrainingsList
+        defaultTrainingsCategory3 = Home.defaultTrainingsList
             .where((training) => training['training_category'] == 3)
             .map((treino) => getWidgetDefault(treino))
             .toList();
-        listaMestra.clear();
-        listaMestra.add(clientTrainingsWidgets);
-        listaMestra.add(defaultTrainingsCategory1);
-        listaMestra.add(defaultTrainingsCategory2);
-        listaMestra.add(defaultTrainingsCategory3);
+        Home.listaCompleta.clear();
+        Home.listaCompleta.add(clientTrainingsWidgets);
+        Home.listaCompleta.add(defaultTrainingsCategory1);
+        Home.listaCompleta.add(defaultTrainingsCategory2);
+        Home.listaCompleta.add(defaultTrainingsCategory3);
 
         isLoading = false;
       });
@@ -348,76 +375,81 @@ class HomeState extends State<Home> {
       },
     );
 
+
     // Atualiza o estado após retornar de StartTraining
     if (StartTraining.trainingTime.value == Duration.zero) {
       setState(() {
-        // Isso forçará uma atualização da interface, fazendo a barra desaparecer
+        fetchTrainings();
       });
     }
   }
 
-Widget buildTrainingBottomBar(BuildContext context, String trainingName) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5), // Reduzi o padding vertical para ajustar a posição
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(12), // Arredondamento das bordas
-      child: Container(
-        color: Colors.grey[900], // Cor de fundo similar ao Spotify
-        height: 70, // Altura ajustada para o container
-        child: GestureDetector(
-          onTap: () {
-            _showTrainingBottomSheet(
-              context,
-              StartTraining.trainingIdAtivo,
-              widget.clientId,
-              StartTraining.trainingNameAtivo,
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0), // Padding interno ajustado
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Nome do treino
-                Expanded(
-                  child: Text(
-                    trainingName,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+  Widget buildTrainingBottomBar(BuildContext context, String trainingName) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: 5,
+          vertical: 5), // Reduzi o padding vertical para ajustar a posição
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12), // Arredondamento das bordas
+        child: Container(
+          color: Colors.grey[900], // Cor de fundo similar ao Spotify
+          height: 70, // Altura ajustada para o container
+          child: GestureDetector(
+            onTap: () {
+              _showTrainingBottomSheet(
+                context,
+                StartTraining.trainingIdAtivo,
+                widget.clientId,
+                StartTraining.trainingNameAtivo,
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0), // Padding interno ajustado
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Nome do treino
+                  Expanded(
+                    child: Text(
+                      trainingName,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow:
+                          TextOverflow.ellipsis, // Trunca se o nome for longo
                     ),
-                    overflow: TextOverflow.ellipsis, // Trunca se o nome for longo
                   ),
-                ),
 
-                // Temporizador de treino
-                ValueListenableBuilder<Duration>(
-                  valueListenable: StartTraining.trainingTime,
-                  builder: (context, duration, child) {
-                    final hours = duration.inHours.toString().padLeft(2, '0');
-                    final minutes = duration.inMinutes
-                        .remainder(60)
-                        .toString()
-                        .padLeft(2, '0');
-                    final seconds = duration.inSeconds
-                        .remainder(60)
-                        .toString()
-                        .padLeft(2, '0');
-                    return Text(
-                      '$hours:$minutes:$seconds',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    );
-                  },
-                ),
-              ],
+                  // Temporizador de treino
+                  ValueListenableBuilder<Duration>(
+                    valueListenable: StartTraining.trainingTime,
+                    builder: (context, duration, child) {
+                      final hours = duration.inHours.toString().padLeft(2, '0');
+                      final minutes = duration.inMinutes
+                          .remainder(60)
+                          .toString()
+                          .padLeft(2, '0');
+                      final seconds = duration.inSeconds
+                          .remainder(60)
+                          .toString()
+                          .padLeft(2, '0');
+                      return Text(
+                        '$hours:$minutes:$seconds',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget ClientListCard(List<Widget> lista) {
     return ListView.builder(
@@ -586,10 +618,10 @@ Widget buildTrainingBottomBar(BuildContext context, String trainingName) {
                                           ),
                                           Expanded(
                                             child: (realIndex == 0)
-                                                ? ClientListCard(
-                                                    listaMestra[realIndex])
-                                                : DefaultListCard(
-                                                    listaMestra[realIndex]),
+                                                ? ClientListCard(Home
+                                                    .listaCompleta[realIndex])
+                                                : DefaultListCard(Home
+                                                    .listaCompleta[realIndex]),
                                           ),
                                         ],
                                       ),
@@ -664,7 +696,6 @@ class _AnimatedSlideBottomSheetContentState
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 
