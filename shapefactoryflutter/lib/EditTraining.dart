@@ -470,14 +470,14 @@ Future<int> deleteAndInsertAll(
                                         widget.clientId,
                                         widget.category,
                                         exercises);
-                                    Navigator.pop(context);
+                                    Navigator.pop(context, true);
                                   } else {
                                     await deleteAndInsertAll(widget.trainingId, exercises);
                                     if (controllerNome.text != widget.nome) {
                                       await updateTraining(
                                           widget.trainingId, controllerNome.text);
                                     }
-                                    Navigator.pop(context);
+                                    Navigator.pop(context, true);
                                   }
 
                                   

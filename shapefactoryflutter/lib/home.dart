@@ -159,9 +159,9 @@ class HomeState extends State<Home> {
           Icons.more_vert,
           color: Colors.white,
         ),
-        onSelected: (String value) {
+        onSelected: (String value) async {
           if (value == 'Editar') {
-            Navigator.of(context).push(
+          bool result = await Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => EditTraining(
                   category: 1,
@@ -171,8 +171,18 @@ class HomeState extends State<Home> {
                 ),
               ),
             );
+          if(result == true){
+            Home.listaCompleta.clear();
+            Home.clientTrainingsList.clear();
+            Home.defaultTrainingsList.clear();
+            fetchTrainings();
+
+          }
           } else if (value == 'Excluir') {
+            setState(() {
             deleteTraining(treino['training_id']);
+            });
+
           }
         },
         itemBuilder: (BuildContext context) {
@@ -317,6 +327,7 @@ class HomeState extends State<Home> {
       print(response.statusCode);
       if (response.statusCode == 200) {
         setState(() {
+          Home.listaCompleta.clear();
           fetchTrainings();
         });
         return 1;
@@ -468,18 +479,23 @@ class HomeState extends State<Home> {
             child: MaterialButton(
               height: 50,
               onPressed: () async {
-                await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => EditTraining(
-                      category: 1,
-                      trainingId: 0,
-                      clientId: widget.clientId,
-                      nome: "",
-                    ),
-                  ),
-                );
-                await fetchTrainings();
-              },
+               bool result = await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => EditTraining(
+                  category: 1,
+                  trainingId: 0,
+                  clientId: widget.clientId,
+                  nome: "",
+                ),
+              ),
+            );
+          if(result == true){
+            Home.listaCompleta.clear();
+            Home.clientTrainingsList.clear();
+            Home.defaultTrainingsList.clear();
+            fetchTrainings();
+
+          }},
               color: Colors.orange,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
