@@ -232,6 +232,80 @@ class StartTrainingState extends State<StartTraining> {
     }
   }
 
+Future<int> insertCompletedRecipes(int clientId, int trainingId) async {
+  print("listaAtiva: "+exercises.toString());
+  final url = Uri.https(
+    'shape-factory-5.onrender.com', 
+    '/history/insert', 
+    {'clientId': clientId.toString()},
+  );
+
+  List<Map<String, dynamic>?> recipes = exercises.map((exercise) {
+    var completedSets = exercise['sets']
+        .where((set) => set['isCompleted'] == true)
+        .map((set) => {
+              'carga': set['carga'] ?? '',
+              'reps': set['reps'] ?? '',
+            })
+        .toList();
+
+    if (completedSets.isEmpty) return null;
+
+    String weight = completedSets.map((set) => set['carga']).join('/');
+    String reps = completedSets.map((set) => set['reps']).join('/');
+    int setsCount = completedSets.length;
+
+    return {
+      "recipe_training": {
+        "training_id": trainingId,
+        "training_name": exercise['training_name'] ?? "Sem nome",
+        "training_category": exercise['training_category'] ?? 1,
+        "training_client": {
+          "client_id": clientId,
+        }
+      },
+      "recipe_exercise": {
+        "exercise_id": exercise['id'],
+        "exercise_name": exercise['name'] ?? "",
+        "exercise_image": exercise['image'] ?? "",
+        "exercise_path": exercise['path'] ?? "",
+        "exercise_muscle": {
+          "muscle_id": exercise['muscle_id'] ?? 0,
+          "muscle_name": exercise['muscle_name'] ?? ""
+        }
+      },
+      "recipe_weight": weight,
+      "recipe_reps": reps,
+      "recipe_sets": setsCount
+    };
+  }).where((recipe) => recipe != null).toList();
+
+  print("Filtered recipes: $recipes");  // Verifica conteúdo após o mapeamento
+  final body = jsonEncode(recipes);
+  print("JSON body: $body");
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      print('Exercícios concluídos inseridos com sucesso');
+      return 1;
+    } else {
+      print('Falha ao inserir exercícios: ${response.statusCode}');
+      print('Response: ${response.body}');
+      return 0;
+    }
+  } catch (error) {
+    print('Erro ao inserir exercícios: $error');
+    return 0;
+  }
+}
+
+
   @override
   void initState() {
     super.initState();
@@ -358,6 +432,7 @@ class StartTrainingState extends State<StartTraining> {
       isTraining = false;
       isLoading = false;
     });
+    await insertCompletedRecipes(widget.clientId, widget.trainingId);
     StartTraining.timer?.cancel();
     StartTraining.trainingIdAtivo = -1;
     StartTraining.trainingNameAtivo = "";
@@ -384,7 +459,7 @@ class StartTrainingState extends State<StartTraining> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 16),
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -413,15 +488,100 @@ class StartTrainingState extends State<StartTraining> {
                                 color: Colors.orange, size: 30),
                         onPressed: () async {
                           if (isTraining) {
-                            await _stopTraining(); // Para o treino
+showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  backgroundColor: const Color.fromARGB(255, 32, 32, 32),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  title: const Text('Salvar alterações',
+                      style: TextStyle(
+                        color: Colors.white70,
+                      )),
+                  content: const Text(
+                      'Você pode manter sua ficha como estava ou salvar as mudanças feitas durante o treino. Apenas sets concluídos serão salvos no seu histórico',
+                      style: TextStyle(
+                        color: Colors.white70,
+                      )),
+                  actions: <Widget>[
+                      MaterialButton(
+                        color: Colors.white10,
+                        child: const Text("Manter como estava",
+                            style: TextStyle(
+                              color: Colors.white70,
+                            )),
+                        onPressed: () async{
+                          await _stopTraining();
+                          Navigator.pop(context);
+                        }),
+                    MaterialButton(
+                        color: Colors.orange,
+                        child: const Text("Salvar",
+                            style: TextStyle(
+                              color: Colors.black,
+                            )),
+                        onPressed: () async{
+                          await _stopTraining();
+                          Navigator.pop(context);
+                        })
+                  ],
+                );
+              },
+            );
+                                 
                           } else {
-                            _startTraining(); // Inicia o treino
+                               showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  backgroundColor: const Color.fromARGB(255, 32, 32, 32),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  title: const Text('Iniciar treino',
+                      style: TextStyle(
+                        color: Colors.white70,
+                      )),
+                  content: const Text(
+                      'Tudo pronto para começar a treinar?',
+                      style: TextStyle(
+                        color: Colors.white70,
+                      )),
+                  actions: <Widget>[
+                      MaterialButton(
+                        color: Colors.white10,
+                        child: const Text("Ainda não",
+                            style: TextStyle(
+                              color: Colors.white70,
+                            )),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        }),
+                    MaterialButton(
+                        color: Colors.orange,
+                        child: const Text("Nasci pronto",
+                            style: TextStyle(
+                              color: Colors.black
+                            )),
+                        onPressed: () {
+                           _startTraining(); 
+                          Navigator.pop(context);
+                        })
+                  ],
+                );
+              },
+            );
+                           
                           }
                         },
                       )
                     ],
                   ),
+                  
                 ),
+                if (isTraining)
+                Text('Clique em um set para marca-lo como concluído', style: TextStyle(color: Colors.white60),), 
+
                 Expanded(
                   child: isApiLoading
                       ? Center(
@@ -541,11 +701,7 @@ class StartTrainingState extends State<StartTraining> {
                   exercise["id"],
                 ),
                 // Aqui pode incluir o widget personalizado para o cabeçalho
-                Text(
-                  "Clique no set para concluí-lo",
-                  style: TextStyle(color: Colors.black54, fontSize: 14),
-                  textAlign: TextAlign.start,
-                ),
+    
                 GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -632,33 +788,25 @@ class StartTrainingState extends State<StartTraining> {
 
   // Atualização do widget setNumber com animação de cor verde para set concluído
   Widget _setNumberWidget(int setNumber, bool isCompleted, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap, // Chama a função passada para alterar o estado
-      child: Container(
-        decoration: BoxDecoration(
-          color: isCompleted
-              ? Colors.green
-              : Colors.black, // Muda a cor dependendo do estado
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-        ),
-        child: TextField(
+  return TextField(
+
           controller: TextEditingController(text: "${setNumber + 1}"),
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 16, color: Colors.white),
+          onTap: isTraining ? onTap : VoidCallbackAction.new,
           readOnly: true,
           cursorColor: Colors.orange,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.black,
-            border: OutlineInputBorder(
+            fillColor: isCompleted ? Colors.orange : Colors.black,
+            border: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(12)),
               borderSide: BorderSide.none,
             ),
             contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 10),
           ),
-        ),
-      ),
-    );
+        );
+      
   }
 
   // Widget para campos editáveis sem alterações de cor
