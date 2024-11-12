@@ -161,7 +161,7 @@ class HomeState extends State<Home> {
         ),
         onSelected: (String value) async {
           if (value == 'Editar') {
-          bool result = await Navigator.of(context).push(
+            bool result = await Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => EditTraining(
                   category: 1,
@@ -171,18 +171,16 @@ class HomeState extends State<Home> {
                 ),
               ),
             );
-          if(result == true){
-            Home.listaCompleta.clear();
-            Home.clientTrainingsList.clear();
-            Home.defaultTrainingsList.clear();
-            fetchTrainings();
-
-          }
+            if (result == true) {
+              Home.listaCompleta.clear();
+              Home.clientTrainingsList.clear();
+              Home.defaultTrainingsList.clear();
+              fetchTrainings();
+            }
           } else if (value == 'Excluir') {
             setState(() {
-            deleteTraining(treino['training_id']);
+              deleteTraining(treino['training_id']);
             });
-
           }
         },
         itemBuilder: (BuildContext context) {
@@ -212,74 +210,112 @@ class HomeState extends State<Home> {
   }
 
   Widget getWidgetDefault(Map<String, dynamic> treino) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
-      child: Card(
-        color: const Color(0xffe0e0e0),
-        shadowColor: const Color(0xff000000),
-        elevation: 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-          side: const BorderSide(color: Color(0x4d9e9e9e), width: 1),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  treino['training_name'] ?? "Treino",
-                  textAlign: TextAlign.start,
-                  overflow: TextOverflow.clip,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                    color: Color(0xff000000),
-                  ),
+    return GestureDetector(
+        onTap: () async {
+          if (StartTraining.trainingIdAtivo == -1 ||
+              StartTraining.trainingIdAtivo == treino['training_id']) {
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => StartTraining(
+                  category: 1,
+                  nome: treino['training_name'],
+                  trainingId: treino['training_id'],
+                  clientId: 1,
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  MaterialButton(
-                    height: 52,
-                    color: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    onPressed: () async {},
-                    child: const Text(
-                      'Adicionar a meus treinos',
-                      style: TextStyle(color: Colors.white),
+            );
+            setState(() {});
+          } else {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  backgroundColor: const Color.fromARGB(255, 32, 32, 32),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  title: const Text('Treino em andamento',
+                      style: TextStyle(
+                        color: Colors.white70,
+                      )),
+                  content: const Text(
+                      'Por favor, termine seu treino atual antes de começar outro',
+                      style: TextStyle(
+                        color: Colors.white70,
+                      )),
+                  actions: <Widget>[
+                    MaterialButton(
+                        color: Colors.orange,
+                        child: const Text("OK",
+                            style: TextStyle(
+                              color: Colors.white70,
+                            )),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        })
+                  ],
+                );
+              },
+            );
+          }
+          setState(() {
+            fetchTrainings();
+          });
+        },
+        child: Card(
+          color: Colors.black45,
+          elevation: 1,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    treino['training_name'] ?? "Treino",
+                    textAlign: TextAlign.start,
+                    overflow: TextOverflow.clip,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: Colors.white,
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+                if (StartTraining.trainingIdAtivo == treino['training_id'])
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                    child: SizedBox(
+                      height: 45,
+                      child: LoadingAnimationWidget.staggeredDotsWave(
+                          color: Colors.orange, size: 24),
+                    ),
+                  )
+                  else
+                    SizedBox(height: 45,)
+                  
+              ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   Future<void> fetchTrainings() async {
     try {
-      if (Home.listaCompleta.isEmpty){
-   setState(() {
-        isLoading = true;
-      });
-      // Fetch client-specific trainings
-      Home.clientTrainingsList = await getTraining(widget.clientId);
+      if (Home.listaCompleta.isEmpty) {
+        setState(() {
+          isLoading = true;
+        });
+        // Fetch client-specific trainings
+        Home.clientTrainingsList = await getTraining(widget.clientId);
 
-      // Fetch default trainings
-      Home.defaultTrainingsList =
-          await getTraining(1); // Assuming 1 is for default trainings
+        // Fetch default trainings
+        Home.defaultTrainingsList =
+            await getTraining(1); // Assuming 1 is for default trainings
       }
-   
-      
 
       setState(() {
         // Agrupa os treinos do usuário pelo ID do cliente
@@ -386,7 +422,6 @@ class HomeState extends State<Home> {
       },
     );
 
-
     // Atualiza o estado após retornar de StartTraining
     if (StartTraining.trainingTime.value == Duration.zero) {
       setState(() {
@@ -479,23 +514,23 @@ class HomeState extends State<Home> {
             child: MaterialButton(
               height: 50,
               onPressed: () async {
-               bool result = await Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => EditTraining(
-                  category: 1,
-                  trainingId: 0,
-                  clientId: widget.clientId,
-                  nome: "",
-                ),
-              ),
-            );
-          if(result == true){
-            Home.listaCompleta.clear();
-            Home.clientTrainingsList.clear();
-            Home.defaultTrainingsList.clear();
-            fetchTrainings();
-
-          }},
+                bool result = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => EditTraining(
+                      category: 1,
+                      trainingId: 0,
+                      clientId: widget.clientId,
+                      nome: "",
+                    ),
+                  ),
+                );
+                if (result == true) {
+                  Home.listaCompleta.clear();
+                  Home.clientTrainingsList.clear();
+                  Home.defaultTrainingsList.clear();
+                  fetchTrainings();
+                }
+              },
               color: Colors.orange,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
@@ -529,7 +564,6 @@ class HomeState extends State<Home> {
         itemCount: lista.length,
         itemBuilder: (context, int i) {
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: lista[i],
           );
         },

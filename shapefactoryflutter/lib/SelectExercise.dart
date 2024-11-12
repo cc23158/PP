@@ -393,6 +393,8 @@ void fetchExercises() async {
     print(lista);
   }
 
+ 
+
     @override
   void dispose() {
     selectedExercisesNotifier.dispose();

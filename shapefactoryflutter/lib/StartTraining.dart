@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:shapefactory/SelectExercise.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shapefactory/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StartTraining extends StatefulWidget {
   final category;
@@ -248,11 +249,86 @@ class StartTrainingState extends State<StartTraining> {
         isLoading = true;
       });
     }
+
+    _checkAndShowPopup();
   }
 
-  // Inicializa o plugin de notificação para iOS e Android
+   Future<void> _checkAndShowPopup() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool showPopup = prefs.getBool('showDefaultPopup') ?? true;
 
-  // Função para iniciar o temporizador
+    if (widget.clientId == 1 && showPopup) {
+      _showPopup();
+    }
+  }
+
+  void _showPopup() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      bool doNotShowAgain = false;
+
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return AlertDialog(
+            backgroundColor: const Color.fromARGB(255, 32, 32, 32),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
+            title: const Text(
+              'Treino padrão',
+              style: TextStyle(
+                color: Colors.white70,
+              ),
+            ),
+            content: const Text(
+              'Treinos padrões são apenas para visualização, favorite o treino para poder altera-lo a partir do "Meus Treinos"',
+              style: TextStyle(
+                color: Colors.white70,
+              ),
+            ),
+            actions: <Widget>[
+              Row(
+                children: [
+                  Checkbox(
+                    value: doNotShowAgain,
+                    checkColor: Colors.orange,
+                    activeColor: Colors.white,
+                    onChanged: (value) {
+                      setState(() {
+                        doNotShowAgain = value!;
+                      });
+                    },
+                  ),
+                  const Text(
+                    "Não mostrar novamente",
+                    style: TextStyle(color: Colors.white54),
+                  ),
+                ],
+              ),
+              MaterialButton(
+                color: Colors.orange,
+                child: const Text(
+                  "OK",
+                  style: TextStyle(
+                    color: Colors.white70,
+                  ),
+                ),
+                onPressed: () async {
+                  if (doNotShowAgain) {
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setBool('showDefaultPopup', false);
+                  }
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
+
   void _startTraining() {
     setState(() {
       isTraining = true;
