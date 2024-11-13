@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:shapefactory/ActiveTrainingBar.dart';
 import 'package:shapefactory/EditTraining.dart';
 import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -12,6 +13,7 @@ class Home extends StatefulWidget {
   static List listaCompleta = List.empty(growable: true);
   static List<Map<String, dynamic>> clientTrainingsList = [];
   static List<Map<String, dynamic>> defaultTrainingsList = [];
+  static int clientIdAtivo = 0;
   @override
   HomeState createState() => HomeState();
 }
@@ -53,7 +55,7 @@ class HomeState extends State<Home> {
     super.initState();
 
     // Initialize PageController
-
+    Home.clientIdAtivo = widget.clientId;
     cardPageController.addListener(() {
       setState(() {
         _currentPageValue = cardPageController.page ?? 1000;
@@ -67,6 +69,31 @@ class HomeState extends State<Home> {
       });
     }
   }
+
+  void _showTrainingBottomSheet(BuildContext context) async {
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setModalState) {
+          return AnimatedTrainingSheet(
+            trainingId: StartTraining.trainingIdAtivo,
+            clientId: widget.clientId,
+            nome: StartTraining.trainingNameAtivo,
+          );
+        },
+      );
+    },
+  );
+
+  if (StartTraining.trainingTime.value == Duration.zero) {
+    setState(() {
+      fetchTrainings();
+    });
+  }
+}
 
   Widget getWidgetClient(Map<String, dynamic> treino) {
     return GestureDetector(
@@ -403,99 +430,9 @@ class HomeState extends State<Home> {
     }
   }
 
-  void _showTrainingBottomSheet(
-      BuildContext context, int trainingId, int clientId, String nome) async {
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setModalState) {
-            return _AnimatedSlideBottomSheetContent(
-              trainingId: trainingId,
-              clientId: clientId,
-              nome: nome,
-            );
-          },
-        );
-      },
-    );
 
-    // Atualiza o estado após retornar de StartTraining
-    if (StartTraining.trainingTime.value == Duration.zero) {
-      setState(() {
-        fetchTrainings();
-      });
-    }
-  }
 
-  Widget buildTrainingBottomBar(BuildContext context, String trainingName) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 5,
-          vertical: 5), // Reduzi o padding vertical para ajustar a posição
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12), // Arredondamento das bordas
-        child: Container(
-          color: Colors.grey[900], // Cor de fundo similar ao Spotify
-          height: 70, // Altura ajustada para o container
-          child: GestureDetector(
-            onTap: () {
-              _showTrainingBottomSheet(
-                context,
-                StartTraining.trainingIdAtivo,
-                widget.clientId,
-                StartTraining.trainingNameAtivo,
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0), // Padding interno ajustado
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Nome do treino
-                  Expanded(
-                    child: Text(
-                      trainingName,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow:
-                          TextOverflow.ellipsis, // Trunca se o nome for longo
-                    ),
-                  ),
-
-                  // Temporizador de treino
-                  ValueListenableBuilder<Duration>(
-                    valueListenable: StartTraining.trainingTime,
-                    builder: (context, duration, child) {
-                      final hours = duration.inHours.toString().padLeft(2, '0');
-                      final minutes = duration.inMinutes
-                          .remainder(60)
-                          .toString()
-                          .padLeft(2, '0');
-                      final seconds = duration.inSeconds
-                          .remainder(60)
-                          .toString()
-                          .padLeft(2, '0');
-                      return Text(
-                        '$hours:$minutes:$seconds',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  
 
   Widget ClientListCard(List<Widget> lista) {
     return ListView.builder(
@@ -641,7 +578,7 @@ class HomeState extends State<Home> {
                                 1 - (difference * 0.1).clamp(0.0, 0.1);
 
                             return TweenAnimationBuilder(
-                              duration: const Duration(milliseconds: 100),
+                              duration: const Duration(milliseconds: 50),
                               tween: Tween(begin: scale, end: scale),
                               builder: (context, double value, child) {
                                 return Transform.scale(
@@ -686,86 +623,12 @@ class HomeState extends State<Home> {
                     ],
                   ),
                   if (StartTraining.trainingIdAtivo != -1)
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: buildTrainingBottomBar(
-                          context,
-                          StartTraining
-                              .trainingNameAtivo), // Passe o nome do treino
-                    ),
+                  ActiveTrainingBar(
+                        clientId: widget.clientId, onTap: _showTrainingBottomSheet,)
+                    
                 ],
               ));
   }
-}
 
-class _AnimatedSlideBottomSheetContent extends StatefulWidget {
-  final int trainingId;
-  final int clientId;
-  final String nome;
-
-  const _AnimatedSlideBottomSheetContent({
-    required this.trainingId,
-    required this.clientId,
-    required this.nome,
-  });
-
-  @override
-  _AnimatedSlideBottomSheetContentState createState() =>
-      _AnimatedSlideBottomSheetContentState();
-}
-
-class _AnimatedSlideBottomSheetContentState
-    extends State<_AnimatedSlideBottomSheetContent>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<Offset> _slideAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration:
-          Duration(milliseconds: 500), // Duração da animação de surgimento
-      vsync: this,
-    );
-
-    // Define a animação para deslizar de baixo para cima
-    _slideAnimation = Tween<Offset>(
-      begin: Offset(0, 1), // Começa abaixo da tela
-      end: Offset(0, 0), // Termina na posição original
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
-
-    // Inicia a animação ao construir o widget
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SlideTransition(
-      position: _slideAnimation,
-      child: DraggableScrollableSheet(
-        initialChildSize: 1,
-        minChildSize: 0.4,
-        maxChildSize: 1,
-        builder: (BuildContext context, ScrollController scrollController) {
-          return StartTraining(
-            category: 1,
-            trainingId: widget.trainingId,
-            clientId: widget.clientId,
-            nome: widget.nome,
-          );
-        },
-      ),
-    );
-  }
+  
 }

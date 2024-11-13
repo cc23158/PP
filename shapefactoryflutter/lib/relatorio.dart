@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_file.dart';
+import 'package:intl/intl.dart';
+import 'package:shapefactory/ActiveTrainingBar.dart';
+import 'package:shapefactory/StartTraining.dart';
+import 'package:shapefactory/home.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:convert';
@@ -29,6 +34,32 @@ class RelatorioState extends State<Relatorio> {
     } else {
       filterDataByPeriod();
     }
+
+  }
+
+  void _showTrainingBottomSheet(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return AnimatedTrainingSheet(
+              trainingId: StartTraining.trainingIdAtivo,
+              clientId: Home.clientIdAtivo,
+              nome: StartTraining.trainingNameAtivo,
+            );
+          },
+        );
+      },
+    );
+
+    if (StartTraining.trainingTime.value == Duration.zero) {
+      setState(() {
+        fetchTrainingData();
+      });
+    }
   }
 
   Future<void> fetchTrainingData() async {
@@ -47,7 +78,8 @@ class RelatorioState extends State<Relatorio> {
       });
 
       if (muscleResponse.statusCode == 200) {
-        final List<dynamic> muscleData = json.decode(utf8.decode(muscleResponse.bodyBytes));
+        final List<dynamic> muscleData =
+            json.decode(utf8.decode(muscleResponse.bodyBytes));
 
         allMuscles.clear();
         for (var muscle in muscleData) {
@@ -89,11 +121,13 @@ class RelatorioState extends State<Relatorio> {
 
     // Processa os dados dos treinos
     Map<DateTime, List> groupedExercises = {};
-    Map<String, int> muscleCounter = Map.from(allMuscles.map((key, value) => MapEntry(key, 0)));
+    Map<String, int> muscleCounter =
+        Map.from(allMuscles.map((key, value) => MapEntry(key, 0)));
 
     for (var item in filteredData) {
       DateTime exerciseDate = DateTime.parse(item['history_date']);
-      String muscleName = item['history_exercise']['exercise_muscle']['muscle_name'];
+      String muscleName =
+          item['history_exercise']['exercise_muscle']['muscle_name'];
 
       // Agrupa exercícios pela data
       groupedExercises.putIfAbsent(exerciseDate, () => []).add(item);
@@ -128,136 +162,214 @@ class RelatorioState extends State<Relatorio> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff000000),
-      body: Stack(children: [ Padding(
-        padding: EdgeInsets.fromLTRB(16, 30, 16, 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(padding: EdgeInsets.fromLTRB(4, 0, 0, 0), child:  const Text(
-              "Relatório",
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 22,
-                color: Colors.white,
-              ),
-            ),),
-           
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: periods.map((period) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  child: ChoiceChip(
-                    label: Text(
-                      period,
+        backgroundColor: const Color(0xff000000),
+        body: Stack(children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 30, 16, 8),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(4, 0, 0, 0),
+                    child: const Text(
+                      "Relatório",
                       style: TextStyle(
-                        color: selectedPeriod == period ? Colors.black : Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 22,
+                        color: Colors.white,
                       ),
                     ),
-                    selected: selectedPeriod == period,
-                    selectedColor: Colors.orange,
-                    onSelected: (selected) {
-                      if (selected) {
-                        setState(() {
-                          selectedPeriod = period;
-                          filterDataByPeriod();
-                        });
-                      }
-                    },
-                    backgroundColor: Colors.grey[800],
                   ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 20),
-            if (isLoading)
-              const Center(child: CircularProgressIndicator())
-            else
-              ...[
-                Card(
-                  color: Colors.grey[900],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        const Text(
-                          "Dias Treinados",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                        Text(
-                          "$totalTreinos",
-                          style: const TextStyle(
-                            color: Colors.orange,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Card(
-                  color: Colors.grey[900],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      
-                      children: [
-                        const Text(
-                          "Músculos Mais Treinados",
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                        SizedBox(height: 50,),
-                        SizedBox(
-                          height: 250,
-                          
-                          child: RadarChart(
-                            RadarChartData(
-                              titleTextStyle: TextStyle(color: Colors.white54),
-                              getTitle: (value, angle) {
-                                var muscles = muscleFrequency.keys.toList();
-                                return muscles.isNotEmpty
-                                    ? RadarChartTitle(
-                                        text: muscles[value.toInt() % muscles.length].toString(),
-                                      )
-                                    : const RadarChartTitle(text: '');
-                              },
-                              borderData: FlBorderData(show: false),
-                              radarShape: RadarShape.circle,
-                              dataSets: [
-                                RadarDataSet(
-                                  dataEntries: muscleFrequency.values
-                                      .map((value) => RadarEntry(value: value.toDouble()))
-                                      .toList(),
-                                  borderColor: Colors.orange,
-                                  fillColor: Colors.orange.withOpacity(0.3),
-                                  entryRadius: 3,
-                                  borderWidth: 2,
-                                ),
-                              ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: periods.map((period) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: ChoiceChip(
+                          label: Text(
+                            period,
+                            style: TextStyle(
+                              color: selectedPeriod == period
+                                  ? Colors.black
+                                  : Colors.white,
                             ),
                           ),
+                          selected: selectedPeriod == period,
+                          selectedColor: Colors.orange,
+                          onSelected: (selected) {
+                            if (selected) {
+                              setState(() {
+                                selectedPeriod = period;
+                                filterDataByPeriod();
+                              });
+                            }
+                          },
+                          backgroundColor: Colors.grey[800],
                         ),
-                         SizedBox(height: 50,)
-                      ],
-                    ),
+                      );
+                    }).toList(),
                   ),
-                ),
-               
-              ],
-          ],
-        ),
-      ),
-
-   ] ));
+                  const SizedBox(height: 20),
+                  if (isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else ...[
+                    Card(
+                      color: Colors.grey[900],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            const Text(
+                              "Dias Treinados",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                            Text(
+                              "$totalTreinos",
+                              style: const TextStyle(
+                                color: Colors.orange,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Card(
+                      color: Colors.grey[900],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Músculos Atingidos",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                            SizedBox(
+                              height: 50,
+                            ),
+                            SizedBox(
+                              height: 250,
+                              child: RadarChart(
+                                RadarChartData(
+                                  titleTextStyle:
+                                      TextStyle(color: Colors.white54),
+                                  getTitle: (value, angle) {
+                                    var muscles = muscleFrequency.keys.toList();
+                                    return muscles.isNotEmpty
+                                        ? RadarChartTitle(
+                                            text: muscles[value.toInt() %
+                                                    muscles.length]
+                                                .toString(),
+                                          )
+                                        : const RadarChartTitle(text: '');
+                                  },
+                                  borderData: FlBorderData(show: false),
+                                  radarShape: RadarShape.circle,
+                                  dataSets: [
+                                    RadarDataSet(
+                                      dataEntries: muscleFrequency.values
+                                          .map((value) => RadarEntry(
+                                              value: value.toDouble()))
+                                          .toList(),
+                                      borderColor: Colors.orange,
+                                      fillColor: Colors.orange.withOpacity(0.3),
+                                      entryRadius: 3,
+                                      borderWidth: 2,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 50,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Card(
+                        color: Colors.grey[900],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Calendário de Treinos",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18),
+                              ),
+                              const SizedBox(height: 10),
+                              TableCalendar(
+                                firstDay: DateTime.utc(2023, 1, 1),
+                                lastDay: DateTime.now(),
+                                focusedDay: DateTime.now(),
+                                calendarFormat: CalendarFormat.month,
+                                calendarStyle: CalendarStyle(
+                                  markerDecoration: BoxDecoration(
+                                    color: Colors.orange,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  defaultTextStyle:
+                                      TextStyle(color: Colors.white),
+                                  weekendTextStyle:
+                                      TextStyle(color: Colors.white),
+                                  outsideTextStyle:
+                                      TextStyle(color: Colors.white),
+                                  disabledTextStyle: TextStyle(
+                                      color: Colors.white.withOpacity(0.4)),
+                                ),
+                                headerStyle: HeaderStyle(
+                                  titleTextStyle: TextStyle(
+                                      color: Colors
+                                          .white), // Título do mês em branco
+                                  formatButtonVisible:
+                                      false, // Esconde o botão de formatação do calendário
+                                  leftChevronIcon: Icon(Icons.chevron_left,
+                                      color: Colors.white),
+                                  rightChevronIcon: Icon(Icons.chevron_right,
+                                      color: Colors.white),
+                                  titleCentered:
+                                      true, // Deixa o título centralizado
+                                ),
+                                eventLoader: (day) {
+                                  DateTime normalizedDay = DateTime(
+                                      day.year, day.month, day.day, 0, 0, 0);
+                                  if (allTreinosPorDia
+                                      .containsKey(normalizedDay)) {
+                                    return [normalizedDay];
+                                  }
+                                  return [];
+                                },
+                              ),
+                            ],
+                          ),
+                        ))
+                  ],
+                ],
+              ),
+            ),
+          ),
+          if (StartTraining.trainingIdAtivo != -1)
+            ActiveTrainingBar(
+              clientId: Home.clientIdAtivo,
+              onTap: _showTrainingBottomSheet,
+            )
+        ]));
   }
 }
