@@ -3,6 +3,7 @@ import 'package:intl/date_symbol_data_file.dart';
 import 'package:intl/intl.dart';
 import 'package:shapefactory/ActiveTrainingBar.dart';
 import 'package:shapefactory/StartTraining.dart';
+import 'package:shapefactory/ViewHistory.dart';
 import 'package:shapefactory/home.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -325,6 +326,8 @@ class RelatorioState extends State<Relatorio> {
                                     color: Colors.orange,
                                     shape: BoxShape.circle,
                                   ),
+                                  todayDecoration: BoxDecoration(color: Colors.black, shape: BoxShape.circle),
+                                  
                                   defaultTextStyle:
                                       TextStyle(color: Colors.white),
                                   weekendTextStyle:
@@ -348,6 +351,7 @@ class RelatorioState extends State<Relatorio> {
                                       true, // Deixa o título centralizado
                                 ),
                                 eventLoader: (day) {
+                                  print(allTreinosPorDia);
                                   DateTime normalizedDay = DateTime(
                                       day.year, day.month, day.day, 0, 0, 0);
                                   if (allTreinosPorDia
@@ -356,6 +360,33 @@ class RelatorioState extends State<Relatorio> {
                                   }
                                   return [];
                                 },
+                         onDaySelected: (selectedDay, focusedDay) {
+  // Normalizando o dia para garantir que a hora, minuto e segundo sejam 00:00
+  DateTime normalizedDay = DateTime(selectedDay.year, selectedDay.month, selectedDay.day, 0, 0, 0);
+
+  // Verificando se existem treinos para o dia selecionado
+  if (allTreinosPorDia.containsKey(normalizedDay)) {
+    // Obtendo a lista de treinos para o dia selecionado
+    List treinoDia = allTreinosPorDia[normalizedDay]!;
+
+    // Navegando para a página StartTraining e passando os dados de treino
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ViewHistory(       
+          nome: "Treino no dia ${normalizedDay.day}/${normalizedDay.month}/${normalizedDay.year}",           
+          listaHistory: treinoDia,
+
+        ),
+      ),
+    );
+  } else {
+    // Se não houver treino para o dia selecionado, pode-se exibir uma mensagem
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Nenhum treino encontrado para este dia!')),
+    );
+  }
+},
                               ),
                             ],
                           ),
