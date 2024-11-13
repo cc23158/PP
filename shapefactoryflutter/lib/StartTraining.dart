@@ -31,7 +31,6 @@ class StartTraining extends StatefulWidget {
 }
 
 class StartTrainingState extends State<StartTraining> {
-
   var listElemento = List<Widget>.empty(growable: true);
   var controllerNome;
   bool isLoading = false;
@@ -73,7 +72,7 @@ class StartTrainingState extends State<StartTraining> {
     // Preparação dos dados dos exercícios para envio
     List<Map<String, dynamic>> recipes = selectedExercises.map((exercise) {
       String exerciseId = exercise['id'].toString();
-      List<Map<String, String>> sets = exercise['sets'];
+      List<Map<String, dynamic>> sets = exercise['sets'];
 
       // Concatenar cargas e reps com "/"
       String weight = sets.map((set) => set['carga'] ?? "").join('/');
@@ -232,87 +231,88 @@ class StartTrainingState extends State<StartTraining> {
     }
   }
 
-Future<int> insertCompletedRecipes(int clientId, int trainingId) async {
-  print("listaAtiva: "+exercises.toString());
-  final url = Uri.https(
-    'shape-factory-5.onrender.com', 
-    '/history/insert', 
-    {'clientId': clientId.toString()},
-  );
-
-  List<Map<String, dynamic>?> recipes = exercises.map((exercise) {
-    var completedSets = exercise['sets']
-        .where((set) => set['isCompleted'] == true)
-        .map((set) => {
-              'carga': set['carga'] ?? '',
-              'reps': set['reps'] ?? '',
-            })
-        .toList();
-
-    if (completedSets.isEmpty) return null;
-
-    String weight = completedSets.map((set) => set['carga']).join('/');
-    String reps = completedSets.map((set) => set['reps']).join('/');
-    int setsCount = completedSets.length;
-
-    return {
-      "recipe_training": {
-        "training_id": trainingId,
-        "training_name": exercise['training_name'] ?? "Sem nome",
-        "training_category": exercise['training_category'] ?? 1,
-        "training_client": {
-          "client_id": clientId,
-        }
-      },
-      "recipe_exercise": {
-        "exercise_id": exercise['id'],
-        "exercise_name": exercise['name'] ?? "",
-        "exercise_image": exercise['image'] ?? "",
-        "exercise_path": exercise['path'] ?? "",
-        "exercise_muscle": {
-          "muscle_id": exercise['muscle_id'] ?? 0,
-          "muscle_name": exercise['muscle_name'] ?? ""
-        }
-      },
-      "recipe_weight": weight,
-      "recipe_reps": reps,
-      "recipe_sets": setsCount
-    };
-  }).where((recipe) => recipe != null).toList();
-
-  print("Filtered recipes: $recipes");  // Verifica conteúdo após o mapeamento
-  final body = jsonEncode(recipes);
-  print("JSON body: $body");
-
-  try {
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: body,
+  Future<int> insertCompletedRecipes(int clientId, int trainingId) async {
+    print("listaAtiva: " + exercises.toString());
+    final url = Uri.https(
+      'shape-factory-5.onrender.com',
+      '/history/insert',
+      {'clientId': clientId.toString()},
     );
 
-    if (response.statusCode == 200) {
-      print('Exercícios concluídos inseridos com sucesso');
-      return 1;
-    } else {
-      print('Falha ao inserir exercícios: ${response.statusCode}');
-      print('Response: ${response.body}');
+    List<Map<String, dynamic>?> recipes = exercises
+        .map((exercise) {
+          var completedSets = exercise['sets']
+              .where((set) => set['isCompleted'] == true)
+              .map((set) => {
+                    'carga': set['carga'] ?? '',
+                    'reps': set['reps'] ?? '',
+                  })
+              .toList();
+
+          if (completedSets.isEmpty) return null;
+
+          String weight = completedSets.map((set) => set['carga']).join('/');
+          String reps = completedSets.map((set) => set['reps']).join('/');
+          int setsCount = completedSets.length;
+
+          return {
+            "recipe_training": {
+              "training_id": trainingId,
+              "training_name": exercise['training_name'] ?? "Sem nome",
+              "training_category": exercise['training_category'] ?? 1,
+              "training_client": {
+                "client_id": clientId,
+              }
+            },
+            "recipe_exercise": {
+              "exercise_id": exercise['id'],
+              "exercise_name": exercise['name'] ?? "",
+              "exercise_image": exercise['image'] ?? "",
+              "exercise_path": exercise['path'] ?? "",
+              "exercise_muscle": {
+                "muscle_id": exercise['muscle_id'] ?? 0,
+                "muscle_name": exercise['muscle_name'] ?? ""
+              }
+            },
+            "recipe_weight": weight,
+            "recipe_reps": reps,
+            "recipe_sets": setsCount
+          };
+        })
+        .where((recipe) => recipe != null)
+        .toList();
+
+    print("Filtered recipes: $recipes"); // Verifica conteúdo após o mapeamento
+    final body = jsonEncode(recipes);
+    print("JSON body: $body");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        print('Exercícios concluídos inseridos com sucesso');
+        return 1;
+      } else {
+        print('Falha ao inserir exercícios: ${response.statusCode}');
+        print('Response: ${response.body}');
+        return 0;
+      }
+    } catch (error) {
+      print('Erro ao inserir exercícios: $error');
       return 0;
     }
-  } catch (error) {
-    print('Erro ao inserir exercícios: $error');
-    return 0;
   }
-}
-
 
   @override
   void initState() {
     super.initState();
     if (StartTraining.listaAtiva.isEmpty) {
       fetchRecipe();
-    }
-    else {
+    } else {
       exercises = StartTraining.listaAtiva;
     }
 
@@ -327,7 +327,7 @@ Future<int> insertCompletedRecipes(int clientId, int trainingId) async {
     _checkAndShowPopup();
   }
 
-   Future<void> _checkAndShowPopup() async {
+  Future<void> _checkAndShowPopup() async {
     final prefs = await SharedPreferences.getInstance();
     final bool showPopup = prefs.getBool('showDefaultPopup') ?? true;
 
@@ -337,71 +337,71 @@ Future<int> insertCompletedRecipes(int clientId, int trainingId) async {
   }
 
   void _showPopup() {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      bool doNotShowAgain = false;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        bool doNotShowAgain = false;
 
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return AlertDialog(
-            backgroundColor: const Color.fromARGB(255, 32, 32, 32),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
-            title: const Text(
-              'Treino padrão',
-              style: TextStyle(
-                color: Colors.white70,
-              ),
-            ),
-            content: const Text(
-              'Treinos padrões são apenas para visualização, favorite o treino para poder altera-lo a partir do "Meus Treinos"',
-              style: TextStyle(
-                color: Colors.white70,
-              ),
-            ),
-            actions: <Widget>[
-              Row(
-                children: [
-                  Checkbox(
-                    value: doNotShowAgain,
-                    checkColor: Colors.orange,
-                    activeColor: Colors.white,
-                    onChanged: (value) {
-                      setState(() {
-                        doNotShowAgain = value!;
-                      });
-                    },
-                  ),
-                  const Text(
-                    "Não mostrar novamente",
-                    style: TextStyle(color: Colors.white54),
-                  ),
-                ],
-              ),
-              MaterialButton(
-                color: Colors.orange,
-                child: const Text(
-                  "OK",
-                  style: TextStyle(
-                    color: Colors.white70,
-                  ),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              backgroundColor: const Color.fromARGB(255, 32, 32, 32),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              title: const Text(
+                'Treino padrão',
+                style: TextStyle(
+                  color: Colors.white70,
                 ),
-                onPressed: () async {
-                  if (doNotShowAgain) {
-                    final prefs = await SharedPreferences.getInstance();
-                    prefs.setBool('showDefaultPopup', false);
-                  }
-                  Navigator.of(context).pop();
-                },
               ),
-            ],
-          );
-        },
-      );
-    },
-  );
-}
+              content: const Text(
+                'Treinos padrões são apenas para visualização, favorite o treino para poder altera-lo a partir do "Meus Treinos"',
+                style: TextStyle(
+                  color: Colors.white70,
+                ),
+              ),
+              actions: <Widget>[
+                Row(
+                  children: [
+                    Checkbox(
+                      value: doNotShowAgain,
+                      checkColor: Colors.orange,
+                      activeColor: Colors.white,
+                      onChanged: (value) {
+                        setState(() {
+                          doNotShowAgain = value!;
+                        });
+                      },
+                    ),
+                    const Text(
+                      "Não mostrar novamente",
+                      style: TextStyle(color: Colors.white54),
+                    ),
+                  ],
+                ),
+                MaterialButton(
+                  color: Colors.orange,
+                  child: const Text(
+                    "OK",
+                    style: TextStyle(
+                      color: Colors.white70,
+                    ),
+                  ),
+                  onPressed: () async {
+                    if (doNotShowAgain) {
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setBool('showDefaultPopup', false);
+                    }
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   void _startTraining() {
     setState(() {
@@ -413,17 +413,15 @@ Future<int> insertCompletedRecipes(int clientId, int trainingId) async {
     });
     StartTraining.trainingIdAtivo = widget.trainingId;
     StartTraining.trainingNameAtivo = widget.nome;
-    
   }
 
   @override
   void dispose() {
-    if (StartTraining.trainingIdAtivo != -1){
-    StartTraining.listaAtiva = exercises;
+    if (StartTraining.trainingIdAtivo != -1) {
+      StartTraining.listaAtiva = exercises;
     }
 
     super.dispose();
-
   }
 
   // Função para parar o temporizador e limpar o estado
@@ -484,104 +482,154 @@ Future<int> insertCompletedRecipes(int clientId, int trainingId) async {
                         icon: isTraining
                             ? const Icon(Icons.stop,
                                 color: Colors.red, size: 30)
-                            : const Icon(Icons.play_arrow_rounded,
-                                color: Colors.orange, size: 30),
+                            : (widget.clientId != 1) ? const Icon(Icons.play_arrow_rounded,
+                                color: Colors.orange, size: 30) : const Icon(Icons.abc, color: Colors.black,),
                         onPressed: () async {
-                          if (isTraining) {
-showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  backgroundColor: const Color.fromARGB(255, 32, 32, 32),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  title: const Text('Salvar alterações',
-                      style: TextStyle(
-                        color: Colors.white70,
-                      )),
-                  content: const Text(
-                      'Você pode manter sua ficha como estava ou salvar as mudanças feitas durante o treino. Apenas sets concluídos serão salvos no seu histórico',
-                      style: TextStyle(
-                        color: Colors.white70,
-                      )),
-                  actions: <Widget>[
-                      MaterialButton(
-                        color: Colors.white10,
-                        child: const Text("Manter como estava",
-                            style: TextStyle(
-                              color: Colors.white70,
-                            )),
-                        onPressed: () async{
-                          await _stopTraining();
-                          Navigator.pop(context);
-                        }),
-                    MaterialButton(
-                        color: Colors.orange,
-                        child: const Text("Salvar",
-                            style: TextStyle(
-                              color: Colors.black,
-                            )),
-                        onPressed: () async{
-                          await _stopTraining();
-                          Navigator.pop(context);
-                        })
-                  ],
-                );
-              },
-            );
-                                 
+                          if (widget.clientId != 1){
+                         if (isTraining) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  bool isLoading =
+                                      false; // Estado para controlar a barra de carregamento
+
+                                  // Widget principal do AlertDialog com barra de carregamento
+                                  return StatefulBuilder(
+                                    builder: (context, setState) {
+                                      return AlertDialog(
+                                        backgroundColor: const Color.fromARGB(
+                                            255, 32, 32, 32),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        title: Column(
+                                          children: [
+                                            const Text(
+                                              'Salvar alterações',
+                                              style: TextStyle(
+                                                color: Colors.white70,
+                                              ),
+                                            ),
+                                            if (isLoading)
+                                              const Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 8.0),
+                                                child: LinearProgressIndicator(
+                                                  color: Colors.orange,
+                                                  backgroundColor:
+                                                      Colors.white10,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                        content: const Text(
+                                          'Você pode manter sua ficha como estava ou salvar as mudanças feitas durante o treino. Apenas sets concluídos serão salvos no seu histórico',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                          ),
+                                        ),
+                                        actions: <Widget>[
+                                          MaterialButton(
+                                            color: Colors.white10,
+                                            child: const Text(
+                                              "Manter como estava",
+                                              style: TextStyle(
+                                                color: Colors.white70,
+                                              ),
+                                            ),
+                                            onPressed: () async {
+                                              setState(() {
+                                                isLoading = true;
+                                              });
+
+                                              await _stopTraining();
+
+                                              // Fecha o diálogo após a operação assíncrona
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                          MaterialButton(
+                                            color: Colors.orange,
+                                            child: const Text(
+                                              "Salvar",
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            onPressed: () async {
+                                              setState(() {
+                                                isLoading = true;
+                                              });
+
+                                              await deleteAndInsertAll(
+                                                  widget.trainingId, exercises);
+                                              await _stopTraining();
+
+                                              // Fecha o diálogo após a operação assíncrona
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            
                           } else {
-                               showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  backgroundColor: const Color.fromARGB(255, 32, 32, 32),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  title: const Text('Iniciar treino',
-                      style: TextStyle(
-                        color: Colors.white70,
-                      )),
-                  content: const Text(
-                      'Tudo pronto para começar a treinar?',
-                      style: TextStyle(
-                        color: Colors.white70,
-                      )),
-                  actions: <Widget>[
-                      MaterialButton(
-                        color: Colors.white10,
-                        child: const Text("Ainda não",
-                            style: TextStyle(
-                              color: Colors.white70,
-                            )),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        }),
-                    MaterialButton(
-                        color: Colors.orange,
-                        child: const Text("Nasci pronto",
-                            style: TextStyle(
-                              color: Colors.black
-                            )),
-                        onPressed: () {
-                           _startTraining(); 
-                          Navigator.pop(context);
-                        })
-                  ],
-                );
-              },
-            );
-                           
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 32, 32, 32),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  title: const Text('Iniciar treino',
+                                      style: TextStyle(
+                                        color: Colors.white70,
+                                      )),
+                                  content: const Text(
+                                      'Tudo pronto para começar a treinar?',
+                                      style: TextStyle(
+                                        color: Colors.white70,
+                                      )),
+                                  actions: <Widget>[
+                                    MaterialButton(
+                                        color: Colors.white10,
+                                        child: const Text("Ainda não",
+                                            style: TextStyle(
+                                              color: Colors.white70,
+                                            )),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        }),
+                                    MaterialButton(
+                                        color: Colors.orange,
+                                        child: const Text("Nasci pronto",
+                                            style:
+                                                TextStyle(color: Colors.black)),
+                                        onPressed: () {
+                                          _startTraining();
+                                          Navigator.pop(context);
+                                        })
+                                  ],
+                                );
+                              },
+                            );
                           }
+                          }
+ 
                         },
-                      )
+                      ) 
                     ],
                   ),
-                  
                 ),
                 if (isTraining)
-                Text('Clique em um set para marca-lo como concluído', style: TextStyle(color: Colors.white60),), 
-
+                  Text(
+                    'Clique em um set para marca-lo como concluído',
+                    style: TextStyle(color: Colors.white60),
+                  ),
                 Expanded(
                   child: isApiLoading
                       ? Center(
@@ -701,7 +749,7 @@ showDialog(
                   exercise["id"],
                 ),
                 // Aqui pode incluir o widget personalizado para o cabeçalho
-    
+
                 GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -788,25 +836,23 @@ showDialog(
 
   // Atualização do widget setNumber com animação de cor verde para set concluído
   Widget _setNumberWidget(int setNumber, bool isCompleted, VoidCallback onTap) {
-  return TextField(
-
-          controller: TextEditingController(text: "${setNumber + 1}"),
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 16, color: Colors.white),
-          onTap: isTraining ? onTap : VoidCallbackAction.new,
-          readOnly: true,
-          cursorColor: Colors.orange,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: isCompleted ? Colors.orange : Colors.black,
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(12)),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-          ),
-        );
-      
+    return TextField(
+      controller: TextEditingController(text: "${setNumber + 1}"),
+      textAlign: TextAlign.center,
+      style: const TextStyle(fontSize: 16, color: Colors.white),
+      onTap: isTraining ? onTap : VoidCallbackAction.new,
+      readOnly: true,
+      cursorColor: Colors.orange,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: isCompleted ? Colors.orange : Colors.black,
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+      ),
+    );
   }
 
   // Widget para campos editáveis sem alterações de cor

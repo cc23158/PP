@@ -1,6 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class Relatorio extends StatefulWidget {
   const Relatorio({super.key});
@@ -10,122 +12,252 @@ class Relatorio extends StatefulWidget {
 }
 
 class RelatorioState extends State<Relatorio> {
-  int totalTreinos = 10; // Exemplo de total de treinos
-  String totalTempo = "15 horas"; // Exemplo de tempo total
+  String selectedPeriod = "Semanal";
+  int totalTreinos = 0;
+  Map<String, int> muscleFrequency = {};
+  static Map<DateTime, List> allTreinosPorDia = {};
+  static List<dynamic> allTrainingData = [];
+  static Map<String, String> allMuscles = {};
+  List<String> periods = ["Semanal", "Mensal", "Anual"];
+  bool isLoading = false;
 
-  // Para o calendário
-  final Map<DateTime, List> treinosPorDia = {
-    DateTime(2024, 9, 20): ['Treino A'],
-    DateTime(2024, 9, 22): ['Treino B'],
-    // Adicione mais datas conforme necessário
-  };
+  @override
+  void initState() {
+    super.initState();
+    if (allTrainingData.isEmpty) {
+      fetchTrainingData();
+    } else {
+      filterDataByPeriod();
+    }
+  }
 
-  List<DateTime> get markedDays {
-    return treinosPorDia.keys.toList();
+  Future<void> fetchTrainingData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Requisição para pegar os músculos
+      final muscleUrl = Uri.https(
+        'shape-factory-5.onrender.com',
+        '/muscle/getAll',
+      );
+      final muscleResponse = await http.get(muscleUrl, headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      });
+
+      if (muscleResponse.statusCode == 200) {
+        final List<dynamic> muscleData = json.decode(utf8.decode(muscleResponse.bodyBytes));
+
+        allMuscles.clear();
+        for (var muscle in muscleData) {
+          allMuscles[muscle['muscle_name']] = muscle['muscle_name'];
+        }
+
+        final url = Uri.https(
+          'shape-factory-5.onrender.com',
+          '/history/getByClientNoDate',
+          {'clientId': '6'},
+        );
+        final response = await http.get(url, headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        });
+
+        if (response.statusCode == 200) {
+          allTrainingData = json.decode(utf8.decode(response.bodyBytes));
+          filterDataByPeriod();
+        }
+      }
+    } catch (error) {
+      print('Erro ao buscar os dados: $error');
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void filterDataByPeriod() {
+    DateTime startDate = _getStartDateForPeriod(selectedPeriod);
+    DateTime endDate = DateTime.now();
+
+    // Filtra os treinos dentro do intervalo selecionado
+    List<dynamic> filteredData = allTrainingData.where((item) {
+      DateTime exerciseDate = DateTime.parse(item['history_date']);
+      return exerciseDate.isAfter(startDate) && exerciseDate.isBefore(endDate);
+    }).toList();
+
+    // Processa os dados dos treinos
+    Map<DateTime, List> groupedExercises = {};
+    Map<String, int> muscleCounter = Map.from(allMuscles.map((key, value) => MapEntry(key, 0)));
+
+    for (var item in filteredData) {
+      DateTime exerciseDate = DateTime.parse(item['history_date']);
+      String muscleName = item['history_exercise']['exercise_muscle']['muscle_name'];
+
+      // Agrupa exercícios pela data
+      groupedExercises.putIfAbsent(exerciseDate, () => []).add(item);
+
+      // Conta a frequência dos músculos
+      if (muscleCounter.containsKey(muscleName)) {
+        muscleCounter[muscleName] = (muscleCounter[muscleName] ?? 0) + 1;
+      }
+    }
+
+    setState(() {
+      allTreinosPorDia = groupedExercises;
+      totalTreinos = groupedExercises.keys.length;
+      muscleFrequency = muscleCounter;
+    });
+  }
+
+  DateTime _getStartDateForPeriod(String period) {
+    DateTime now = DateTime.now();
+    switch (period) {
+      case 'Semanal':
+        return now.subtract(Duration(days: now.weekday - 1));
+      case 'Mensal':
+        return DateTime(now.year, now.month, 1);
+      case 'Anual':
+        return DateTime(now.year, 1, 1);
+      default:
+        return DateTime(2000);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xff000000),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Total de Treinos",
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    Text(
-                      "$totalTreinos",
-                      style: const TextStyle(
-                        color: Colors.orange,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Tempo Total Treinado",
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                    Text(
-                      totalTempo,
-                      style: const TextStyle(
-                        color: Colors.orange,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          // Espaço para descer o calendário
-          const SizedBox(height: 40), // Altere o valor conforme necessário
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: TableCalendar(
-                focusedDay: DateTime.now(),
-                firstDay: DateTime.now().subtract(const Duration(days: 365)),
-                lastDay: DateTime.now().add(const Duration(days: 365)),
-                calendarStyle: CalendarStyle(
-                  // Estilo para dias sem eventos (circular cinza)
-                  defaultDecoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 78, 78, 78).withOpacity(0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  // Estilo para o texto padrão (número branco)
-                  defaultTextStyle: const TextStyle(
-                    color: Colors.white,
-                  ),
-                  // Estilo dos dias com eventos
-                  markerDecoration: BoxDecoration(
-                    color: Colors.blue,
-                    shape: BoxShape.circle,
-                  ),
-                  // Estilo do dia de hoje
-                  todayDecoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.5),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                calendarBuilders: CalendarBuilders(
-                  markerBuilder: (context, date, events) {
-                    if (markedDays.contains(date)) {
-                      return const Padding(
-                        padding: EdgeInsets.only(top: 4.0),
-                        child: Icon(
-                          Icons.circle,
-                          color: Colors.blue,
-                          size: 8.0,
-                        ),
-                      );
-                    }
-                    return null;
-                  },
-                ),
-                eventLoader: (date) {
-                  return treinosPorDia[date] ?? [];
-                },
+      body: Stack(children: [ Padding(
+        padding: EdgeInsets.fromLTRB(16, 30, 16, 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(padding: EdgeInsets.fromLTRB(4, 0, 0, 0), child:  const Text(
+              "Relatório",
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 22,
+                color: Colors.white,
               ),
+            ),),
+           
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: periods.map((period) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: ChoiceChip(
+                    label: Text(
+                      period,
+                      style: TextStyle(
+                        color: selectedPeriod == period ? Colors.black : Colors.white,
+                      ),
+                    ),
+                    selected: selectedPeriod == period,
+                    selectedColor: Colors.orange,
+                    onSelected: (selected) {
+                      if (selected) {
+                        setState(() {
+                          selectedPeriod = period;
+                          filterDataByPeriod();
+                        });
+                      }
+                    },
+                    backgroundColor: Colors.grey[800],
+                  ),
+                );
+              }).toList(),
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            if (isLoading)
+              const Center(child: CircularProgressIndicator())
+            else
+              ...[
+                Card(
+                  color: Colors.grey[900],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Dias Treinados",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        Text(
+                          "$totalTreinos",
+                          style: const TextStyle(
+                            color: Colors.orange,
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Card(
+                  color: Colors.grey[900],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      
+                      children: [
+                        const Text(
+                          "Músculos Mais Treinados",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        SizedBox(height: 50,),
+                        SizedBox(
+                          height: 250,
+                          
+                          child: RadarChart(
+                            RadarChartData(
+                              titleTextStyle: TextStyle(color: Colors.white54),
+                              getTitle: (value, angle) {
+                                var muscles = muscleFrequency.keys.toList();
+                                return muscles.isNotEmpty
+                                    ? RadarChartTitle(
+                                        text: muscles[value.toInt() % muscles.length].toString(),
+                                      )
+                                    : const RadarChartTitle(text: '');
+                              },
+                              borderData: FlBorderData(show: false),
+                              radarShape: RadarShape.circle,
+                              dataSets: [
+                                RadarDataSet(
+                                  dataEntries: muscleFrequency.values
+                                      .map((value) => RadarEntry(value: value.toDouble()))
+                                      .toList(),
+                                  borderColor: Colors.orange,
+                                  fillColor: Colors.orange.withOpacity(0.3),
+                                  entryRadius: 3,
+                                  borderWidth: 2,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                         SizedBox(height: 50,)
+                      ],
+                    ),
+                  ),
+                ),
+               
+              ],
+          ],
+        ),
       ),
-    );
+
+   ] ));
   }
 }

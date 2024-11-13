@@ -411,31 +411,38 @@ void fetchExercises() async {
    onPressed: () {
   final selectedIds = selectedExercisesNotifier.value;
 
-  // Função para buscar os sets correspondentes a um exercício selecionado
-  List<Map<String, String>> getSets(String exerciseId) {
-    // Usa 'orElse' para retornar um mapa vazio diretamente
-    final exerciseWithSets = widget.selectedExercises.firstWhere(
-      (e) => e['id'].toString() == exerciseId,
-      orElse: () => <String, dynamic>{},
-    );
-    return exerciseWithSets['sets'] ?? [{"carga": "", "reps": ""}];
-  }
+        // Função para buscar os sets correspondentes a um exercício selecionado e incluir o campo isCompleted
+List<Map<String, dynamic>> getSets(String exerciseId) {
+  // Encontra o exercício com sets ou retorna um set padrão
+  final exerciseWithSets = widget.selectedExercises.firstWhere(
+    (e) => e['id'].toString() == exerciseId,
+    orElse: () => <String, dynamic>{},
+  );
 
-  // Monta a lista de exercícios selecionados com seus sets
-  final selectedExercises = selectedIds.map((id) {
-    final exercise = lista.firstWhere((e) => e['exercise_id'] == id);
-
+  // Verifica e mantém o campo isCompleted ou adiciona caso esteja ausente
+  return (exerciseWithSets['sets'] ?? [{"carga": "", "reps": "", "isCompleted": false}]).map<Map<String, dynamic>>((set) {
     return {
-      'id': exercise['exercise_id'],
-      'name': exercise['exercise_name'],
-      'musculo': exercise['exercise_muscle']['muscle_name'],
-      'image': exercise['exercise_image'],
-      'sets': getSets(exercise['exercise_id'].toString()),
+      ...Map<String, dynamic>.from(set), // Converte set para Map<String, dynamic>
+      'isCompleted': set.containsKey('isCompleted') ? set['isCompleted'] : false, // Mantém ou adiciona isCompleted
     };
   }).toList();
+}
 
-  print(selectedExercises.toString());
-  Navigator.of(context).pop(selectedExercises);
+        // Monta a lista de exercícios selecionados com seus sets
+        final selectedExercises = selectedIds.map((id) {
+          final exercise = lista.firstWhere((e) => e['exercise_id'] == id);
+
+          return {
+            'id': exercise['exercise_id'],
+            'name': exercise['exercise_name'],
+            'musculo': exercise['exercise_muscle']['muscle_name'],
+            'image': exercise['exercise_image'],
+            'sets': getSets(exercise['exercise_id'].toString()),
+          };
+        }).toList();
+
+        print(selectedExercises.toString());
+        Navigator.of(context).pop(selectedExercises);
 }
 ,
           backgroundColor: Colors.orange,
