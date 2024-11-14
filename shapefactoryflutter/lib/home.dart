@@ -348,7 +348,7 @@ class HomeState extends State<Home> {
           isLoading = true;
         });
         Home.clientTrainingsList = await getTraining(widget.clientId);
-
+        _currentPageValue = 1000;
         Home.defaultTrainingsList =
             await getTraining(1); 
       }
@@ -529,6 +529,7 @@ Future<void> copyTraining(int clientId, dynamic treino) async {
       print('Training copied successfully');
       setState(() {
         Home.clientTrainingsList.add(treino);
+        Home.listaCompleta.clear();
         fetchTrainings();
       });
     } else {

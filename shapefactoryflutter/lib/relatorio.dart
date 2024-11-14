@@ -163,16 +163,18 @@ class RelatorioState extends State<Relatorio> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: const Color(0xff000000),
-        body: Stack(children: [
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
           Padding(
             padding: EdgeInsets.fromLTRB(16, 40, 16, 8),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.fromLTRB(4, 0, 0, 0),
-                    child: const Text(
+                    child: Text(
                       "Relatório",
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
