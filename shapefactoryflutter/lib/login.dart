@@ -21,7 +21,6 @@ class LoginState extends State<Login> {
   @override
   void initState() {
     
-    // TODO: implement initState
     super.initState();
 
   }
@@ -42,7 +41,6 @@ class LoginState extends State<Login> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                    ///***If you have exported images you must have to copy those images in assets/images directory.
                     Image(
                       image: const AssetImage(
                           "assets/images/SF-removebg-preview.png"),
@@ -271,18 +269,15 @@ Future<List?> getClientPassword(String email) async {
     var listReturn = List.empty(growable: true);
     final queryParameters = {'email': email};
 
-    // URL corrigida para usar apenas o caminho no segundo parâmetro do Uri.https
     final url = Uri.https(
         'shape-factory-5.onrender.com', '/client/getByEmail', queryParameters);
     print("URL: $url");
 
     final response = await http.get(url);
 
-    // Verificar o status da resposta antes de tentar decodificar
     if (response.statusCode == 200) {
       var decodedResponse = jsonDecode(response.body);
 
-      // Verifica se a resposta tem os campos esperados
       if (decodedResponse != null &&
           decodedResponse['client_password'] != null) {
         listReturn.add(decodedResponse['client_password']);
@@ -291,7 +286,6 @@ Future<List?> getClientPassword(String email) async {
       }
     }
 
-    // Retornar uma lista vazia se não encontrar a senha
     return List.empty();
   } catch (erro) {
     print("Erro ao obter senha do cliente: $erro");

@@ -53,7 +53,6 @@ class HomeState extends State<Home> {
   void initState() {
     super.initState();
 
-    // Initialize PageController
     Home.clientIdAtivo = widget.clientId;
     cardPageController.addListener(() {
       setState(() {
@@ -179,7 +178,6 @@ class HomeState extends State<Home> {
 
   Widget treinoAtivo(treino) {
     if (StartTraining.trainingIdAtivo != treino['training_id']) {
-      // Condição para mostrar o ícone apenas se não for o treino ativo
       return PopupMenuButton<String>(
         icon: const Icon(
           Icons.more_vert,
@@ -223,7 +221,6 @@ class HomeState extends State<Home> {
         },
       );
     } else {
-      // Placeholder para ocupar o espaço do PopupMenuButton
       return Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
         child: SizedBox(
@@ -350,21 +347,17 @@ class HomeState extends State<Home> {
         setState(() {
           isLoading = true;
         });
-        // Fetch client-specific trainings
         Home.clientTrainingsList = await getTraining(widget.clientId);
 
-        // Fetch default trainings
         Home.defaultTrainingsList =
-            await getTraining(1); // Assuming 1 is for default trainings
+            await getTraining(1); 
       }
 
       setState(() {
-        // Agrupa os treinos do usuário pelo ID do cliente
         clientTrainingsWidgets = Home.clientTrainingsList
             .map((treino) => getWidgetClient(treino))
             .toList();
 
-        // Filtra e agrupa treinos padrão por categoria
         defaultTrainingsCategory1 = Home.defaultTrainingsList
             .where((training) => training['training_category'] == 1)
             .map((treino) => getWidgetDefault(treino))
@@ -450,7 +443,7 @@ class HomeState extends State<Home> {
 
   Widget ClientListCard(List<Widget> lista) {
     return ListView.builder(
-      padding: EdgeInsets.only(bottom: 50), // Remove padding padrão da ListView
+      padding: EdgeInsets.only(bottom: 50), 
       controller: controllerList,
       shrinkWrap: true,
       itemCount: lista.length + 1,
@@ -510,7 +503,7 @@ class HomeState extends State<Home> {
       interactive: true,
       radius: const Radius.circular(12),
       child: ListView.builder(
-        padding: EdgeInsets.zero, // Remove padding padrão da ListView
+        padding: EdgeInsets.zero, 
         controller: controllerList,
         itemCount: lista.length,
         itemBuilder: (context, int i) {
@@ -523,7 +516,7 @@ class HomeState extends State<Home> {
   }
 
 Future<void> copyTraining(int clientId, dynamic treino) async {
-  final url = Uri.parse('https://shape-factory-5.onrender.com/recipe/copy'); // Coloque sua URL completa aqui
+  final url = Uri.parse('https://shape-factory-5.onrender.com/recipe/copy'); 
   try {
     final response = await http.post(
       url,
@@ -603,15 +596,12 @@ Future<void> copyTraining(int clientId, dynamic treino) async {
                         child: PageView.builder(
                           controller: cardPageController,
                           itemBuilder: (context, index) {
-                            // Calcula o índice real para o loop infinito
                             final realIndex = (index % vetorImagens.length +
                                     vetorImagens.length) %
                                 vetorImagens.length;
 
-                            // Calcula a diferença entre o índice atual e a página atual
                             final difference =
                                 (index - _currentPageValue).abs();
-                            // Aplica uma escala suave baseada na diferença
                             final scale =
                                 1 - (difference * 0.1).clamp(0.0, 0.1);
 
@@ -631,7 +621,7 @@ Future<void> copyTraining(int clientId, dynamic treino) async {
                                             BorderRadius.circular(12.0),
                                       ),
                                       clipBehavior: Clip
-                                          .antiAlias, // Adiciona clipping no Card
+                                          .antiAlias, 
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [

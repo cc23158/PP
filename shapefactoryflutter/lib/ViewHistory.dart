@@ -28,7 +28,7 @@ class ViewHistoryState extends State<ViewHistory> {
   var controllerNome;
   bool isLoading = false;
   String currentSearchText = '';
-  bool isTraining = false; // Para controlar o estado do treino
+  bool isTraining = false;
 
   Duration elapsedTime = Duration.zero;
 
@@ -38,17 +38,14 @@ class ViewHistoryState extends State<ViewHistory> {
 
 Future<void> fetchRecipeFromList(List recipesData) async {
   try {
-    // Converte os dados da lista passada para o formato desejado.
     exercises = recipesData.map<Map<String, dynamic>>((recipe) {
       final recipeExercise = recipe['history_exercise'];
       final weight = recipe['history_weight'] ?? '';
       final reps = recipe['history_reps'] ?? '';
 
-      // Separa as cargas e reps usando a '/' como delimitador.
       final weights = weight.split('/');
       final repsList = reps.split('/');
 
-      // Cria a lista de sets, unindo carga e reps na ordem correta.
       List<Map<String, dynamic>> sets = [];
       for (int i = 0; i < weights.length; i++) {
         sets.add({
@@ -68,7 +65,6 @@ Future<void> fetchRecipeFromList(List recipesData) async {
     }).toList();
 
   } catch (e) {
-    // Trate a exceção de acordo com sua lógica.
     print('Erro: $e');
   }
 }
@@ -85,7 +81,6 @@ Future<void> fetchRecipeFromList(List recipesData) async {
 
 
 
-  // Função para parar o temporizador e limpar o estado
  
 
   @override
@@ -140,7 +135,6 @@ Future<void> fetchRecipeFromList(List recipesData) async {
     );
   }
 
-  // Função para cabeçalhos da GridView
   Widget _gridHeader(String text) {
     return Center(
       child: Text(
@@ -154,8 +148,6 @@ Future<void> fetchRecipeFromList(List recipesData) async {
     );
   }
 
-  // Função para exibir número do set
-// Função para exibir número do set
   Widget _exerciseCard(Map<String, dynamic> exercise) {
     return Center(
       child: Container(
@@ -178,13 +170,12 @@ Future<void> fetchRecipeFromList(List recipesData) async {
                   exercise["image"],
                   exercise["id"],
                 ),
-                // Aqui pode incluir o widget personalizado para o cabeçalho
 
                 GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount:
-                        exercise["sets"].length * 3 + 3, // +3 for headers
+                        exercise["sets"].length * 3 + 3, 
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
@@ -194,29 +185,25 @@ Future<void> fetchRecipeFromList(List recipesData) async {
                     ),
                     itemBuilder: (context, index) {
                       if (index < 3) {
-                        // Header row
                         return _gridHeader(["Set", "Carga", "Reps"][index]);
                       } else {
-                        // Body rows with sets
                         final setIndex = (index - 3) ~/ 3;
                         final set = exercise["sets"][setIndex];
                         final fieldIndex = (index - 3) % 3;
 
                         if (fieldIndex == 0) {
-                          // Display set number
                           return _setNumberWidget(
                             setIndex,
                             set["isCompleted"] ??
-                                false, // Passa o estado de conclusão
+                                false, 
                             () {
                               setState(() {
                                 set["isCompleted"] = !(set["isCompleted"] ??
-                                    false); // Alterna o estado
+                                    false); 
                               });
                             },
                           );
                         } else if (fieldIndex == 1) {
-                          // Editable carga field
                           return _editableField(
                             initialValue: set["carga"],
                             onChanged: (value) => set["carga"] = value,
@@ -239,7 +226,6 @@ Future<void> fetchRecipeFromList(List recipesData) async {
     );
   }
 
-  // Atualização do widget setNumber com animação de cor verde para set concluído
   Widget _setNumberWidget(int setNumber, bool isCompleted, VoidCallback onTap) {
     return TextField(
       controller: TextEditingController(text: "${setNumber + 1}"),
@@ -260,7 +246,6 @@ Future<void> fetchRecipeFromList(List recipesData) async {
     );
   }
 
-  // Widget para campos editáveis sem alterações de cor
   Widget _editableField({
     required String initialValue,
     required ValueChanged<String> onChanged,
@@ -293,7 +278,6 @@ Future<void> fetchRecipeFromList(List recipesData) async {
   }
 }
 
-// Função personalizada fornecida
 Widget getWidget(String nome, String musculo, String imagem, int id) {
   return Card(
     color: const Color(0xffffffff),

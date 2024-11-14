@@ -39,7 +39,6 @@ class CadastroState extends State<Cadastro> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: [
-                ///***If you have exported images you must have to copy those images in assets/images directory.
                 Image(
                   image:
                       const AssetImage("assets/images/SF-removebg-preview.png"),
@@ -581,15 +580,13 @@ Future<String> getClient(String email) async {
 Future<int> postClient(String nome, String email, String data, String sexo,
     String peso, String senha) async {
   try {
-    // Divide a data no formato dd/MM/yyyy e cria um DateTime
     var dateParts = data.split('/');
     var parsedDate = DateTime(
-      int.parse(dateParts[2]), // Ano
-      int.parse(dateParts[1]), // Mês
-      int.parse(dateParts[0]), // Dia
+      int.parse(dateParts[2]), 
+      int.parse(dateParts[1]), 
+      int.parse(dateParts[0]), 
     );
 
-    // Formata a data para yyyy-MM-dd
     var dataFormatada = "${parsedDate.year}-${parsedDate.month.toString().padLeft(2, '0')}-${parsedDate.day.toString().padLeft(2, '0')}";
 
     var queryParameters = {

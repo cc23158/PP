@@ -35,7 +35,7 @@ class StartTrainingState extends State<StartTraining> {
   var controllerNome;
   bool isLoading = false;
   String currentSearchText = '';
-  bool isTraining = false; // Para controlar o estado do treino
+  bool isTraining = false; 
 
   Duration elapsedTime = Duration.zero;
 
@@ -62,26 +62,21 @@ class StartTrainingState extends State<StartTraining> {
 
   Future<int> deleteAndInsertAll(
       int trainingId, List<Map<String, dynamic>> selectedExercises) async {
-    // URL para deletar e inserir ao mesmo tempo
     final queryParameters = {
       'trainingId': trainingId.toString(),
     };
     final url = Uri.https(
         'shape-factory-5.onrender.com', '/recipe/delete', queryParameters);
 
-    // Preparação dos dados dos exercícios para envio
     List<Map<String, dynamic>> recipes = selectedExercises.map((exercise) {
       String exerciseId = exercise['id'].toString();
       List<Map<String, dynamic>> sets = exercise['sets'];
 
-      // Concatenar cargas e reps com "/"
       String weight = sets.map((set) => set['carga'] ?? "").join('/');
       String reps = sets.map((set) => set['reps'] ?? "").join('/');
 
-      // Número de sets é o tamanho da lista 'sets'
       int setsCount = sets.length;
 
-      // Dados de cada exercício com os nomes adequados
       return {
         "recipe_id": exercise['recipe_id'] ?? 0,
         "recipe_training": {
@@ -115,14 +110,12 @@ class StartTrainingState extends State<StartTraining> {
       };
     }).toList();
 
-    // Corpo da requisição contendo o ID do treino e os novos exercícios
     final body = jsonEncode(recipes);
 
     try {
       print("DELETE and INSERT on $url");
       print("Body: $body");
 
-      // Requisição DELETE com dados de inserção
       final response = await http.delete(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -148,7 +141,6 @@ class StartTrainingState extends State<StartTraining> {
       setState(() {
         isApiLoading = true;
       });
-      // Faz a chamada para a API para obter as receitas.
       final response = await http.get(Uri.parse(
           'https://shape-factory-5.onrender.com/recipe/getByTraining?trainingId=${widget.trainingId}'));
 
@@ -157,24 +149,21 @@ class StartTrainingState extends State<StartTraining> {
 
         final List<dynamic> recipesData = json.decode(responseBody);
 
-        // Converte os dados da API para o formato desejado.
         exercises = recipesData.map<Map<String, dynamic>>((recipe) {
           final recipeExercise = recipe['recipe_exercise'];
           final weight = recipe['recipe_weight'];
           final reps = recipe['recipe_reps'];
 
-          // Separa as cargas e reps usando a '/' como delimitador.
           final weights = weight.split('/');
           final repsList = reps.split('/');
 
-          // Cria a lista de sets, unindo carga e reps na ordem correta.
           List<Map<String, dynamic>> sets = [];
           for (int i = 0; i < weights.length; i++) {
             sets.add({
-              'carga': weights[i].trim(), // Remove espaços em branco
+              'carga': weights[i].trim(), 
               'reps': repsList.length > i
                   ? repsList[i].trim()
-                  : '', // Garante que não ultrapasse a lista
+                  : '', 
               'isCompleted': false
             });
           }
@@ -188,16 +177,13 @@ class StartTrainingState extends State<StartTraining> {
           };
         }).toList();
 
-        // Atualiza o estado para refletir as mudanças.
         setState(() {
           isApiLoading = false;
         });
       } else {
-        // Trate o erro de acordo com sua lógica.
         throw Exception('Falha ao carregar as receitas');
       }
     } catch (e) {
-      // Trate a exceção de acordo com sua lógica.
       print('Erro: $e');
     }
   }
@@ -211,7 +197,6 @@ class StartTrainingState extends State<StartTraining> {
       'name': name,
     };
 
-    // Print da URL e do corpo da requisição
     print("PUT $url");
     print("Body: $body");
 
@@ -220,7 +205,7 @@ class StartTrainingState extends State<StartTraining> {
 
       if (response.statusCode == 200) {
         print('Training updated successfully');
-        return trainingId; // Retorna o ID do treino atualizado
+        return trainingId; 
       } else {
         print('Failed to update training: ${response.statusCode}');
         return null;
@@ -282,7 +267,7 @@ class StartTrainingState extends State<StartTraining> {
         .where((recipe) => recipe != null)
         .toList();
 
-    print("Filtered recipes: $recipes"); // Verifica conteúdo após o mapeamento
+    print("Filtered recipes: $recipes"); 
     final body = jsonEncode(recipes);
     print("JSON body: $body");
 
@@ -424,7 +409,6 @@ class StartTrainingState extends State<StartTraining> {
     super.dispose();
   }
 
-  // Função para parar o temporizador e limpar o estado
   Future<void> _stopTraining() async {
     setState(() {
       isTraining = false;
@@ -491,9 +475,8 @@ class StartTrainingState extends State<StartTraining> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   bool isLoading =
-                                      false; // Estado para controlar a barra de carregamento
+                                      false; 
 
-                                  // Widget principal do AlertDialog com barra de carregamento
                                   return StatefulBuilder(
                                     builder: (context, setState) {
                                       return AlertDialog(
@@ -544,7 +527,6 @@ class StartTrainingState extends State<StartTraining> {
 
                                               await _stopTraining();
 
-                                              // Fecha o diálogo após a operação assíncrona
                                               Navigator.pop(context);
                                             },
                                           ),
@@ -565,7 +547,6 @@ class StartTrainingState extends State<StartTraining> {
                                                   widget.trainingId, exercises);
                                               await _stopTraining();
 
-                                              // Fecha o diálogo após a operação assíncrona
                                               Navigator.pop(context);
                                             },
                                           ),
@@ -710,7 +691,6 @@ class StartTrainingState extends State<StartTraining> {
     );
   }
 
-  // Função para cabeçalhos da GridView
   Widget _gridHeader(String text) {
     return Center(
       child: Text(
@@ -724,8 +704,6 @@ class StartTrainingState extends State<StartTraining> {
     );
   }
 
-  // Função para exibir número do set
-// Função para exibir número do set
   Widget _exerciseCard(Map<String, dynamic> exercise) {
     return Center(
       child: Container(
@@ -748,13 +726,12 @@ class StartTrainingState extends State<StartTraining> {
                   exercise["image"],
                   exercise["id"],
                 ),
-                // Aqui pode incluir o widget personalizado para o cabeçalho
 
                 GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount:
-                        exercise["sets"].length * 3 + 3, // +3 for headers
+                        exercise["sets"].length * 3 + 3, 
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
@@ -764,29 +741,25 @@ class StartTrainingState extends State<StartTraining> {
                     ),
                     itemBuilder: (context, index) {
                       if (index < 3) {
-                        // Header row
                         return _gridHeader(["Set", "Carga", "Reps"][index]);
                       } else {
-                        // Body rows with sets
                         final setIndex = (index - 3) ~/ 3;
                         final set = exercise["sets"][setIndex];
                         final fieldIndex = (index - 3) % 3;
 
                         if (fieldIndex == 0) {
-                          // Display set number
                           return _setNumberWidget(
                             setIndex,
                             set["isCompleted"] ??
-                                false, // Passa o estado de conclusão
+                                false, 
                             () {
                               setState(() {
                                 set["isCompleted"] = !(set["isCompleted"] ??
-                                    false); // Alterna o estado
+                                    false); 
                               });
                             },
                           );
                         } else if (fieldIndex == 1) {
-                          // Editable carga field
                           return _editableField(
                             initialValue: set["carga"],
                             onChanged: (value) => set["carga"] = value,
@@ -834,7 +807,6 @@ class StartTrainingState extends State<StartTraining> {
     );
   }
 
-  // Atualização do widget setNumber com animação de cor verde para set concluído
   Widget _setNumberWidget(int setNumber, bool isCompleted, VoidCallback onTap) {
     return TextField(
       controller: TextEditingController(text: "${setNumber + 1}"),
@@ -855,7 +827,6 @@ class StartTrainingState extends State<StartTraining> {
     );
   }
 
-  // Widget para campos editáveis sem alterações de cor
   Widget _editableField({
     required String initialValue,
     required ValueChanged<String> onChanged,
@@ -884,7 +855,6 @@ class StartTrainingState extends State<StartTraining> {
   }
 }
 
-// Função personalizada fornecida
 Widget getWidget(String nome, String musculo, String imagem, int id) {
   return Card(
     color: const Color(0xffffffff),

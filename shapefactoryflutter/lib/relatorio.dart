@@ -72,7 +72,6 @@ class RelatorioState extends State<Relatorio> {
     });
 
     try {
-      // Requisição para pegar os músculos
       final muscleUrl = Uri.https(
         'shape-factory-5.onrender.com',
         '/muscle/getAll',
@@ -118,13 +117,11 @@ class RelatorioState extends State<Relatorio> {
     DateTime startDate = _getStartDateForPeriod(selectedPeriod);
     DateTime endDate = DateTime.now().add(Duration(days: 1));
 
-    // Filtra os treinos dentro do intervalo selecionado
     List<dynamic> filteredData = allTrainingData.where((item) {
       DateTime exerciseDate = DateTime.parse(item['history_date']);
       return exerciseDate.isAfter(startDate) && exerciseDate.isBefore(endDate);
     }).toList();
 
-    // Processa os dados dos treinos
     Map<DateTime, List> groupedExercises = {};
     Map<String, int> muscleCounter =
         Map.from(allMuscles.map((key, value) => MapEntry(key, 0)));
@@ -134,10 +131,8 @@ class RelatorioState extends State<Relatorio> {
       String muscleName =
           item['history_exercise']['exercise_muscle']['muscle_name'];
 
-      // Agrupa exercícios pela data
       groupedExercises.putIfAbsent(exerciseDate, () => []).add(item);
 
-      // Conta a frequência dos músculos
       if (muscleCounter.containsKey(muscleName)) {
         muscleCounter[muscleName] = (muscleCounter[muscleName] ?? 0) + 1;
       }
@@ -350,15 +345,15 @@ class RelatorioState extends State<Relatorio> {
                                 headerStyle: HeaderStyle(
                                   titleTextStyle: TextStyle(
                                       color: Colors
-                                          .white), // Título do mês em branco
+                                          .white), 
                                   formatButtonVisible:
-                                      false, // Esconde o botão de formatação do calendário
+                                      false, 
                                   leftChevronIcon: Icon(Icons.chevron_left,
                                       color: Colors.white),
                                   rightChevronIcon: Icon(Icons.chevron_right,
                                       color: Colors.white),
                                   titleCentered:
-                                      true, // Deixa o título centralizado
+                                      true, 
                                 ),
                                 eventLoader: (day) {
                                   print(allTreinosPorDia);
@@ -371,15 +366,11 @@ class RelatorioState extends State<Relatorio> {
                                   return [];
                                 },
                          onDaySelected: (selectedDay, focusedDay) {
-  // Normalizando o dia para garantir que a hora, minuto e segundo sejam 00:00
   DateTime normalizedDay = DateTime(selectedDay.year, selectedDay.month, selectedDay.day, 0, 0, 0);
 
-  // Verificando se existem treinos para o dia selecionado
   if (allTreinosPorDia.containsKey(normalizedDay)) {
-    // Obtendo a lista de treinos para o dia selecionado
     List treinoDia = allTreinosPorDia[normalizedDay]!;
 
-    // Navegando para a página StartTraining e passando os dados de treino
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -391,7 +382,6 @@ class RelatorioState extends State<Relatorio> {
       ),
     );
   } else {
-    // Se não houver treino para o dia selecionado, pode-se exibir uma mensagem
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Nenhum treino encontrado para este dia')),
     );

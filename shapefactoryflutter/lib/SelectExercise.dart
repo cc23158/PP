@@ -14,7 +14,7 @@ class SelectExerciseState extends State<SelectExercise> {
   final scrollController = ScrollController();
   var lista = List.empty(growable: true);
   var listElemento = List<Widget>.empty(growable: true);
-  bool isLoading = true; // Adiciona um indicador de carregamento
+  bool isLoading = true;
   var selectedMuscles = List.empty(growable: true);
   var listMuscles = List<String>.empty(growable: true);
   String currentSearchText = '';
@@ -23,18 +23,15 @@ class SelectExerciseState extends State<SelectExercise> {
   void _applyFilters(String value) {
     setState(() {
       listElemento = lista.where((exercise) {
-        // Filtro por texto
         bool matchesText = exercise['exercise_name']
             .toLowerCase()
             .contains(value.toLowerCase());
 
-        // Filtro por músculos selecionados
         bool matchesMuscles = selectedMuscles.isEmpty ||
             selectedMuscles.any((selectedMuscle) =>
                 selectedMuscle.toLowerCase() ==
                 exercise['exercise_muscle']['muscle_name'].toLowerCase());
 
-        // Retorna verdadeiro se ambos os filtros forem satisfeitos
         return matchesText && matchesMuscles;
       }).map<Widget>((exercise) {
         return getWidget(
@@ -107,9 +104,9 @@ class SelectExerciseState extends State<SelectExercise> {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Wrap(
                               spacing:
-                                  8.0, // Espaçamento horizontal entre as caixas
+                                  8.0, 
                               runSpacing:
-                                  8.0, // Espaçamento vertical entre as caixas
+                                  8.0, 
                               children: muscles.map((muscle) {
                                 bool isSelected =
                                     selectedMuscles.contains(muscle);
@@ -137,9 +134,9 @@ class SelectExerciseState extends State<SelectExercise> {
                                     decoration: BoxDecoration(
                                       color: isSelected
                                           ? Colors
-                                              .orange // Cor quando selecionado
+                                              .orange 
                                           : const Color.fromARGB(255, 50, 50,
-                                              50), // Cor quando não selecionado
+                                              50),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Text(
@@ -198,7 +195,6 @@ class SelectExerciseState extends State<SelectExercise> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  // Imagem do exercício
                   Container(
                     alignment: Alignment.center,
                     decoration: const BoxDecoration(
@@ -217,7 +213,6 @@ class SelectExerciseState extends State<SelectExercise> {
                     ),
                   ),
 
-                  // Informações do exercício
                   Expanded(
                     flex: 1,
                     child: Padding(
@@ -258,7 +253,6 @@ class SelectExerciseState extends State<SelectExercise> {
                     ),
                   ),
 
-                  // Campo de Ordem de Seleção - Exibe apenas se selecionado
                   if (isSelected) ...[
                     Padding(
                       padding: const EdgeInsets.only(left: 10),
@@ -271,7 +265,7 @@ class SelectExerciseState extends State<SelectExercise> {
                         ),
                         child: Text(
                           (selectedExercises.indexOf(id) + 1)
-                              .toString(), // Ordem de seleção
+                              .toString(), 
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -303,13 +297,10 @@ Future<void> getExercises({int maxRetries = 10, int currentRetry = 0}) async {
         List<dynamic> decodedResponse = jsonDecode(utf8.decode(response.bodyBytes));
 
         if (decodedResponse.isEmpty && currentRetry < maxRetries) {
-          // Se a lista está vazia e ainda não atingimos o número máximo de tentativas
           print('Tentativa ${currentRetry + 1}: Lista vazia recebida, tentando novamente...');
           
-          // Espera um tempo crescente entre as tentativas (0.5s, 1s, 1.5s, etc)
           await Future.delayed(Duration(milliseconds: 500 * (currentRetry + 1)));
           
-          // Faz uma nova tentativa
           return getExercises(
             maxRetries: maxRetries,
             currentRetry: currentRetry + 1,
@@ -357,7 +348,6 @@ Future<void> getExercises({int maxRetries = 10, int currentRetry = 0}) async {
     }
 }
 
-// Função auxiliar para tratamento de erros
 void _handleError(String message) {
   setState(() {
     isLoading = false;
@@ -379,7 +369,6 @@ void _handleError(String message) {
   );
 }
 
-// Modifique a função fetchExercises para usar as novas opções
 void fetchExercises() async {
   await getExercises(maxRetries: 3);
 }
@@ -411,24 +400,20 @@ void fetchExercises() async {
    onPressed: () {
   final selectedIds = selectedExercisesNotifier.value;
 
-        // Função para buscar os sets correspondentes a um exercício selecionado e incluir o campo isCompleted
 List<Map<String, dynamic>> getSets(String exerciseId) {
-  // Encontra o exercício com sets ou retorna um set padrão
   final exerciseWithSets = widget.selectedExercises.firstWhere(
     (e) => e['id'].toString() == exerciseId,
     orElse: () => <String, dynamic>{},
   );
 
-  // Verifica e mantém o campo isCompleted ou adiciona caso esteja ausente
   return (exerciseWithSets['sets'] ?? [{"carga": "", "reps": "", "isCompleted": false}]).map<Map<String, dynamic>>((set) {
     return {
-      ...Map<String, dynamic>.from(set), // Converte set para Map<String, dynamic>
-      'isCompleted': set.containsKey('isCompleted') ? set['isCompleted'] : false, // Mantém ou adiciona isCompleted
+      ...Map<String, dynamic>.from(set), 
+      'isCompleted': set.containsKey('isCompleted') ? set['isCompleted'] : false, 
     };
   }).toList();
 }
 
-        // Monta a lista de exercícios selecionados com seus sets
         final selectedExercises = selectedIds.map((id) {
           final exercise = lista.firstWhere((e) => e['exercise_id'] == id);
 
@@ -454,7 +439,7 @@ List<Map<String, dynamic>> getSets(String exerciseId) {
           child: isLoading
               ? const Center(
                   child:
-                      CircularProgressIndicator(color: Colors.orange,)) // Mostra um indicador de carregamento
+                      CircularProgressIndicator(color: Colors.orange,)) 
 
               : Column(
                   children: [
@@ -545,7 +530,7 @@ List<Map<String, dynamic>> getSets(String exerciseId) {
                           horizontal: MediaQuery.of(context).size.width * 0.02,
                         ),
                         child: Wrap(
-                          spacing: 8.0, // Espaço entre as tags
+                          spacing: 8.0, 
                           runSpacing: 8,
                           children: selectedMuscles.map((muscle) {
                             return Chip(
@@ -575,10 +560,10 @@ List<Map<String, dynamic>> getSets(String exerciseId) {
                         controller: scrollController,
                         padding: EdgeInsets.only(bottom: 15),
                         thumbVisibility:
-                            true, // Exibe a barra mesmo quando não está rolando
-                        thickness: 6, // Define a espessura do Scrollbar
+                            true, 
+                        thickness: 6, 
                         radius: const Radius.circular(
-                            10), // Define o raio para cantos arredondados
+                            10),
                         child: ListView(
                           controller: scrollController,
                           scrollDirection: Axis.vertical,
