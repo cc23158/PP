@@ -91,7 +91,7 @@ Future<int> deleteAndInsertAll(
   // Preparação dos dados dos exercícios para envio
   List<Map<String, dynamic>> recipes = selectedExercises.map((exercise) {
     String exerciseId = exercise['id'].toString();
-    List<Map<String, String>> sets = exercise['sets'];
+    List<Map<String, dynamic>> sets = exercise['sets'];
 
     // Concatenar cargas e reps com "/"
     String weight = sets.map((set) => set['carga'] ?? "").join('/');
@@ -290,7 +290,7 @@ Future<int> deleteAndInsertAll(
           final repsList = reps.split('/');
 
           // Cria a lista de sets, unindo carga e reps na ordem correta.
-          List<Map<String, String>> sets = [];
+          List<Map<String, dynamic>> sets = [];
           for (int i = 0; i < weights.length; i++) {
             sets.add({
               'carga': weights[i].trim(), // Remove espaços em branco
