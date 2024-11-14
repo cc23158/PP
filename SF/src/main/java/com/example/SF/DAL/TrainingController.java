@@ -54,8 +54,9 @@ public class TrainingController {
 
     @CrossOrigin
     @PostMapping("/insert")
-    public Training insert(@RequestParam("name") String name, @RequestParam("category") Integer category, @RequestParam("clientId") Integer clientId) {
-        return trainingService.insert(name, category, clientId);
+    public Integer insert(@RequestParam("name") String name, @RequestParam("category") Integer category, @RequestParam("clientId") Integer clientId) {
+        Training training = trainingService.insert(name, category, clientId);
+        return training.getTraining_id();
     }
 
     @CrossOrigin
@@ -73,9 +74,9 @@ public class TrainingController {
 
     @CrossOrigin
     @DeleteMapping("/delete")
-    public ResponseEntity<String> delete(@RequestParam("clientId") Integer clientId) {
+    public ResponseEntity<String> delete(@RequestParam("id") Integer id) {
         try {
-            trainingService.delete(clientId);
+            trainingService.delete(id);
             return ResponseEntity.ok("Training deleted");
         }
 

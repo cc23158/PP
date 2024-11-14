@@ -31,6 +31,18 @@ public class ClientController {
     }
 
     @CrossOrigin
+    @GetMapping("/getById")
+    public Client getById(@RequestParam("clientId") Integer clientId) {
+        try {
+            return clientService.getById(clientId);
+        }
+
+        catch (Exception e) {
+            return null;
+        }
+    }
+
+    @CrossOrigin
     @GetMapping("/getByName")
     public Client getByName(@RequestParam("name") String name) {
         try {
@@ -63,9 +75,10 @@ public class ClientController {
 
     @CrossOrigin
     @PostMapping("/insert")
-    public Client insert(@RequestParam("name") String name, @RequestParam("email") String email, @RequestParam("birthday") String birthday, @RequestParam("gender") Character gender, @RequestParam("weight") Double weight, @RequestParam("password") String password) {
+    public Integer insert(@RequestParam("name") String name, @RequestParam("email") String email, @RequestParam("birthday") String birthday, @RequestParam("gender") Character gender, @RequestParam("weight") Double weight, @RequestParam("password") String password) {
         LocalDate dateBirthday = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        return clientService.insert(name, email, dateBirthday, gender, weight, password);
+        Client client = clientService.insert(name, email, dateBirthday, gender, weight, password);
+        return client.getClient_id();
     }
 
     @CrossOrigin

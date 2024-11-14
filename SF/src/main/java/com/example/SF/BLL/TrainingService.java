@@ -101,7 +101,7 @@ public class TrainingService {
     @Transactional
     public void delete(Integer id) {
         try {
-            iTraining.deleteById(id);
+            iTraining.delete(id);
         }
 
         catch (Exception e) {

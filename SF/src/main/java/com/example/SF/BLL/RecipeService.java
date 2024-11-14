@@ -23,6 +23,10 @@ public class RecipeService {
         this.exerciseService = exerciseService;
     }
 
+    public Recipe getById(Integer id) {
+        return iRecipe.findById(id).orElse(null);
+    }
+
     public List<Recipe> getByTraining(Integer trainingId) {
         try {
             return iRecipe.getByTraining(trainingId);
@@ -35,9 +39,9 @@ public class RecipeService {
     }
 
     @Transactional
-    public Recipe insert(Integer trainingId, Integer exerciseId, Double weight) {
-        if (trainingId == null || exerciseId == null || weight == null) {
-            System.out.println("TrainingId, exerciseId and weight must be not null");
+    public Recipe insert(Integer trainingId, Integer exerciseId, String weight, String reps, Integer sets) {
+        if (trainingId == null || exerciseId == null) {
+            System.out.println("TrainingId, exerciseId must be not null");
             return null;
         }
 
@@ -59,6 +63,8 @@ public class RecipeService {
             recipe.setRecipe_training(training);
             recipe.setRecipe_exercise(exercise);
             recipe.setRecipe_weight(weight);
+            recipe.setRecipe_reps(reps);
+            recipe.setRecipe_sets(sets);
             return iRecipe.save(recipe);
         }
 
@@ -69,24 +75,58 @@ public class RecipeService {
     }
 
     @Transactional
-    public void update(Integer id, Double weight) {
+    public void copy(Integer clientId, Integer trainingId) {
+        if (clientId == null || trainingId == null) {
+            System.out.println("ClientId, trainingId must be not null");
+            return;
+        }
+
         try {
-            iRecipe.update(id, weight);
+            Training training = trainingService.getById(trainingId);
+            if (training == null) {
+                System.out.println("Cannot find training by ID: " + trainingId);
+                return;
+            }
+
+            List<Recipe> recipes = iRecipe.getByTraining(trainingId);
+            if (recipes.isEmpty()) {
+                System.out.println("Cannot find recipes by ID: " + trainingId);
+                return;
+            }
+
+            Training copied = trainingService.insert(training.getTraining_name(), training.getTraining_category(), clientId);
+
+            for (Recipe originalRecipe : recipes) {
+                Recipe newRecipe = new Recipe();
+
+                newRecipe.setRecipe_training(copied);
+                newRecipe.setRecipe_exercise(originalRecipe.getRecipe_exercise());
+                newRecipe.setRecipe_weight(originalRecipe.getRecipe_weight());
+                newRecipe.setRecipe_reps(originalRecipe.getRecipe_reps());
+                newRecipe.setRecipe_sets(originalRecipe.getRecipe_sets());
+                iRecipe.save(newRecipe);
+            }
+            System.out.println("Recipes copied");
         }
 
         catch (Exception e) {
-            System.out.println("Cannot change recipe's weight: " + e.getMessage());
+
         }
     }
 
     @Transactional
-    public void delete(Integer id) {
+    public void delete(Integer training, List<Recipe> recipes) {
         try {
-            iRecipe.deleteById(id);
+            iRecipe.delete(training);
+
+            for(int i = 0; i < recipes.size(); i++) {
+                Recipe recipe = recipes.get(i);
+                insert(recipe.getRecipe_training().getTraining_id(), recipe.getRecipe_exercise().getExercise_id(), recipe.getRecipe_weight(), recipe.getRecipe_reps(), recipe.getRecipe_sets());
+            }
         }
 
         catch (Exception e) {
-            System.out.println("Cannot delete recipe: " + e.getMessage());
+            System.out.println("Cannot delete recipes: " + e.getMessage());
         }
     }
 }

@@ -1,48 +1,53 @@
 -- TRIGGER CLIENT INSERT --
-CREATE OR REPLACE FUNCTION Client_Insert()
+CREATE OR REPLACE FUNCTION SF.T_ClientInsert()
 RETURNS TRIGGER AS $$
+DECLARE
+    client_age INT;
 BEGIN
-    IF NEW.client_weight > 0 AND 
-       NEW.client_weight < 610 AND 
-       NEW.client_birthday < CURRENT_DATE THEN
+    client_age := EXTRACT(YEAR FROM AGE(NEW.client_birthday));
 
-        RETURN NEW;
-    ELSE
-        RAISE EXCEPTION 'Dados inválidos para inserção.';
+    IF NEW.client_weight <= 0 OR NEW.client_weight >= 610 THEN
+        RAISE NOTICE 'Peso inválido para o cliente: %', NEW.client_name;
+        RETURN NULL;
     END IF;
 
-    RETURN NULL; -- Este retorno não deve ser alcançado
-END;
-$$ LANGUAGE plpgsql;
-
-
-CREATE TRIGGER Client_Insert_Trigger
-BEFORE INSERT ON SF.Client
-FOR EACH ROW EXECUTE FUNCTION Client_Insert();
-
--- TRIGGER CLIENT UPDATE --
-CREATE OR REPLACE FUNCTION Client_Update()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.client_password IS DISTINCT FROM OLD.client_password OR
-	   NEW.client_active IS DISTINCT FROM OLD.client_active THEN
-        RETURN NEW;
-    END IF;
-
-	IF NEW.client_weight < 0 OR NEW.client_weight > 610 THEN
-        RAISE EXCEPTION 'Dados inválidos para atualização: client_weight deve estar entre 0 e 610.';
+    IF client_age <= 12 THEN
+        RAISE NOTICE 'Cliente % deve ter mais de 12 anos.', NEW.client_name;
+        RETURN NULL;
     END IF;
 
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER Client_Update_Trigger
+CREATE TRIGGER trg_check_client_insert
+BEFORE INSERT ON SF.Client
+FOR EACH ROW EXECUTE FUNCTION SF.T_ClientInsert();
+
+-- TRIGGER CLIENT UPDATE --
+CREATE OR REPLACE FUNCTION SF.T_ClientUpdate()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.client_password IS DISTINCT FROM OLD.client_password AND
+       NEW.client_active IS TRUE THEN
+        RETURN NEW;
+    END IF;
+
+    IF NEW.client_weight < 0 OR NEW.client_weight > 610 THEN
+        RAISE NOTICE 'Dados inválidos para atualização: client_weight deve estar entre 0 e 610 para o cliente: %', NEW.client_name;
+        RETURN NULL;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_check_client_update
 BEFORE UPDATE ON SF.Client
-FOR EACH ROW EXECUTE FUNCTION Client_Update();
+FOR EACH ROW EXECUTE FUNCTION SF.T_ClientUpdate();
 
 -- TRIGGER ADM INSERT --
-CREATE OR REPLACE FUNCTION Adm_Insert()
+CREATE OR REPLACE FUNCTION SF.T_AdmInsert()
 RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.adm_salary > 0 THEN
@@ -53,15 +58,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER Adm_Insert_Trigger
+CREATE TRIGGER trg_check_adm_insert
 BEFORE INSERT ON SF.Adm
-FOR EACH ROW EXECUTE FUNCTION Adm_Insert();
+FOR EACH ROW EXECUTE FUNCTION SF.T_AdmInsert();
 
 -- TRIGGER ADM UPDATE --
-CREATE OR REPLACE FUNCTION Adm_Update()
+CREATE OR REPLACE FUNCTION SF.T_AdmUpdate()
 RETURNS TRIGGER AS $$
 BEGIN
-
 	IF NEW.adm_password IS DISTINCT FROM OLD.adm_password OR
 	   NEW.adm_active IS DISTINCT FROM OLD.adm_active THEN
 	   RETURN NEW;
@@ -75,38 +79,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER Adm_Update_Trigger
+CREATE TRIGGER trg_check_adm_update
 BEFORE UPDATE ON SF.Adm
-FOR EACH ROW EXECUTE FUNCTION Adm_Update();
-
--- TRIGGER RECIPE INSERT --
-CREATE OR REPLACE FUNCTION Recipe_Insert()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.recipe_weight > 0.0 THEN
-		RETURN NEW;
-	END IF;
-
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER Recipe_Insert_Trigger
-BEFORE INSERT ON SF.Recipe
-FOR EACH ROW EXECUTE FUNCTION Recipe_Insert();
-
--- TRIGGER RECIPE UPDATE --
-CREATE OR REPLACE FUNCTION Recipe_Update()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.recipe_weight > 0.0 THEN
-		RETURN NEW;
-	END IF;
-
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER Recipe_Update_Trigger
-BEFORE UPDATE ON SF.Recipe
-FOR EACH ROW EXECUTE FUNCTION Recipe_Update();
+FOR EACH ROW EXECUTE FUNCTION SF.T_AdmUpdate();

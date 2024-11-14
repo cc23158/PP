@@ -27,4 +27,8 @@ public interface ITraining extends JpaRepository<Training, Integer> {
             @Param("id") Integer id,
             @Param("name") String name
     );
+
+    @Modifying
+    @Query("DELETE Training WHERE training_id = :id")
+    void delete(@Param("id") Integer id);
 }

@@ -30,33 +30,33 @@ public class RecipeController {
 
     @CrossOrigin
     @PostMapping("/insert")
-    public Recipe insert(@RequestParam("trainingId") Integer training, @RequestParam("exerciseId") Integer exercise, @RequestParam("weight") Double weight) {
-        return recipeService.insert(training, exercise, weight);
+    public Recipe insert(@RequestParam("trainingId") Integer training, @RequestParam("exerciseId") Integer exercise, @RequestParam("weight") String weight, @RequestParam("reps") String reps, @RequestParam("sets") Integer sets) {
+        return recipeService.insert(training, exercise, weight, reps, sets);
     }
 
     @CrossOrigin
-    @PutMapping("/update")
-    public ResponseEntity<String> update(@RequestParam("id") Integer id, @RequestParam("weight") Double weight) {
+    @PostMapping("/copy")
+    public ResponseEntity<String> copy(@RequestParam("clientId") Integer client, @RequestParam("trainingId") Integer training) {
         try {
-            recipeService.update(id, weight);
-            return ResponseEntity.ok("Recipe's weight changed");
+            recipeService.copy(client, training);
+            return ResponseEntity.ok("Training copied");
         }
 
         catch (Exception e) {
-            return ResponseEntity.badRequest().body("Cannot change recipe's weight");
+            return ResponseEntity.badRequest().body("Cannot copy training");
         }
     }
 
     @CrossOrigin
     @DeleteMapping("/delete")
-    public ResponseEntity<String> delete(@RequestParam("id") Integer id) {
+    public ResponseEntity<String> delete(@RequestParam("trainingId") Integer trainingId, @RequestBody List<Recipe> recipes) {
         try {
-            recipeService.delete(id);
-            return ResponseEntity.ok("Recipe deleted");
+            recipeService.delete(trainingId, recipes);
+            return ResponseEntity.ok("Recipes deleted");
         }
 
         catch (Exception e) {
-            return ResponseEntity.badRequest().body("Cannot delete recipe");
+            return ResponseEntity.badRequest().body("Cannot delete recipes");
         }
     }
 }

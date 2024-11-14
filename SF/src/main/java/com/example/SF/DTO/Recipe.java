@@ -26,6 +26,12 @@ public class Recipe {
     @JoinColumn(name = "recipe_exercise", referencedColumnName = "exercise_id", nullable = false)
     private Exercise recipe_exercise;
 
-    @Column(name = "recipe_weight", nullable = false)
-    private Double recipe_weight;
+    @Column(name = "recipe_weight", nullable = true)
+    private String recipe_weight;
+
+    @Column(name = "recipe_reps", nullable = true)
+    private String recipe_reps;
+
+    @Column(name = "recipe_sets", nullable = true)
+    private Integer recipe_sets;
 }

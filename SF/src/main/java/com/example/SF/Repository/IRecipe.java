@@ -13,9 +13,6 @@ public interface IRecipe extends JpaRepository<Recipe, Integer> {
     List<Recipe> getByTraining(@Param("training") Integer training);
 
     @Modifying
-    @Query("UPDATE Recipe SET recipe_weight = :weight WHERE recipe_id = :id")
-    void update(
-            @Param("id") Integer id,
-            @Param("weight") Double weight
-    );
+    @Query(value = "DELETE FROM SF.Recipe WHERE recipe_training = :training", nativeQuery = true)
+    void delete(@Param("training") Integer training);
 }
