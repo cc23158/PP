@@ -97,7 +97,7 @@ Future<void> fetchRecipeFromList(List recipesData) async {
         backgroundColor: Colors.black,
         leading: IconButton(onPressed: () {Navigator.pop(context);}, icon: Icon(Icons.arrow_back, color: Colors.white,)),
         title: Text(widget.nome, style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
-
+        centerTitle: true,
         toolbarHeight: 40,
       ),
       body: Center(

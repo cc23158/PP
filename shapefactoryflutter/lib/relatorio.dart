@@ -6,8 +6,10 @@ import 'package:shapefactory/StartTraining.dart';
 import 'package:shapefactory/ViewHistory.dart';
 import 'package:shapefactory/home.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:convert';
+import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'package:http/http.dart' as http;
 
 class Relatorio extends StatefulWidget {
@@ -32,6 +34,7 @@ class RelatorioState extends State<Relatorio> {
     super.initState();
     if (allTrainingData.isEmpty) {
       fetchTrainingData();
+
     } else {
       filterDataByPeriod();
     }
@@ -90,7 +93,7 @@ class RelatorioState extends State<Relatorio> {
         final url = Uri.https(
           'shape-factory-5.onrender.com',
           '/history/getByClientNoDate',
-          {'clientId': '6'},
+          {'clientId': Home.clientIdAtivo.toString()},
         );
         final response = await http.get(url, headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -98,6 +101,7 @@ class RelatorioState extends State<Relatorio> {
 
         if (response.statusCode == 200) {
           allTrainingData = json.decode(utf8.decode(response.bodyBytes));
+          print(allTrainingData);
           filterDataByPeriod();
         }
       }
@@ -112,7 +116,7 @@ class RelatorioState extends State<Relatorio> {
 
   void filterDataByPeriod() {
     DateTime startDate = _getStartDateForPeriod(selectedPeriod);
-    DateTime endDate = DateTime.now();
+    DateTime endDate = DateTime.now().add(Duration(days: 1));
 
     // Filtra os treinos dentro do intervalo selecionado
     List<dynamic> filteredData = allTrainingData.where((item) {
@@ -166,7 +170,7 @@ class RelatorioState extends State<Relatorio> {
         backgroundColor: const Color(0xff000000),
         body: Stack(children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(16, 30, 16, 8),
+            padding: EdgeInsets.fromLTRB(16, 40, 16, 8),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,7 +217,13 @@ class RelatorioState extends State<Relatorio> {
                   ),
                   const SizedBox(height: 20),
                   if (isLoading)
-                    const Center(child: CircularProgressIndicator())
+                    Center(
+                      child: LoadingAnimationWidget.staggeredDotsWave(
+                        color: Colors.orange,
+                        size: 30,
+                      ),
+                    
+                  )
                   else ...[
                     Card(
                       color: Colors.grey[900],
@@ -242,64 +252,64 @@ class RelatorioState extends State<Relatorio> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Card(
-                      color: Colors.grey[900],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Músculos Atingidos",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            ),
-                            SizedBox(
-                              height: 50,
-                            ),
-                            SizedBox(
-                              height: 250,
-                              child: RadarChart(
-                                RadarChartData(
-                                  titleTextStyle:
-                                      TextStyle(color: Colors.white54),
-                                  getTitle: (value, angle) {
-                                    var muscles = muscleFrequency.keys.toList();
-                                    return muscles.isNotEmpty
-                                        ? RadarChartTitle(
-                                            text: muscles[value.toInt() %
-                                                    muscles.length]
-                                                .toString(),
-                                          )
-                                        : const RadarChartTitle(text: '');
-                                  },
-                                  borderData: FlBorderData(show: false),
-                                  radarShape: RadarShape.circle,
-                                  dataSets: [
-                                    RadarDataSet(
-                                      dataEntries: muscleFrequency.values
-                                          .map((value) => RadarEntry(
-                                              value: value.toDouble()))
-                                          .toList(),
-                                      borderColor: Colors.orange,
-                                      fillColor: Colors.orange.withOpacity(0.3),
-                                      entryRadius: 3,
-                                      borderWidth: 2,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 50,
+                   Card(
+  color: Colors.grey[900],
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(12),
+  ),
+  child: Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Músculos Atingidos",
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
+        SizedBox(height: 50),
+        muscleFrequency.isNotEmpty && allTrainingData.isNotEmpty
+            ? SizedBox(
+                height: 250,
+                child: RadarChart(
+                  RadarChartData(
+                    titleTextStyle: TextStyle(color: Colors.white54),
+                    getTitle: (value, angle) {
+                      var muscles = muscleFrequency.keys.toList();
+                      return muscles.isNotEmpty
+                          ? RadarChartTitle(
+                              text: muscles[value.toInt() % muscles.length]
+                                  .toString(),
                             )
-                          ],
-                        ),
+                          : const RadarChartTitle(text: '');
+                    },
+                    borderData: FlBorderData(show: false),
+                    radarShape: RadarShape.circle,
+                    dataSets: [
+                      RadarDataSet(
+                        dataEntries: muscleFrequency.values
+                            .map((value) => RadarEntry(value: value.toDouble()))
+                            .toList(),
+                        borderColor: Colors.orange,
+                        fillColor: Colors.orange.withOpacity(0.3),
+                        entryRadius: 3,
+                        borderWidth: 2,
                       ),
-                    ),
+                    ],
+                  ),
+                ),
+              )
+            : const Center(
+                child: Text(
+                  "Nenhum dado disponível",
+                  style: TextStyle(color: Colors.white54),
+                ),
+              ),
+        SizedBox(height: 50),
+      ],
+    ),
+  ),
+),
+                    SizedBox(height: 16,),
                     Card(
                         color: Colors.grey[900],
                         shape: RoundedRectangleBorder(
@@ -318,7 +328,7 @@ class RelatorioState extends State<Relatorio> {
                               const SizedBox(height: 10),
                               TableCalendar(
                                 firstDay: DateTime.utc(2023, 1, 1),
-                                lastDay: DateTime.now(),
+                                lastDay: DateTime.now().add(Duration(days: 1)),
                                 focusedDay: DateTime.now(),
                                 calendarFormat: CalendarFormat.month,
                                 calendarStyle: CalendarStyle(
@@ -383,7 +393,7 @@ class RelatorioState extends State<Relatorio> {
   } else {
     // Se não houver treino para o dia selecionado, pode-se exibir uma mensagem
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Nenhum treino encontrado para este dia!')),
+      const SnackBar(content: Text('Nenhum treino encontrado para este dia')),
     );
   }
 },

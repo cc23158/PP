@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shapefactory/ActiveTrainingBar.dart';
 import 'package:shapefactory/EditTraining.dart';
-import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shapefactory/StartTraining.dart';
 
@@ -25,10 +24,10 @@ class HomeState extends State<Home> {
 
   var listaMestra = List.empty(growable: true);
   final List<String> vetorImagens = [
-    "assets/images/paint.png",
-    "assets/images/intermediario.png",
-    "assets/images/avancado.png",
-    "assets/images/musculos.png"
+    "assets/images/MeusTreinos.png",
+    "assets/images/Superiores.png",
+    "assets/images/Inferiores.png",
+    "assets/images/Full-body.png"
   ];
   var cardPageController = PageController(
     viewportFraction: 0.85,
@@ -237,98 +236,113 @@ class HomeState extends State<Home> {
   }
 
   Widget getWidgetDefault(Map<String, dynamic> treino) {
-    return GestureDetector(
-        onTap: () async {
-          if (StartTraining.trainingIdAtivo == -1 ||
-              StartTraining.trainingIdAtivo == treino['training_id']) {
-            await Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => StartTraining(
-                  category: 1,
-                  nome: treino['training_name'],
-                  trainingId: treino['training_id'],
-                  clientId: 1,
-                ),
-              ),
-            );
-            setState(() {});
-          } else {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  backgroundColor: const Color.fromARGB(255, 32, 32, 32),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  title: const Text('Treino em andamento',
-                      style: TextStyle(
-                        color: Colors.white70,
-                      )),
-                  content: const Text(
-                      'Por favor, termine seu treino atual antes de começar outro',
-                      style: TextStyle(
-                        color: Colors.white70,
-                      )),
-                  actions: <Widget>[
-                    MaterialButton(
-                        color: Colors.orange,
-                        child: const Text("OK",
-                            style: TextStyle(
-                              color: Colors.white70,
-                            )),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        })
-                  ],
-                );
-              },
-            );
-          }
-          setState(() {
-            fetchTrainings();
-          });
-        },
-        child: Card(
-          color: Colors.black45,
-          elevation: 1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    treino['training_name'] ?? "Treino",
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.clip,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                if (StartTraining.trainingIdAtivo == treino['training_id'])
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                    child: SizedBox(
-                      height: 45,
-                      child: LoadingAnimationWidget.staggeredDotsWave(
-                          color: Colors.orange, size: 24),
-                    ),
-                  )
-                  else
-                    SizedBox(height: 45,)
-                  
-              ],
+  return GestureDetector(
+    onTap: () async {
+      if (StartTraining.trainingIdAtivo == -1 ||
+          StartTraining.trainingIdAtivo == treino['training_id']) {
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => StartTraining(
+              category: 1,
+              nome: treino['training_name'],
+              trainingId: treino['training_id'],
+              clientId: 1,
             ),
           ),
-        ));
-  }
+        );
+        setState(() {});
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: const Color.fromARGB(255, 32, 32, 32),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              title: const Text(
+                'Treino em andamento',
+                style: TextStyle(
+                  color: Colors.white70,
+                ),
+              ),
+              content: const Text(
+                'Por favor, termine seu treino atual antes de começar outro',
+                style: TextStyle(
+                  color: Colors.white70,
+                ),
+              ),
+              actions: <Widget>[
+                MaterialButton(
+                  color: Colors.orange,
+                  child: const Text(
+                    "OK",
+                    style: TextStyle(
+                      color: Colors.white70,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                )
+              ],
+            );
+          },
+        );
+      }
+      setState(() {
+        fetchTrainings();
+      });
+    },
+    child: Card(
+      color: Colors.black45,
+      elevation: 1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                treino['training_name'] ?? "Treino",
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.clip,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            if (StartTraining.trainingIdAtivo == treino['training_id'])
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                child: SizedBox(
+                  height: 45,
+                  child: LoadingAnimationWidget.staggeredDotsWave(
+                    color: Colors.orange,
+                    size: 24,
+                  ),
+                ),
+              )
+            else
+              const SizedBox(height: 45),
+            IconButton(
+              icon: const Icon(Icons.add, color: Colors.white),
+              onPressed: () async{
+                await copyTraining(widget.clientId, treino);
+              },
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
 
   Future<void> fetchTrainings() async {
     try {
@@ -508,6 +522,30 @@ class HomeState extends State<Home> {
     );
   }
 
+Future<void> copyTraining(int clientId, dynamic treino) async {
+  final url = Uri.parse('https://shape-factory-5.onrender.com/recipe/copy'); // Coloque sua URL completa aqui
+  try {
+    final response = await http.post(
+      url,
+      body: {
+        'clientId': clientId.toString(),
+        'trainingId': treino['training_id'].toString(),
+      },
+    );
+    if (response.statusCode == 200) {
+      print('Training copied successfully');
+      setState(() {
+        Home.clientTrainingsList.add(treino);
+        fetchTrainings();
+      });
+    } else {
+      print('Failed to copy training: ${response.body}');
+    }
+  } catch (e) {
+    print('Error copying training: $e');
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -525,7 +563,7 @@ class HomeState extends State<Home> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       const Padding(
-                        padding: EdgeInsets.fromLTRB(16, 30, 16, 8),
+                        padding: EdgeInsets.fromLTRB(16, 40, 16, 0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
