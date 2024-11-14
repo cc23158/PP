@@ -53,7 +53,6 @@ class LoginState extends State<Login> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          ///***If you have exported images you must have to copy those images in assets/images directory.
                           const Image(
                             image: AssetImage(
                                 "assets/images/shapeforadmslogo.png"),

@@ -41,10 +41,8 @@ class AddExerciceState extends State<AddExercise> {
   try {
     var dio = Dio();
 
-    // Construa o FormData dependendo da plataforma
     FormData formData;
     if (kIsWeb) {
-      // Para a Web, use fromBytes
       formData = FormData.fromMap({
         'muscleId': muscle.toString(),
         'name': nome,
@@ -52,7 +50,6 @@ class AddExerciceState extends State<AddExercise> {
         'image': MultipartFile.fromBytes(imagem.bytes!, filename: imagem.name),
       });
     } else if (io.Platform.isAndroid || io.Platform.isIOS) {
-      // Para Android/iOS, use fromFile para acessar pelo caminho do arquivo
       formData = FormData.fromMap({
         'muscleId': muscle.toString(),
         'name': nome,
@@ -63,7 +60,6 @@ class AddExerciceState extends State<AddExercise> {
       throw UnsupportedError('Plataforma não suportada');
     }
 
-    // Enviar a solicitação POST
     var response = await dio.post(
       'https://shape-factory-5.onrender.com/exercise/insert',
       data: formData,
@@ -72,7 +68,7 @@ class AddExerciceState extends State<AddExercise> {
     return response.statusCode ?? 500;
   } catch (e) {
     print('Erro ao enviar exercício: $e');
-    return 500; // Retorna um código de erro em caso de falha
+    return 500; 
   }
 }
 
@@ -109,16 +105,13 @@ class AddExerciceState extends State<AddExercise> {
       'path': path,
     });
 
-    // Adiciona a imagem apenas se uma nova imagem foi selecionada
     if (imagem != null && imagem.name != 'null') {
       if (kIsWeb) {
-        // Para a Web, use fromBytes
         formData.files.add(MapEntry(
           'image',
           MultipartFile.fromBytes(imagem.bytes!, filename: imagem.name),
         ));
       } else if (io.Platform.isAndroid || io.Platform.isIOS) {
-        // Para Android/iOS, use fromFile para acessar pelo caminho do arquivo
         formData.files.add(MapEntry(
           'image',
           await MultipartFile.fromFile(imagem.path!, filename: imagem.name),
@@ -249,9 +242,8 @@ class AddExerciceState extends State<AddExercise> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Campo de Nome - Flex menor para reduzir mais rapidamente
                       Flexible(
-                        flex: 4, // Flex menor
+                        flex: 4,
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(10, 10, 5, 10),
                           child: Container(constraints: BoxConstraints(minWidth: 200), child:  TextField(
@@ -271,9 +263,8 @@ class AddExerciceState extends State<AddExercise> {
                         ),
                       ),),
 
-                      // Campo de URL - Flex maior para manter tamanho mais estável
                       Flexible(
-                        flex: 5, // Flex maior
+                        flex: 5,
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
                           child: TextField(
@@ -293,7 +284,6 @@ class AddExerciceState extends State<AddExercise> {
                         ),
                       ),
 
-                      // Dropdown de Músculo
                       Padding(
                         padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
                         child: SizedBox(
@@ -319,7 +309,6 @@ class AddExerciceState extends State<AddExercise> {
                         ),
                       ),
 
-                      // Botão de Upload de Imagem
                       Padding(
                         padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
                         child: MaterialButton(
@@ -339,9 +328,7 @@ class AddExerciceState extends State<AddExercise> {
         controllerUpdate.add(controllerId[controllerIndex]);
       }
 
-      // Verifica a plataforma
       if (kIsWeb || io.Platform.isIOS) {
-        // Usar Image.memory para web e iOS
         controllerCamera[controllerIndex] = picked.files.first;
         listCamera[controllerIndex] = ClipRRect(
           borderRadius: BorderRadius.circular(12),
@@ -353,7 +340,6 @@ class AddExerciceState extends State<AddExercise> {
           ),
         );
       } else {
-        // Usar Image.file para Android
         controllerCamera[controllerIndex] = picked.files.first;
         listCamera[controllerIndex] = ClipRRect(
           borderRadius: BorderRadius.circular(12),
@@ -370,7 +356,6 @@ class AddExerciceState extends State<AddExercise> {
         }),
                       ),
 
-                      // Botão de Remover Item
                       Padding(
                         padding: const EdgeInsets.fromLTRB(5, 10, 10, 10),
                         child: MaterialButton(
@@ -441,7 +426,6 @@ class AddExerciceState extends State<AddExercise> {
   Widget build(BuildContext context) {
     print("build");
 
-    // Ajusta a cor da borda com base na orientação da tela
     if (MediaQuery.of(context).size.width >
         MediaQuery.of(context).size.height) {
       corBorda = const BorderSide(color: Colors.grey, width: 2);
@@ -449,12 +433,10 @@ class AddExerciceState extends State<AddExercise> {
       corBorda = const BorderSide(color: Colors.black);
     }
 
-    // Carrega os exercícios apenas uma vez
     if (listElement.isEmpty && podeMudar) {
       getExercises();
     }
 
-    // Atualiza a lista de widgets
     listElement.clear();
     for (int i = 0; i < controllerRow.length; i++) {
       listElement.add(getWidget(widget.musculos, i));
@@ -466,7 +448,6 @@ class AddExerciceState extends State<AddExercise> {
         backgroundColor: Colors.black,
         body: Stack(
           children: [
-            // Conteúdo principal
             Align(
               alignment: Alignment.center,
               child: Container(
@@ -491,7 +472,7 @@ class AddExerciceState extends State<AddExercise> {
                           controller: controllerList,
                           interactive: true,
                           minThumbLength:
-                              50, // Tamanho mínimo do thumb da scrollbar
+                              50, 
                           radius: const Radius.circular(12),
                           padding: const EdgeInsets.fromLTRB(10, 40, 0, 10),
                           child: ListView.builder(
@@ -499,7 +480,6 @@ class AddExerciceState extends State<AddExercise> {
                             itemCount: listElement.length + 1,
                             itemBuilder: (context, index) {
                               if (index < listElement.length) {
-                                // Renderiza os elementos dinâmicos
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 0, horizontal: 10),
@@ -514,7 +494,6 @@ class AddExerciceState extends State<AddExercise> {
                                           MainAxisAlignment.center,
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
-                                        // Botão Adicionar
                                         Flexible(
                                           child: MaterialButton(
                                             height: 50,
@@ -567,7 +546,6 @@ class AddExerciceState extends State<AddExercise> {
                                             ),
                                           ),
                                         ),
-                                        // Botão Salvar
                                         Flexible(
                                           child: MaterialButton(
                                             height: 50,
@@ -667,7 +645,7 @@ class AddExerciceState extends State<AddExercise> {
             ),
             if (isLoading)
               Container(
-                color: Colors.black.withOpacity(1), // Fundo semitransparente
+                color: Colors.black.withOpacity(1), 
                 child: const Center(
                   child: CircularProgressIndicator(
                     color: Colors.orange,
@@ -677,7 +655,6 @@ class AddExerciceState extends State<AddExercise> {
           ],
         ),
       ),
-      // Exibe o CircularProgressIndicator durante o carregamento
     );
   }
 }

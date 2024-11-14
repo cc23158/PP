@@ -23,7 +23,7 @@ class CentralPageState extends State<CentralPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Center(
-        child: pages.elementAt(_selectedIndex), //New
+        child: pages.elementAt(_selectedIndex), 
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [

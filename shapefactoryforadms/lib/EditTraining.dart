@@ -56,7 +56,6 @@ class EditTrainingState extends State<EditTraining> {
       'category': category.toString(),
     };
 
-    // Print da URL e do corpo da requisição
     print("POST $url");
     print("Body: $body");
 
@@ -64,7 +63,6 @@ class EditTrainingState extends State<EditTraining> {
       final response = await http.post(url, body: body);
 
       if (response.statusCode == 200) {
-        // Aqui assumo que o ID do treino é retornado como resposta
         return int.tryParse(response.body);
       } else {
         print('Failed to insert training: ${response.statusCode}');
@@ -80,26 +78,21 @@ class EditTrainingState extends State<EditTraining> {
 
 Future<int> deleteAndInsertAll(
     int trainingId, List<Map<String, dynamic>> selectedExercises) async {
-  // URL para deletar e inserir ao mesmo tempo
   final queryParameters = {
     'trainingId': trainingId.toString(),
   };
   final url = Uri.https(
       'shape-factory-5.onrender.com', '/recipe/delete', queryParameters);
 
-  // Preparação dos dados dos exercícios para envio
   List<Map<String, dynamic>> recipes = selectedExercises.map((exercise) {
     String exerciseId = exercise['id'].toString();
     List<Map<String, String>> sets = exercise['sets'];
 
-    // Concatenar cargas e reps com "/"
     String weight = sets.map((set) => set['carga'] ?? "").join('/');
     String reps = sets.map((set) => set['reps'] ?? "").join('/');
 
-    // Número de sets é o tamanho da lista 'sets'
     int setsCount = sets.length;
 
-    // Dados de cada exercício com os nomes adequados
     return {
       "recipe_id": exercise['recipe_id'] ?? 0,
       "recipe_training": {
@@ -133,14 +126,12 @@ Future<int> deleteAndInsertAll(
     };
   }).toList();
 
-  // Corpo da requisição contendo o ID do treino e os novos exercícios
   final body = jsonEncode(recipes);
 
   try {
     print("DELETE and INSERT on $url");
     print("Body: $body");
 
-    // Requisição DELETE com dados de inserção
     final response = await http.delete(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -164,14 +155,11 @@ Future<int> deleteAndInsertAll(
 
 
 
-  // Método principal que insere o treino e os exercícios
   Future<void> addTrainingWithExercises(String name, int clientId, int category,
       List<Map<String, dynamic>> selectedExercises) async {
-    // Primeiro, insere o treino
     int? trainingId = await insertTraining(name, clientId, category);
 
     if (trainingId != null) {
-      // Se o treino foi inserido com sucesso, insere os exercícios associados
       await deleteAndInsertAll(trainingId, selectedExercises);
     } else {
       print('Failed to insert training.');
@@ -269,7 +257,6 @@ Future<int> deleteAndInsertAll(
       setState(() {
         isApiLoading = true;
       });
-      // Faz a chamada para a API para obter as receitas.
       final response = await http.get(Uri.parse(
           'https://shape-factory-5.onrender.com/recipe/getByTraining?trainingId=${widget.id}'));
 
@@ -278,24 +265,21 @@ Future<int> deleteAndInsertAll(
 
         final List<dynamic> recipesData = json.decode(responseBody);
 
-        // Converte os dados da API para o formato desejado.
         exercises = recipesData.map<Map<String, dynamic>>((recipe) {
           final recipeExercise = recipe['recipe_exercise'];
           final weight = recipe['recipe_weight'];
           final reps = recipe['recipe_reps'];
 
-          // Separa as cargas e reps usando a '/' como delimitador.
           final weights = weight.split('/');
           final repsList = reps.split('/');
 
-          // Cria a lista de sets, unindo carga e reps na ordem correta.
           List<Map<String, String>> sets = [];
           for (int i = 0; i < weights.length; i++) {
             sets.add({
-              'carga': weights[i].trim(), // Remove espaços em branco
+              'carga': weights[i].trim(),
               'reps': repsList.length > i
                   ? repsList[i].trim()
-                  : '', // Garante que não ultrapasse a lista
+                  : '',
             });
           }
 
@@ -308,16 +292,13 @@ Future<int> deleteAndInsertAll(
           };
         }).toList();
 
-        // Atualiza o estado para refletir as mudanças.
         setState(() {
           isApiLoading = false;
         });
       } else {
-        // Trate o erro de acordo com sua lógica.
         throw Exception('Falha ao carregar as receitas');
       }
     } catch (e) {
-      // Trate a exceção de acordo com sua lógica.
       print('Erro: $e');
     }
   }
@@ -331,7 +312,6 @@ Future<int> deleteAndInsertAll(
       'name': name,
     };
 
-    // Print da URL e do corpo da requisição
     print("PUT $url");
     print("Body: $body");
 
@@ -340,7 +320,7 @@ Future<int> deleteAndInsertAll(
 
       if (response.statusCode == 200) {
         print('Training updated successfully');
-        return trainingId; // Retorna o ID do treino atualizado
+        return trainingId; 
       } else {
         print('Failed to update training: ${response.statusCode}');
         return null;
@@ -353,7 +333,6 @@ Future<int> deleteAndInsertAll(
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (widget.id != 0) {
       fetchRecipe();
@@ -361,7 +340,7 @@ Future<int> deleteAndInsertAll(
     controllerNome.text = widget.nome;
   }
 
-  bool isApiLoading = false; // Variável de controle para carregamento da API
+  bool isApiLoading = false; 
 
   @override
   Widget build(BuildContext context) {
@@ -459,10 +438,9 @@ Future<int> deleteAndInsertAll(
                               onPressed: () async {
                                 if (controllerNome.text.isNotEmpty) {
                                   setState(() {
-                                    isLoading = true; // Inicia o carregamento
+                                    isLoading = true; 
                                   });
 
-                                  // Verifica se estamos criando um novo treino ou atualizando um existente
                                   if (widget.id == 0) {
                                     await addTrainingWithExercises(
                                         controllerNome.text,
@@ -482,7 +460,6 @@ Future<int> deleteAndInsertAll(
                                   
 
                                 } else {
-                                  // Exibe um popup se o nome estiver vazio
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
@@ -521,7 +498,7 @@ Future<int> deleteAndInsertAll(
                 ),
                 Expanded(
                   child:
-                      isApiLoading // Verifica se os dados da API estão sendo carregados
+                      isApiLoading 
                           ? Center(
                               child: LoadingAnimationWidget.staggeredDotsWave(
                                   color: Colors.orange, size: 30))
@@ -577,7 +554,6 @@ Future<int> deleteAndInsertAll(
     );
   }
 
-  // Função para cabeçalhos da GridView
   Widget _gridHeader(String text) {
     return Center(
       child: Text(
@@ -591,8 +567,6 @@ Future<int> deleteAndInsertAll(
     );
   }
 
-  // Função para exibir número do set
-// Função para exibir número do set
   Widget _setNumberWidget(int setNumber) {
     var onChanged;
     return Container(
@@ -614,7 +588,6 @@ Future<int> deleteAndInsertAll(
     );
   }
 
-// Função para campos editáveis
   Widget _editableField({
     required String initialValue,
     required ValueChanged<String> onChanged,
@@ -643,7 +616,6 @@ Future<int> deleteAndInsertAll(
     );
   }
 
-  // Função personalizada fornecida
   Widget getWidget(String nome, String musculo, String imagem, int id) {
     return Card(
       color: const Color(0xffffffff),

@@ -58,7 +58,6 @@ class SelectTrainingState extends State<SelectTraining>
     final url = Uri.parse(
         'https://shape-factory-5.onrender.com/training/getByClient?clientId=1');
 
-    // Print da URL da requisição
     print("GET $url");
 
     try {
@@ -67,7 +66,6 @@ class SelectTrainingState extends State<SelectTraining>
       if (response.statusCode == 200) {
         print('Treinos obtidos com sucesso: ${response.body}');
 
-        // Decodifica o JSON e retorna a lista de treinos
         final List<dynamic> jsonResponse = jsonDecode(response.body);
         return jsonResponse
             .map((item) => item as Map<String, dynamic>)
@@ -164,29 +162,27 @@ class SelectTrainingState extends State<SelectTraining>
     setState(() {
       isLoading = true;
     });
-    treinos = await getTraining(); // Obtém os treinos
-    // Filtra e cria widgets apenas para treinos com training_category == 1
+    treinos = await getTraining();
     listElement = treinos
         .where((treino) => treino['training_category'] == initialSeletion)
-        .map((treino) => getWidget(treino)) // Chama sua função getWidget
+        .map((treino) => getWidget(treino)) 
         .toList();
         print(treinos);
     setState(() {
       isLoading = false;
-    }); // Atualiza a interface
+    }); 
   }
 
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this); // 3 tipos de treino
+    tabController = TabController(length: 3, vsync: this);
     fetchTrainings(1);
   }
 
   @override
   Widget build(BuildContext context) {
     print("build");
-    // Atualiza a cor da borda com base na orientação da tela
     if (MediaQuery.of(context).size.width >
         MediaQuery.of(context).size.height) {
       setState(() {
@@ -223,7 +219,6 @@ class SelectTrainingState extends State<SelectTraining>
                 ),
                 child: Column(
                   children: [
-                    // TabBar para seleção do tipo de treino
                     Container(
                       color: Colors.black,
                       child: Column(
@@ -235,9 +230,9 @@ class SelectTrainingState extends State<SelectTraining>
                                   .where((treino) =>
                                       treino['training_category'] == value + 1)
                                   .map((treino) =>
-                                      getWidget(treino)) // Chama sua função getWidget
+                                      getWidget(treino)) 
                                   .toList();
-                              setState(() {}); // Atualiza a interface
+                              setState(() {}); 
                             },
                             labelColor: Colors.white,
                             indicatorColor: Colors.orange,
@@ -248,17 +243,15 @@ class SelectTrainingState extends State<SelectTraining>
                               Tab(text: 'Full-body'),
                             ],
                           ),
-                          // Animação de barra de progresso abaixo das tabs
                           isLoading
                               ? const LinearProgressIndicator(
                                   color: Colors.orange,
                                   backgroundColor: Colors.black54,
                                 )
-                              : const SizedBox.shrink(), // Oculta a barra se não estiver carregando
+                              : const SizedBox.shrink(),
                         ],
                       ),
                     ),
-                    // Usar Expanded para o ListView ocupar o espaço disponível
                     Flexible(
                       flex: 5,
                       child: RawScrollbar(
@@ -269,7 +262,7 @@ class SelectTrainingState extends State<SelectTraining>
                         padding: const EdgeInsets.all(10),
                         child: ListView.builder(
                           controller: controllerList,
-                          itemCount: listElement.length + 1, // +1 para o botão de adicionar
+                          itemCount: listElement.length + 1,
                           itemBuilder: (context, index) {
                             if (index < listElement.length) {
                               return Padding(
@@ -277,7 +270,6 @@ class SelectTrainingState extends State<SelectTraining>
                                 child: listElement[index],
                               );
                             } else {
-                              // Botão Adicionar
                               return Padding(
                                 padding: const EdgeInsets.fromLTRB(15, 5, 15, 20),
                                 child: MaterialButton(
