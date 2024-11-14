@@ -18,7 +18,7 @@ class CentralPageState extends State<CentralPage> {
 
 @override
   void initState() {
-    _pages = <Widget>[Home(clientId: widget.clientId), const Relatorio(), Conta()]; 
+    _pages = <Widget>[Home(clientId: widget.clientId), const Relatorio(), Conta(clientId: widget.clientId)]; 
     super.initState();
   }
 
