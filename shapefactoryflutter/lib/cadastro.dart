@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shapefactory/home.dart';
 import 'package:shapefactory/objetivo.dart';
 import 'package:http/http.dart' as http;
 
@@ -442,6 +443,7 @@ class CadastroState extends State<Cadastro> {
                               });
                             }
                             else {
+                              Home.listaCompleta.clear();
 Navigator.push(context, MaterialPageRoute(builder: (context) => Objetivo(result)));
                             }
 
