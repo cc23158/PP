@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart'; 
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shapefactory/login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -14,10 +16,13 @@ class _ContaState extends State<Conta> {
   String name = '';
   String email = '';
   String password = '';
+  String weight = '';
   bool isLoading = true;
   bool isEditingPassword = false;
+  bool isEditingWeight = false;
 
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
 
   @override
   void initState() {
@@ -27,7 +32,9 @@ class _ContaState extends State<Conta> {
         name = userData['name'];
         email = userData['email'];
         password = userData['password'];
+        weight = userData['weight'];
         _passwordController.text = password;
+        _weightController.text = weight;
         isLoading = false;
       });
     }).catchError((e) {
@@ -44,20 +51,22 @@ class _ContaState extends State<Conta> {
           'https://shape-factory-5.onrender.com/client/getById?clientId=$clientId'));
 
       if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body);
+        final decodedData = jsonDecode(response.body);
 
-        // Verificar se os campos existem e se não são nulos
+        print("Dados recebidos da API: $decodedData");
+
         return {
           'name': decodedData['client_name'] ?? 'Nome não disponível',
           'email': decodedData['client_email'] ?? 'Email não disponível',
           'password': decodedData['client_password'] ?? 'Senha não disponível',
+          'weight': decodedData['client_weight']?.toString() ?? 'Peso não disponível',
         };
       } else {
         throw Exception('Falha ao carregar dados: ${response.statusCode}');
       }
     } catch (e) {
       print("Erro ao buscar dados: $e");
-      throw e;
+      throw Exception("Erro ao se conectar com a API.");
     }
   }
 
@@ -91,15 +100,41 @@ class _ContaState extends State<Conta> {
                   SizedBox(height: 16),
                   _buildInfoRow("Email: $email", 'email', false),
                   SizedBox(height: 16),
-                  _buildInfoRow("Senha: ${isEditingPassword ? '' : password}",
-                      'password', true),
+                  _buildInfoRow("Peso: ${isEditingWeight ? '' : weight}", 'weight', false, isWeightField: true),
+                  SizedBox(height: 16),
+                  _buildInfoRow("Senha: ${isEditingPassword ? '' : password}", 'password', true),
+                  const SizedBox(height: 32),
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 12),
+                      ),
+                      onPressed: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.remove('clientId');
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => Login()),
+                        );
+                      },
+                      child: const Text(
+                        "Sair",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
     );
   }
 
-  Widget _buildInfoRow(String info, String field, bool isPasswordField) {
+  Widget _buildInfoRow(String info, String field, bool isPasswordField, {bool isWeightField = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -113,47 +148,75 @@ class _ContaState extends State<Conta> {
                     hintText: "Nova senha",
                     hintStyle: const TextStyle(color: Colors.white),
                     enabledBorder: UnderlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.white),
+                      borderSide: const BorderSide(color: Colors.black),
                     ),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: const BorderSide(color: Colors.orange),
                     ),
                   ),
                 )
-              : Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    info,
-                    style: const TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ),
+              : isWeightField && isEditingWeight
+                  ? TextField(
+                      controller: _weightController,
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: "Novo peso",
+                        hintStyle: const TextStyle(color: Colors.white),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.orange),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        border: Border.all(color: Colors.black, width: 1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        info,
+                        style: const TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
         ),
-        if (isPasswordField)
+        if (isPasswordField || isWeightField)
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange, // Cor de fundo
-              foregroundColor: Colors.white, // Cor do texto
+              backgroundColor: Colors.orange,
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12), // Bordas arredondadas
+                borderRadius: BorderRadius.circular(12),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             ),
             onPressed: () {
-              if (isEditingPassword) {
-                _updatePassword();
-              } else {
-                setState(() {
-                  isEditingPassword = true;
-                  _passwordController.text = password;
-                });
+              if (isPasswordField) {
+                if (isEditingPassword) {
+                  _updatePassword();
+                } else {
+                  setState(() {
+                    isEditingPassword = true;
+                    _passwordController.text = password;
+                  });
+                }
+              } else if (isWeightField) {
+                if (isEditingWeight) {
+                  _updateWeight();
+                } else {
+                  setState(() {
+                    isEditingWeight = true;
+                    _weightController.text = weight;
+                  });
+                }
               }
             },
             child: Text(
-              isEditingPassword ? "Salvar" : "Alterar",
+              (isPasswordField ? isEditingPassword : isEditingWeight) ? "Salvar" : "Alterar",
               style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 15,
@@ -165,41 +228,97 @@ class _ContaState extends State<Conta> {
   }
 
   Future<void> _updatePassword() async {
+    if (_passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('A senha deve ter pelo menos 6 caracteres'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
     try {
       final response = await http.put(
         Uri.parse('https://shape-factory-5.onrender.com/client/updatePassword'),
         body: {
-          'id': widget.clientId.toString(), // Passando o ID do cliente
-          'password': _passwordController.text, // Nova senha
+          'id': widget.clientId.toString(),
+          'password': _passwordController.text,
         },
       );
 
       if (response.statusCode == 200) {
-        print("Senha atualizada com sucesso!");
-        // Recarregar os dados após atualizar a senha
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Senha atualizada com sucesso!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
         setState(() {
-          password = _passwordController.text; // Atualiza a senha na UI
-          isEditingPassword = false; // Desativa o modo de edição
+          password = _passwordController.text;
+          isEditingPassword = false;
         });
-        getUserData(widget.clientId); // Recarregar dados do usuário
       } else {
-        print("Erro ao atualizar a senha: ${response.statusCode}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erro ao atualizar a senha. Tente novamente.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
       }
     } catch (e) {
-      print("Erro ao fazer a requisição PUT: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro de conexão. Tente novamente.'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
     }
   }
 
-  String _getFieldValue(String field) {
-    switch (field) {
-      case 'name':
-        return name;
-      case 'email':
-        return email;
-      case 'password':
-        return password;
-      default:
-        return '';
+  Future<void> _updateWeight() async {
+    try {
+      final response = await http.put(
+        Uri.parse('https://shape-factory-5.onrender.com/client/updateData'),
+        body: {
+          'id': widget.clientId.toString(),
+          'weight': _weightController.text,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Peso atualizado com sucesso!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        setState(() {
+          weight = _weightController.text;
+          isEditingWeight = false;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erro ao atualizar o peso. Tente novamente.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro de conexão. Tente novamente.'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
     }
   }
 }
